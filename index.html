@@ -19,7 +19,7 @@
 
         /* Navigation */
         nav {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #000f96 0%, #000f96 100%);
             padding: 1rem 0;
             position: sticky;
             top: 0;
@@ -151,30 +151,29 @@
             background: #f8f9fa;
         }
 
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+        .blog-list {
+            max-width: 800px;
+            margin: 2rem auto 0;
         }
 
         .blog-post {
             background: white;
             border-radius: 10px;
             padding: 2rem;
+            margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .blog-post:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
         .blog-post h3 {
             color: #667eea;
             margin-bottom: 0.5rem;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
 
         .blog-date {
@@ -186,18 +185,7 @@
         .blog-post p {
             color: #666;
             margin-bottom: 1rem;
-        }
-
-        .read-more {
-            display: inline-block;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .read-more:hover {
-            color: #764ba2;
+            line-height: 1.8;
         }
 
         /* Footer */
@@ -242,8 +230,8 @@
 
 <!-- Header -->
 <header id="home">
-    <h1>Alexander Robbins</h1>
-    <p>Mathematics | Economics | Computer Science</p>
+    <h1>Welcome to My Portfolio</h1>
+    <p>Developer | Creator | Problem Solver</p>
 </header>
 
 <!-- About Section -->
@@ -256,10 +244,12 @@
         ============================================
         -->
         <p>
-            I am a 2nd year at the University of Florida who is passionate about advanced financial mathematics.
+            Hi! I'm a passionate developer with a love for creating innovative solutions.
+            I specialize in web development and enjoy working on projects that make a difference.
         </p>
         <p>
-            attatched you will find completed projects and blog posts on what research and other simulations that I am working on.
+            When I'm not coding, you can find me exploring new technologies, reading tech blogs,
+            or working on personal projects that push my skills to the next level.
         </p>
         <!--
         ============================================
@@ -307,7 +297,7 @@
 <!-- Blog Section -->
 <section id="blog">
     <h2>Blog</h2>
-    <div class="blog-grid">
+    <div class="blog-list">
         <!--
         ============================================
         ADD YOUR BLOG POSTS BELOW THIS LINE
@@ -318,30 +308,32 @@
             <h3>Blog Post Title 1</h3>
             <p class="blog-date">December 22, 2025</p>
             <p>
-                A compelling introduction to your blog post. Share your insights,
-                experiences, or tutorials that will interest your readers.
+                Write your full blog post content here. You can write as much as you want -
+                multiple paragraphs, detailed explanations, code examples, or anything else.
+                The entire post will be visible without needing to click "Read More."
             </p>
-            <a href="#" class="read-more">Read More →</a>
+            <p>
+                Add more paragraphs as needed. Just keep adding paragraph tags for each
+                section of your post.
+            </p>
         </div>
 
         <div class="blog-post">
             <h3>Blog Post Title 2</h3>
             <p class="blog-date">December 15, 2025</p>
             <p>
-                Another interesting topic you've written about. Make it engaging
-                and informative to draw readers in.
+                Your complete second blog post goes here. Share all your thoughts, research,
+                and findings directly in this space.
             </p>
-            <a href="#" class="read-more">Read More →</a>
         </div>
 
         <div class="blog-post">
             <h3>Blog Post Title 3</h3>
             <p class="blog-date">December 8, 2025</p>
             <p>
-                Share your knowledge and experiences. Your unique perspective
-                is what makes your blog valuable.
+                Third blog post with all the content visible. Perfect for sharing detailed
+                analysis, tutorials, or any other content you want readers to see immediately.
             </p>
-            <a href="#" class="read-more">Read More →</a>
         </div>
         <!--
         ============================================
@@ -353,7 +345,7 @@
 
 <!-- Footer -->
 <footer>
-    <p>&copy; 2025 Alexander Robbins. All rights reserved.</p>
+    <p>&copy; 2025 My Portfolio. All rights reserved.</p>
 </footer>
 </body>
 </html>
