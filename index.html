@@ -15,6 +15,50 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             line-height: 1.6;
             color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        /* Toggle Switch Styles */
+        .lever-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .lever {
+            width: 60px;
+            height: 34px;
+            background: #ccc;
+            border-radius: 34px;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .lever.active {
+            background: #667eea;
+        }
+
+        .lever-switch {
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .lever.active .lever-switch {
+            transform: translateX(26px);
         }
 
         /* Navigation */
@@ -25,6 +69,11 @@
             top: 0;
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+
+        body.dark-mode nav {
+            background: linear-gradient(135deg, #2a2d3a 0%, #2a2d3a 100%);
         }
 
         nav ul {
@@ -51,6 +100,11 @@
             color: white;
             text-align: center;
             padding: 6rem 2rem;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode header {
+            background: linear-gradient(135deg, #4a5fc1 0%, #cc5700 100%);
         }
 
         header h1 {
@@ -88,16 +142,56 @@
             margin-bottom: 2rem;
             color: #667eea;
             text-align: center;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode section h2 {
+            color: #8b9eff;
         }
 
         /* About Section */
         #about {
             background: #f8f9fa;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode #about {
+            background: #242424;
+        }
+
+        .about-container {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-photo {
+            flex-shrink: 0;
+            width: 250px;
+            height: 250px;
+            border-radius: 10px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            padding: 1rem;
+            border: 3px dashed #ccc;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        body.dark-mode .about-photo {
+            background: #333;
+            border-color: #555;
+            color: #999;
         }
 
         .about-content {
-            max-width: 800px;
-            margin: 0 auto;
+            flex: 1;
             font-size: 1.1rem;
             line-height: 1.8;
         }
@@ -115,7 +209,12 @@
             border-radius: 10px;
             padding: 2rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+
+        body.dark-mode .project-card {
+            background: #2a2a2a;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
         .project-card:hover {
@@ -123,15 +222,29 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.2);
         }
 
+        body.dark-mode .project-card:hover {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+        }
+
         .project-card h3 {
             color: #667eea;
             margin-bottom: 1rem;
             font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .project-card h3 {
+            color: #8b9eff;
         }
 
         .project-card p {
             color: #666;
             margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .project-card p {
+            color: #b0b0b0;
         }
 
         .project-link {
@@ -142,13 +255,26 @@
             transition: color 0.3s;
         }
 
+        body.dark-mode .project-link {
+            color: #8b9eff;
+        }
+
         .project-link:hover {
             color: #764ba2;
+        }
+
+        body.dark-mode .project-link:hover {
+            color: #a8b5ff;
         }
 
         /* Blog Section */
         #blog {
             background: #f8f9fa;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode #blog {
+            background: #242424;
         }
 
         .blog-list {
@@ -162,7 +288,12 @@
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+
+        body.dark-mode .blog-post {
+            background: #2a2a2a;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
         .blog-post:hover {
@@ -170,22 +301,41 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
 
+        body.dark-mode .blog-post:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+        }
+
         .blog-post h3 {
             color: #667eea;
             margin-bottom: 0.5rem;
             font-size: 1.8rem;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .blog-post h3 {
+            color: #8b9eff;
         }
 
         .blog-date {
             color: #999;
             font-size: 0.9rem;
             margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .blog-date {
+            color: #888;
         }
 
         .blog-post p {
             color: #666;
             margin-bottom: 1rem;
             line-height: 1.8;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .blog-post p {
+            color: #b0b0b0;
         }
 
         /* Footer */
@@ -194,6 +344,11 @@
             color: white;
             text-align: center;
             padding: 2rem;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode footer {
+            background: #1a1d28;
         }
 
         /* Responsive */
@@ -214,10 +369,48 @@
             section h2 {
                 font-size: 2rem;
             }
+
+            .about-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .about-photo {
+                width: 200px;
+                height: 200px;
+            }
+
+            .lever-container {
+                top: 10px;
+                right: 10px;
+            }
+
+            .lever {
+                width: 50px;
+                height: 28px;
+            }
+
+            .lever-switch {
+                width: 22px;
+                height: 22px;
+                top: 3px;
+                left: 3px;
+            }
+
+            .lever.active .lever-switch {
+                transform: translateX(22px);
+            }
         }
     </style>
 </head>
 <body>
+<!-- Toggle Switch -->
+<div class="lever-container" onclick="toggleDarkMode()">
+    <div class="lever" id="lever">
+        <div class="lever-switch"></div>
+    </div>
+</div>
+
 <!-- Navigation -->
 <nav>
     <ul>
@@ -237,26 +430,31 @@
 <!-- About Section -->
 <section id="about">
     <h2>About Me</h2>
-    <div class="about-content">
-        <!--
-        ============================================
-        EDIT YOUR ABOUT ME CONTENT BELOW THIS LINE
-        ============================================
-        -->
-        <p>
-            I’m a University of Florida student majoring in Mathematics, Data Science, and Economics, graduating early in 2027.
-            My interests lie at the intersection of probability, statistics, and finance, with a focus on applying rigorous mathematical ideas to real-world problems.
-            I’ve completed advanced coursework in calculus, linear algebra, data structures, and probability, and I’m currently studying real analysis and abstract algebra.
-        </p>
-        <p>
-            Outside the classroom, I work with a student-run quantitative hedge fund, where I build and test models using Python and C++.
-            I’m driven by deep problem-solving, independent research, and developing quantitative tools that bridge theory and practice.
-        </p>
-        <!--
-        ============================================
-        END OF ABOUT ME CONTENT
-        ============================================
-        -->
+    <div class="about-container">
+        <div class="about-photo">
+            <img src="your-photo.png" alt="Alexander Robbins" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+        </div>
+        <div class="about-content">
+            <!--
+            ============================================
+            EDIT YOUR ABOUT ME CONTENT BELOW THIS LINE
+            ============================================
+            -->
+            <p>
+                I'm a University of Florida student majoring in Mathematics, Data Science, and Economics, graduating early in 2027.
+                My interests lie at the intersection of probability, statistics, and finance, with a focus on applying rigorous mathematical ideas to real-world problems.
+                I've completed advanced coursework in calculus, linear algebra, data structures, and probability, and I'm currently studying real analysis and abstract algebra.
+            </p>
+            <p>
+                Outside the classroom, I work with a student-run quantitative hedge fund, where I build and test models using Python and C++.
+                I'm driven by deep problem-solving, independent research, and developing quantitative tools that bridge theory and practice.
+            </p>
+            <!--
+            ============================================
+            END OF ABOUT ME CONTENT
+            ============================================
+            -->
+        </div>
     </div>
 </section>
 
@@ -348,5 +546,31 @@
 <footer>
     <p>&copy; 2025 Alexander Robbins. All rights reserved.</p>
 </footer>
+
+<script>
+    function toggleDarkMode() {
+        const body = document.body;
+        const lever = document.getElementById('lever');
+
+        body.classList.toggle('dark-mode');
+        lever.classList.toggle('active');
+
+        // Save preference
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    }
+
+    // Check for saved preference on load
+    window.addEventListener('DOMContentLoaded', () => {
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('lever').classList.add('active');
+        }
+    });
+</script>
 </body>
 </html>
