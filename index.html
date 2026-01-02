@@ -380,8 +380,8 @@
             }
 
             .about-photo {
-                width: 200px;
-                height: 200px;
+                width: 160px;
+                height: 160px;
             }
 
             .lever-container {
@@ -807,12 +807,17 @@
         }
     }
 
-    // Check for saved preference on load
+    // Check for saved preference on load (default to dark mode)
     window.addEventListener('DOMContentLoaded', () => {
         const darkMode = localStorage.getItem('darkMode');
-        if (darkMode === 'enabled') {
+        
+        // If no preference saved, default to dark mode
+        if (darkMode === null || darkMode === 'enabled') {
             document.body.classList.add('dark-mode');
             document.getElementById('lever').classList.add('active');
+            if (darkMode === null) {
+                localStorage.setItem('darkMode', 'enabled');
+            }
         }
     });
 </script>
