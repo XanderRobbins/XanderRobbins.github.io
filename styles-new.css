@@ -79,7 +79,10 @@ body {
 
 .sidebar-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    padding: 24px 16px;
+    gap: 12px;
 }
 
 .logo {
@@ -499,12 +502,4 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
-}
-
-.sidebar-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 16px;
-    gap: 12px;
 }
