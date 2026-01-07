@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+    <title>Alexander Robbins · Home</title>
     <style>
         * {
             margin: 0;
@@ -11,826 +11,609 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            transition: background-color 0.3s, color 0.3s;
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --border-color: #e0e0e0;
+            --accent: #0066ff;
+            --card-bg: #ffffff;
+            --nav-bg: #fafafa;
         }
 
         body.dark-mode {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #0f0f0f;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0a0;
+            --border-color: #2a2a2a;
+            --accent: #4d9eff;
+            --card-bg: #1f1f1f;
+            --nav-bg: #141414;
         }
 
-        /* Toggle Switch Styles */
-        .lever-container {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--nav-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            cursor: pointer;
-        }
-
-        .lever {
-            width: 60px;
-            height: 34px;
-            background: #ccc;
-            border-radius: 34px;
-            position: relative;
+            height: 100vh;
+            overflow-y: auto;
             transition: background 0.3s;
         }
 
-        .lever.active {
-            background: #667eea;
-        }
-
-        .lever-switch {
-            width: 26px;
-            height: 26px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .lever.active .lever-switch {
-            transform: translateX(26px);
-        }
-
-        /* Navigation */
-        nav {
-            background: linear-gradient(135deg, #404357 0%, #404357 100%);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: background 0.3s;
-        }
-
-        body.dark-mode nav {
-            background: linear-gradient(135deg, #2a2d3a 0%, #2a2d3a 100%);
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            margin-bottom: 2rem;
         }
 
         nav ul {
             list-style: none;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
+        }
+
+        nav li {
+            margin-bottom: 0.25rem;
         }
 
         nav a {
-            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: var(--text-secondary);
             text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .divider-text {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin: 1.5rem 0 1rem;
             font-weight: 600;
-            transition: opacity 0.3s;
         }
 
-        nav a:hover {
-            opacity: 0.8;
+        .theme-toggle {
+            margin-top: auto;
+            padding-top: 2rem;
         }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #ff6f00 100%);
-            color: white;
-            text-align: center;
-            padding: 6rem 2rem;
-            transition: background 0.3s;
-        }
-
-        body.dark-mode header {
-            background: linear-gradient(135deg, #4a5fc1 0%, #cc5700 100%);
-        }
-
-        header h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        header p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Sections */
-        section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            color: #667eea;
-            text-align: center;
-            transition: color 0.3s;
-        }
-
-        body.dark-mode section h2 {
-            color: #8b9eff;
-        }
-
-        /* About Section */
-        #about {
-            background: #f8f9fa;
-            transition: background 0.3s;
-        }
-
-        body.dark-mode #about {
-            background: #242424;
-        }
-
-        .about-container {
+        .theme-buttons {
             display: flex;
-            gap: 3rem;
-            align-items: center;
-            max-width: 900px;
-            margin: 0 auto;
+            gap: 4px;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 8px;
         }
 
-        .about-photo {
-            flex-shrink: 0;
-            width: 250px;
-            height: 250px;
-            border-radius: 10px;
-            background: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            color: #666;
-            text-align: center;
-            padding: 0;
-            transition: background 0.3s, border-color 0.3s;
-            overflow: hidden;
-        }
-
-        .about-photo img {
-            width: 250px;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        body.dark-mode .about-photo {
-            background: #333;
-            color: #999;
-        }
-
-        .about-content {
+        .theme-btn {
             flex: 1;
-            font-size: 1.1rem;
-            line-height: 1.8;
+            padding: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        /* Projects Section */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+        .theme-btn.active {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .project-card {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 3rem 4rem;
+            max-width: 1400px;
         }
 
-        body.dark-mode .project-card {
-            background: #2a2a2a;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 3rem;
         }
 
-        body.dark-mode .project-card:hover {
-            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 3rem 0 1.5rem;
         }
 
-        .project-card h3 {
-            color: #667eea;
-            margin-bottom: 1rem;
+        .section-header h2 {
             font-size: 1.5rem;
-            transition: color 0.3s;
-        }
-
-        body.dark-mode .project-card h3 {
-            color: #8b9eff;
-        }
-
-        .project-card p {
-            color: #666;
-            margin-bottom: 1rem;
-            transition: color 0.3s;
-        }
-
-        body.dark-mode .project-card p {
-            color: #b0b0b0;
-        }
-
-        .project-link {
-            display: inline-block;
-            color: #667eea;
-            text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s;
         }
 
-        body.dark-mode .project-link {
-            color: #8b9eff;
+        .view-all {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
         }
 
-        .project-link:hover {
-            color: #764ba2;
+        .view-all:hover {
+            color: var(--accent);
         }
 
-        body.dark-mode .project-link:hover {
-            color: #a8b5ff;
+        .about-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            line-height: 1.7;
         }
 
-        /* Blog Section */
-        #blog {
-            background: #f8f9fa;
-            transition: background 0.3s;
+        .about-section p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
         }
 
-        body.dark-mode #blog {
-            background: #242424;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
-        .blog-list {
-            max-width: 800px;
-            margin: 2rem auto 0;
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .external-icon {
+            font-size: 0.9rem;
+            opacity: 0.5;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .card-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .card-link:hover {
+            text-decoration: underline;
         }
 
         .blog-post {
-            background: white;
-            border-radius: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-        }
-
-        body.dark-mode .blog-post {
-            background: #2a2a2a;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s;
         }
 
         .blog-post:hover {
-            transform: translateX(5px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-
-        body.dark-mode .blog-post:hover {
-            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+            border-color: var(--accent);
         }
 
         .blog-post h3 {
-            color: #667eea;
+            font-size: 1.4rem;
             margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-            transition: color 0.3s;
-        }
-
-        body.dark-mode .blog-post h3 {
-            color: #8b9eff;
+            color: var(--text-primary);
         }
 
         .blog-date {
-            color: #999;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            transition: color 0.3s;
-        }
-
-        body.dark-mode .blog-date {
-            color: #888;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
         }
 
         .blog-post p {
-            color: #666;
+            color: var(--text-secondary);
+            line-height: 1.7;
             margin-bottom: 1rem;
-            line-height: 1.8;
-            transition: color 0.3s;
         }
 
-        body.dark-mode .blog-post p {
-            color: #b0b0b0;
+        .blog-post strong {
+            color: var(--text-primary);
+            display: block;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
-        /* Footer */
-        footer {
-            background: #2d3748;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            transition: background 0.3s;
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                margin-left: 200px;
+                padding: 2rem;
+            }
         }
 
-        body.dark-mode footer {
-            background: #1a1d28;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-
-            header p {
-                font-size: 1rem;
-            }
-
-            nav ul {
-                gap: 1rem;
-                flex-wrap: wrap;
-            }
-
-            nav a {
-                font-size: 0.9rem;
-            }
-
-            section h2 {
-                font-size: 2rem;
-            }
-
-            .about-container {
+            body {
                 flex-direction: column;
-                text-align: center;
             }
 
-            .about-photo {
-                width: 160px;
-                height: 160px;
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
             }
 
-            .about-photo img {
-                width: 160px !important;
-                height: 160px !important;
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1.5rem;
             }
 
-            .lever-container {
-                top: 10px;
-                right: 10px;
-            }
-
-            .lever {
-                width: 50px;
-                height: 28px;
-            }
-
-            .lever-switch {
-                width: 22px;
-                height: 22px;
-                top: 3px;
-                left: 3px;
-            }
-
-            .lever.active .lever-switch {
-                transform: translateX(22px);
+            .grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-<!-- Toggle Switch -->
-<div class="lever-container" onclick="toggleDarkMode()">
-    <div class="lever" id="lever">
-        <div class="lever-switch"></div>
-    </div>
-</div>
-
-<!-- Navigation -->
-<nav>
-    <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#blog">Blog</a></li>
-    </ul>
-</nav>
-
-<!-- Header -->
-<header id="home">
-    <h1>Alexander Robbins</h1>
-    <p>Mathematics | Economics | Computer Science</p>
-</header>
-
-<!-- About Section -->
-<section id="about">
-    <h2>About Me</h2>
-    <div class="about-container">
-        <div class="about-photo">
-            <img src="your-photo.jpg" alt="Alexander Robbins">
-        </div>
-        <div class="about-content">
-            <p>
-                University of Florida student majoring in Mathematics, Computer Science, and Economics, graduating 2 1/2 years early in 2027.
-            </p>
-
-            <p>
-                Focuses: probability, finance, simulation, and advanced mathematics.
-            </p>
-
-            <p>
-                Experience: Senior MacroEconomic Analyst for AlgoGators Quantitative hedge fund, CEO and Founder of CHIV
-            </p>
-
-            <p>
-                Completed Coursework: operating systems, linear algebra, data structures, probability theory, real analysis, functions and complex variables.
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- Projects Section -->
-<section id="projects">
-    <h2>Projects</h2>
-    <div class="projects-grid">
-        <div class="project-card">
-            <h3>Arbitrage-Free Volatility Surface</h3>
-            <p>Production-grade Python toolkit for computing implied volatilities, enforcing no-arbitrage constraints, fitting SVI models, and calibrating Heston stochastic volatility models to market data. Features robust IV computation, 3D surface visualization, and comprehensive testing.</p>
-            <a href="https://github.com/XanderRobbins/Arbitrage-Free-Volatility-Surface" class="project-link">View Project →</a>
-        </div>
-
-        <div class="project-card">
-            <h3>Monte Carlo Variance Reduction</h3>
-            <p>This is a research project that I am working on over the next semester, lookout for updates!</p>
-            <a href="https://github.com/ChronoInferna/lfmc" class="project-link">View Project →</a>
-        </div>
-
-        <div class="project-card">
-            <h3>Physics informed Foreign Exchange Currency Network</h3>
-            <p>Another exciting project I am working on. Still a major work in progress.</p>
-            <a href="research-paper.docx" class="project-link">View Project →</a>
-        </div>
-
-        <div class="project-card">
-            <h3>Impact of Corporate Changes on Market Volatility & Market Return</h3>
-            <p>Published research for AlgoGators, looking to expand with more metrics in the near future</p>
-            <a href="https://www.algogators.com/post/impact-of-corporate-changes-on-market-volatility-market-return" class="project-link">View Project →</a>
-        </div>
-
-        <div class="project-card">
-            <h3>CHIV LLC</h3>
-            <p>Startup that I have been working on for the last 6 months, should be public by February</p>
-            <a href="https://www.instagram.com/chiv_co/" class="project-link">View Project →</a>
-        </div>
-    </div>
-</section>
-
-<!-- Blog Section -->
-<section id="blog">
-    <h2>Blog</h2>
-    <div class="blog-list">
-        <div class="blog-post">
-            <h3>Building in Public: How I'm Teaching Myself to Think Like a Quant</h3>
-            <p class="blog-date">October 21, 2025</p>
-            <p>
-                I don't think becoming "good at quant" is about memorizing libraries, grinding LeetCode forever,
-                or stacking flashy projects on GitHub. For me, it's been about something quieter (and harder):
-                learning how to think.
-            </p>
-            <p>
-                This is a short snapshot of how I'm approaching that process right now — not as an expert,
-                but as someone actively figuring it out.
-            </p>
-
-            <p><strong>Thinking > Tools</strong></p>
-            <p>
-                Early on, I thought progress meant learning more tools. New Python packages. New frameworks.
-                New buzzwords. And sure, tools matter — but I've learned they're only useful once the thinking
-                is already there.
-            </p>
-            <p>
-                Math has been the biggest driver of that shift. Classes like probability, linear algebra, and
-                analysis don't just teach techniques; they force precision. You learn what assumptions you're
-                making, what breaks when they're wrong, and how small changes ripple through an argument.
-                That mindset transfers directly to data, models, and markets.
-            </p>
-            <p>
-                Now, when I learn a tool, it's usually because I need it to express an idea I already have —
-                not because I'm hoping the tool itself will make me smarter.
-            </p>
-
-            <p><strong>Coding as a Thinking Tool</strong></p>
-            <p>
-                I don't code just to "build things." I code to clarify ideas.
-            </p>
-            <p>
-                If I can't simulate it, I probably don't understand it. If I can't explain it in code, my
-                mental model is probably fuzzy. Writing small scripts — especially for probability or data
-                problems — forces me to be honest about what I actually know versus what I'm hand-waving.
-            </p>
-            <p>
-                That's why a lot of my projects are small, focused, and sometimes a little boring on the
-                surface. They're not meant to impress — they're meant to sharpen intuition.
-            </p>
-
-            <p><strong>Why I Build in Public</strong></p>
-            <p>
-                Putting work on GitHub (even when it's imperfect) keeps me accountable. It forces me to
-                finish thoughts, clean up reasoning, and document why I did something — not just what I did.
-            </p>
-            <p>
-                It also removes the illusion that everyone else has it figured out. The difference is whether they're willing to show the process.
-            </p>
-            <p>
-                Building in public isn't about showing off progress — it's about making learning visible.
-            </p>
-
-            <p><strong>Small Projects > Big Unfinished Ones</strong></p>
-            <p>
-                I used to think every project needed to be ambitious. Now I'm convinced the opposite is true.
-            </p>
-            <p>
-                A clean, well-understood notebook on one idea beats a half-built "AI trading system" every
-                time. Depth compounds. Shallow breadth doesn't.
-            </p>
-            <p>
-                When something clicks — a distribution, a factor intuition, a modeling assumption — I try
-                to capture it immediately, even if it's messy. Those moments are where real learning happens.
-            </p>
-
-            <p><strong>Where I'm At (Right Now)</strong></p>
-            <p>
-                I'm still early. I'm still confused a lot. And that's fine.
-            </p>
-            <p>
-                Right now, my focus is on building strong mathematical intuition, using code to test and
-                formalize ideas, and writing things down so future-me can see how my thinking evolved.
-            </p>
-            <p>
-                This site is part notebook, part lab, part public record of that process.
-            </p>
-            <p>
-                If you're also figuring things out — you're probably doing it right.
-            </p>
-        </div>
-
-        <div class="blog-post">
-            <h3>How I Decide What's Worth Learning (And What I Ignore)</h3>
-            <p class="blog-date">November 14, 2025</p>
-            <p>
-                One of the hardest parts of learning anything technical isn't understanding the material —
-                it's deciding what's worth your time in the first place.
-            </p>
-            <p>
-                There's no shortage of things you could learn. New tools, new fields, new buzzwords, new
-                threads telling you that if you don't know X by tomorrow, you're behind. Early on, I tried
-                to chase all of it. That didn't last long.
-            </p>
-            <p>
-                Over time, I've started using a few simple filters to decide what I actually focus on —
-                and just as importantly, what I ignore.
-            </p>
-
-            <p><strong>Does This Strengthen My Thinking or Just My Toolkit?</strong></p>
-            <p>
-                The first question I ask is whether something strengthens how I think, or whether it just
-                adds another tool to the pile.
-            </p>
-            <p>
-                Things that consistently make the cut: Math that forces precision (probability, linear
-                algebra, proofs), concepts that transfer across problems, and ideas that change how I
-                frame questions.
-            </p>
-            <p>
-                Things that usually don't: Tools I don't have a concrete use for yet, frameworks I'm
-                learning "just in case," and anything I can only use by copying patterns.
-            </p>
-            <p>
-                Tools are easy to pick up later. Thinking is not.
-            </p>
-
-            <p><strong>Can I Explain This Simply?</strong></p>
-            <p>
-                If I can't explain something in plain language — or better yet, implement a small version
-                of it — I probably don't understand it well enough to justify going deeper.
-            </p>
-            <p>
-                This is where coding helps. Writing a short script or notebook forces clarity. There's no
-                hiding behind vague intuition once you have to make something run.
-            </p>
-            <p>
-                If an idea collapses the moment I try to formalize it, that's a signal to slow down —
-                not move on.
-            </p>
-
-            <p><strong>Does This Compound?</strong></p>
-            <p>
-                Some things compound quietly. Others don't.
-            </p>
-            <p>
-                Learning a core mathematical idea tends to pay dividends across everything else. Learning
-                a niche library often doesn't. That doesn't mean niche tools are bad — just that they're
-                lower priority early on.
-            </p>
-            <p>
-                I try to bias toward things that make future learning easier, unlock multiple domains at
-                once, and stay relevant even as tools change.
-            </p>
-            <p>
-                If something only helps in one narrow context, I'm comfortable skipping it for now.
-            </p>
-
-            <p><strong>What Am I Willing to Be Bad At (For Now)?</strong></p>
-            <p>
-                This might be the most important filter.
-            </p>
-            <p>
-                You can't be good at everything at once. Trying to be just spreads effort thin. So I've
-                gotten more comfortable explicitly choosing gaps — areas I know I'm weak in, but am
-                intentionally postponing.
-            </p>
-            <p>
-                That choice isn't permanent. It's just honest.
-            </p>
-            <p>
-                Being deliberate about what I ignore has been as valuable as deciding what to learn.
-            </p>
-
-            <p><strong>Avoiding the Distraction Loop</strong></p>
-            <p>
-                There's a certain kind of productivity that looks like progress but isn't. Watching videos.
-                Skimming docs. Saving links. Feeling busy.
-            </p>
-            <p>
-                When I notice myself doing that, it's usually a sign I need a sharper question — not more
-                information.
-            </p>
-            <p>
-                Learning accelerates once you're solving a real problem. Until then, restraint matters
-                more than curiosity.
-            </p>
-
-            <p><strong>This Will Change — and That's Fine</strong></p>
-            <p>
-                None of this is fixed. As my interests evolve, so will these filters.
-            </p>
-            <p>
-                But for now, this framework keeps me grounded. It helps me say no without guilt, focus
-                without panic, and learn without constantly feeling behind.
-            </p>
-            <p>
-                In a world with infinite things to learn, attention is the real scarce resource.
-            </p>
-        </div>
-
-        <div class="blog-post">
-            <h3>Why I'm More Interested in Models Than Answers</h3>
-            <p class="blog-date">December 21, 2025</p>
-            <p>
-                For a long time, I cared a lot about answers. Getting the right result. Matching the
-                solution. Knowing I was "correct."
-            </p>
-            <p>
-                Somewhere along the way — mostly through math and probability — that shifted. Now,
-                I'm far more interested in models than answers.
-            </p>
-
-            <p><strong>Answers Are Fragile</strong></p>
-            <p>
-                An answer is usually tied to a very specific setup. Change an assumption, tweak a
-                parameter, or move slightly outside the original context, and the answer can fall apart.
-            </p>
-            <p>
-                That doesn't make answers useless — it just makes them brittle.
-            </p>
-            <p>
-                What started to bother me was how often I could get the "right" answer without really
-                understanding why it was right, or when it would stop being right.
-            </p>
-
-            <p><strong>Models Force You to Be Honest</strong></p>
-            <p>
-                A model, even a simple one, forces clarity.
-            </p>
-            <p>
-                What assumptions are you making? What are you ignoring? What happens when those
-                assumptions fail?
-            </p>
-            <p>
-                You can't hide inside a model. If it's wrong, it breaks — sometimes loudly.
-            </p>
-            <p>
-                That's uncomfortable, but it's also where learning happens.
-            </p>
-
-            <p><strong>Math Changed What I Pay Attention To</strong></p>
-            <p>
-                Proof-based math shifted my focus away from results and toward structure. You start
-                caring less about the final line and more about the logic that gets you there.
-            </p>
-            <p>
-                Probability did the same thing in a different way. Instead of asking "what will happen?",
-                you ask "under what conditions does this tend to happen?" That subtle shift changes
-                everything.
-            </p>
-            <p>
-                Once you start thinking like that, chasing isolated answers feels less satisfying.
-            </p>
-
-            <p><strong>Models Age Better Than Answers</strong></p>
-            <p>
-                Answers expire quickly. Models don't.
-            </p>
-            <p>
-                A numerical result might only be useful today. A good model — even an imperfect one —
-                can be adapted, stress-tested, and reused as conditions change.
-            </p>
-            <p>
-                That's why I'm drawn to understanding the shape of problems rather than memorizing
-                outputs. It's also why I'm comfortable sitting with approximation instead of precision
-                when precision isn't justified.
-            </p>
-
-            <p><strong>This Changes How I Learn</strong></p>
-            <p>
-                When I study something new, I'm less concerned with mastering every technique and
-                more concerned with what assumptions are being made, what problem this is really
-                solving, and where this model breaks down.
-            </p>
-            <p>
-                If I can answer those, the details tend to fall into place later.
-            </p>
-
-            <p><strong>Especially in Uncertain Systems</strong></p>
-            <p>
-                Markets, data, and real-world systems don't reward answer-chasing. They reward people
-                who understand structure, limitations, and uncertainty.
-            </p>
-            <p>
-                A clean answer can be comforting. A useful model is more valuable.
-            </p>
-            <p>
-                That's the level I'm trying to operate on — even if it means being less certain,
-                more often.
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer>
-    <p>&copy; 2025 Alexander Robbins. All rights reserved.</p>
-</footer>
-
-<script>
-    function toggleDarkMode() {
-        const body = document.body;
-        const lever = document.getElementById('lever');
-
-        body.classList.toggle('dark-mode');
-        lever.classList.toggle('active');
-
-        // Save preference
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('darkMode', 'enabled');
-        } else {
-            localStorage.setItem('darkMode', 'disabled');
-        }
-    }
-
-    // Check for saved preference on load (default to dark mode)
-    window.addEventListener('DOMContentLoaded', () => {
-        const darkMode = localStorage.getItem('darkMode');
+    <aside class="sidebar">
+        <div class="logo"></div>
         
-        // If no preference saved, default to dark mode
-        if (darkMode === null || darkMode === 'enabled') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('lever').classList.add('active');
-            if (darkMode === null) {
-                localStorage.setItem('darkMode', 'enabled');
+        <nav>
+            <ul>
+                <li><a href="#home" class="active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Home</span>
+                </a></li>
+                <li><a href="#about">
+                    <span class="nav-icon">👤</span>
+                    <span>About</span>
+                </a></li>
+                <li><a href="#projects">
+                    <span class="nav-icon">📁</span>
+                    <span>Projects</span>
+                </a></li>
+                <li><a href="#blog">
+                    <span class="nav-icon">✏️</span>
+                    <span>Blog</span>
+                </a></li>
+            </ul>
+
+            <div class="divider-text">Connect</div>
+
+            <ul>
+                <li><a href="https://github.com/XanderRobbins" target="_blank">
+                    <span class="nav-icon">💻</span>
+                    <span>GitHub</span>
+                </a></li>
+                <li><a href="https://www.instagram.com/chiv_co/" target="_blank">
+                    <span class="nav-icon">📷</span>
+                    <span>CHIV Instagram</span>
+                </a></li>
+            </ul>
+        </nav>
+
+        <div class="theme-toggle">
+            <div class="theme-buttons">
+                <button class="theme-btn" onclick="setTheme('light')">Light</button>
+                <button class="theme-btn active" onclick="setTheme('dark')">Dark</button>
+                <button class="theme-btn" onclick="setTheme('auto')">Auto</button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <h1>Hello</h1>
+        <p class="subtitle">I'm Alexander Robbins — Welcome to my portfolio.</p>
+
+        <section id="about">
+            <div class="section-header">
+                <h2>About Me</h2>
+            </div>
+            <div class="about-section">
+                <p>
+                    <strong>University of Florida student</strong> majoring in Mathematics, Computer Science, and Economics, graduating 2 1/2 years early in 2027.
+                </p>
+                <p>
+                    <strong>Focuses:</strong> probability, finance, simulation, and advanced mathematics.
+                </p>
+                <p>
+                    <strong>Experience:</strong> Senior MacroEconomic Analyst for AlgoGators Quantitative hedge fund, CEO and Founder of CHIV
+                </p>
+                <p>
+                    <strong>Completed Coursework:</strong> operating systems, linear algebra, data structures, probability theory, real analysis, functions and complex variables.
+                </p>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="section-header">
+                <h2>Projects</h2>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-title">
+                        Arbitrage-Free Volatility Surface
+                        <span class="external-icon">↗</span>
+                    </div>
+                    <div class="card-desc">
+                        Production-grade Python toolkit for computing implied volatilities, enforcing no-arbitrage constraints, fitting SVI models, and calibrating Heston stochastic volatility models to market data. Features robust IV computation, 3D surface visualization, and comprehensive testing.
+                    </div>
+                    <a href="https://github.com/XanderRobbins/Arbitrage-Free-Volatility-Surface" class="card-link" target="_blank">View Project →</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        Monte Carlo Variance Reduction
+                        <span class="external-icon">↗</span>
+                    </div>
+                    <div class="card-desc">
+                        This is a research project that I am working on over the next semester, lookout for updates!
+                    </div>
+                    <a href="https://github.com/ChronoInferna/lfmc" class="card-link" target="_blank">View Project →</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        Physics Informed Foreign Exchange Currency Network
+                    </div>
+                    <div class="card-desc">
+                        Another exciting project I am working on. Still a major work in progress.
+                    </div>
+                    <a href="research-paper.docx" class="card-link">View Project →</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        Impact of Corporate Changes on Market Volatility & Market Return
+                        <span class="external-icon">↗</span>
+                    </div>
+                    <div class="card-desc">
+                        Published research for AlgoGators, looking to expand with more metrics in the near future
+                    </div>
+                    <a href="https://www.algogators.com/post/impact-of-corporate-changes-on-market-volatility-market-return" class="card-link" target="_blank">View Project →</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        CHIV LLC
+                        <span class="external-icon">↗</span>
+                    </div>
+                    <div class="card-desc">
+                        Startup that I have been working on for the last 6 months, should be public by February
+                    </div>
+                    <a href="https://www.instagram.com/chiv_co/" class="card-link" target="_blank">View Project →</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="blog">
+            <div class="section-header">
+                <h2>Blog</h2>
+            </div>
+
+            <div class="blog-post">
+                <h3>Building in Public: How I'm Teaching Myself to Think Like a Quant</h3>
+                <p class="blog-date">October 21, 2025</p>
+                <p>
+                    I don't think becoming "good at quant" is about memorizing libraries, grinding LeetCode forever,
+                    or stacking flashy projects on GitHub. For me, it's been about something quieter (and harder):
+                    learning how to think.
+                </p>
+                <p>
+                    This is a short snapshot of how I'm approaching that process right now — not as an expert,
+                    but as someone actively figuring it out.
+                </p>
+
+                <strong>Thinking > Tools</strong>
+                <p>
+                    Early on, I thought progress meant learning more tools. New Python packages. New frameworks.
+                    New buzzwords. And sure, tools matter — but I've learned they're only useful once the thinking
+                    is already there.
+                </p>
+                <p>
+                    Math has been the biggest driver of that shift. Classes like probability, linear algebra, and
+                    analysis don't just teach techniques; they force precision. You learn what assumptions you're
+                    making, what breaks when they're wrong, and how small changes ripple through an argument.
+                    That mindset transfers directly to data, models, and markets.
+                </p>
+
+                <strong>Coding as a Thinking Tool</strong>
+                <p>
+                    I don't code just to "build things." I code to clarify ideas.
+                </p>
+                <p>
+                    If I can't simulate it, I probably don't understand it. If I can't explain it in code, my
+                    mental model is probably fuzzy. Writing small scripts — especially for probability or data
+                    problems — forces me to be honest about what I actually know versus what I'm hand-waving.
+                </p>
+
+                <strong>Why I Build in Public</strong>
+                <p>
+                    Putting work on GitHub (even when it's imperfect) keeps me accountable. It forces me to
+                    finish thoughts, clean up reasoning, and document why I did something — not just what I did.
+                </p>
+                <p>
+                    Building in public isn't about showing off progress — it's about making learning visible.
+                </p>
+            </div>
+
+            <div class="blog-post">
+                <h3>How I Decide What's Worth Learning (And What I Ignore)</h3>
+                <p class="blog-date">November 14, 2025</p>
+                <p>
+                    One of the hardest parts of learning anything technical isn't understanding the material —
+                    it's deciding what's worth your time in the first place.
+                </p>
+
+                <strong>Does This Strengthen My Thinking or Just My Toolkit?</strong>
+                <p>
+                    The first question I ask is whether something strengthens how I think, or whether it just
+                    adds another tool to the pile.
+                </p>
+                <p>
+                    Things that consistently make the cut: Math that forces precision (probability, linear
+                    algebra, proofs), concepts that transfer across problems, and ideas that change how I
+                    frame questions.
+                </p>
+
+                <strong>Can I Explain This Simply?</strong>
+                <p>
+                    If I can't explain something in plain language — or better yet, implement a small version
+                    of it — I probably don't understand it well enough to justify going deeper.
+                </p>
+
+                <strong>Does This Compound?</strong>
+                <p>
+                    Some things compound quietly. Others don't. Learning a core mathematical idea tends to pay 
+                    dividends across everything else. Learning a niche library often doesn't.
+                </p>
+            </div>
+
+            <div class="blog-post">
+                <h3>Why I'm More Interested in Models Than Answers</h3>
+                <p class="blog-date">December 21, 2025</p>
+                <p>
+                    For a long time, I cared a lot about answers. Getting the right result. Matching the
+                    solution. Knowing I was "correct."
+                </p>
+                <p>
+                    Somewhere along the way — mostly through math and probability — that shifted. Now,
+                    I'm far more interested in models than answers.
+                </p>
+
+                <strong>Answers Are Fragile</strong>
+                <p>
+                    An answer is usually tied to a very specific setup. Change an assumption, tweak a
+                    parameter, or move slightly outside the original context, and the answer can fall apart.
+                </p>
+
+                <strong>Models Force You to Be Honest</strong>
+                <p>
+                    A model, even a simple one, forces clarity. What assumptions are you making? What are you 
+                    ignoring? What happens when those assumptions fail?
+                </p>
+
+                <strong>Models Age Better Than Answers</strong>
+                <p>
+                    Answers expire quickly. Models don't. A numerical result might only be useful today. A good 
+                    model — even an imperfect one — can be adapted, stress-tested, and reused as conditions change.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function setTheme(theme) {
+            const buttons = document.querySelectorAll('.theme-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else if (theme === 'light') {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+                localStorage.setItem('theme', 'auto');
             }
         }
-    });
-</script>
+
+        // Initialize theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const buttons = document.querySelectorAll('.theme-btn');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                buttons[1].classList.add('active');
+            } else if (savedTheme === 'auto') {
+                buttons[2].classList.add('active');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) document.body.classList.add('dark-mode');
+            }
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
