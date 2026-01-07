@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Alexander Robbins</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        nav {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #3498db;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .about-content img {
+            max-width: 200px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 2rem;
+        }
+
+        .about-content p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .about-content h2 {
+            color: #667eea;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="blog.html">Blog</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>About Me</h1>
+        </div>
+
+        <div class="about-content">
+            <img src="your-photo.jpg" alt="Alexander Robbins">
+            
+            <p>University of Florida student majoring in Mathematics, Computer Science, and Economics, graduating 2 1/2 years early in 2027.</p>
+
+            <h2>Focus Areas</h2>
+            <p>Probability, finance, simulation, and advanced mathematics.</p>
+
+            <h2>Experience</h2>
+            <p>Senior MacroEconomic Analyst for AlgoGators Quantitative hedge fund, CEO and Founder of CHIV</p>
+
+            <h2>Completed Coursework</h2>
+            <p>Operating systems, linear algebra, data structures, probability theory, real analysis, functions and complex variables.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Alexander Robbins. All rights reserved.</p>
+    </footer>
+</body>
+</html>
