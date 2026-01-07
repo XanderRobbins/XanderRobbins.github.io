@@ -7,13 +7,19 @@
     <link rel="stylesheet" href="styles-new.css">
 </head>
 <body>
+    <!-- Animated canvas background -->
     <canvas id="canvas" class="bg-canvas"></canvas>
-
+    
+    <!-- Left Sidebar Navigation -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo">AR</div>
+            <div class="profile-photo">
+                <img src="your-photo.jpg" alt="Alexander Robbins">
+            </div>
+            <div class="logo">
+                Alexander<br>Robbins
+            </div>
         </div>
-
         <nav class="nav-links">
             <a href="index.html" class="nav-item">
                 <div class="nav-left">
@@ -22,7 +28,6 @@
                 </div>
                 <span class="nav-shortcut">1</span>
             </a>
-
             <a href="about.html" class="nav-item">
                 <div class="nav-left">
                     <span class="nav-icon">👤</span>
@@ -30,7 +35,6 @@
                 </div>
                 <span class="nav-shortcut">2</span>
             </a>
-
             <a href="projects.html" class="nav-item active">
                 <div class="nav-left">
                     <span class="nav-icon">💼</span>
@@ -38,7 +42,6 @@
                 </div>
                 <span class="nav-shortcut">3</span>
             </a>
-
             <a href="blog.html" class="nav-item">
                 <div class="nav-left">
                     <span class="nav-icon">✍️</span>
@@ -47,7 +50,7 @@
                 <span class="nav-shortcut">4</span>
             </a>
         </nav>
-
+        <!-- Theme Switcher -->
         <div class="theme-switcher">
             <button class="theme-btn active" data-theme="light">Light</button>
             <button class="theme-btn" data-theme="dark">Dark</button>
@@ -55,137 +58,136 @@
             <span class="theme-glider"></span>
         </div>
     </aside>
-
+    
+    <!-- Main Content -->
     <main class="main-content">
         <div class="content-wrapper">
+            <!-- Hero Section -->
             <section class="hero">
                 <h1 class="greeting">Projects</h1>
                 <p class="intro-text">
                     Technical work spanning quantitative finance, mathematical modeling, and software development.
                 </p>
             </section>
-
-            <!-- Projects List -->
-            <div class="projects-full">
-                <!-- Project 1 -->
-                <article class="project-full-card">
-                    <div class="project-full-header">
-                        <div>
-                            <h2 class="project-full-title">Arbitrage-Free Volatility Surface</h2>
-                            <div class="project-status active">Active</div>
+            
+            <!-- Projects Grid -->
+            <section class="section">
+                <div class="projects-grid">
+                    <a href="#" class="project-card">
+                        <div class="project-image">
+                            <img src="Volitility_Surface.png" alt="Volatility Surface">
                         </div>
-                        <a href="#" class="project-link">View Project →</a>
-                    </div>
-
-                    <div class="project-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">Quantitative Finance</span>
-                        <span class="tag">Options Pricing</span>
-                    </div>
-
-                    <p class="project-full-description">
-                        Production-grade Python toolkit for computing implied volatilities, enforcing no-arbitrage constraints, 
-                        fitting SVI models, and calibrating Heston stochastic volatility models to market data. Features robust 
-                        IV computation, 3D surface visualization, and comprehensive testing [5].
-                    </p>
-
-                    <div class="project-full-image">
-                        <img src="https://via.placeholder.com/800x400" alt="Volatility Surface">
-                    </div>
-                </article>
-
-                <!-- Project 2 -->
-                <article class="project-full-card">
-                    <div class="project-full-header">
-                        <div>
-                            <h2 class="project-full-title">Monte Carlo Variance Reduction</h2>
-                            <div class="project-status progress">In Progress</div>
+                        <div class="project-info">
+                            <div class="project-header">
+                                <h3 class="project-title">Arbitrage-Free Volatility Surface</h3>
+                                <span class="project-status active">Active</span>
+                            </div>
+                            <p class="project-description">
+                                Production-grade Python toolkit for computing implied volatilities, enforcing no-arbitrage constraints, 
+                                fitting SVI models, and calibrating Heston stochastic volatility models to market data. Features robust 
+                                IV computation, 3D surface visualization, and comprehensive testing.
+                            </p>
+                            <div class="project-tags">
+                                <span class="tag">Python</span>
+                                <span class="tag">Quantitative Finance</span>
+                                <span class="tag">Options Pricing</span>
+                            </div>
+                            <div class="project-link">View Project →</div>
                         </div>
-                        <a href="#" class="project-link">View Project →</a>
-                    </div>
-
-                    <div class="project-tags">
-                        <span class="tag">Research</span>
-                        <span class="tag">Monte Carlo Methods</span>
-                        <span class="tag">Statistical Computing</span>
-                    </div>
-
-                    <p class="project-full-description">
-                        Research project exploring advanced variance reduction techniques for Monte Carlo simulations. 
-                        Investigating control variates, importance sampling, and antithetic variables to improve computational 
-                        efficiency in financial modeling [5].
-                    </p>
-                </article>
-
-                <!-- Project 3 -->
-                <article class="project-full-card">
-                    <div class="project-full-header">
-                        <div>
-                            <h2 class="project-full-title">Physics-Informed FX Currency Network</h2>
-                            <div class="project-status progress">In Progress</div>
+                    </a>
+                    
+                    <a href="#" class="project-card">
+                        <div class="project-image">
+                            <img src="Monte_Carlo.webp" alt="Monte Carlo">
                         </div>
-                        <a href="#" class="project-link">View Project →</a>
-                    </div>
-
-                    <div class="project-tags">
-                        <span class="tag">Machine Learning</span>
-                        <span class="tag">Foreign Exchange</span>
-                        <span class="tag">Network Analysis</span>
-                    </div>
-
-                    <p class="project-full-description">
-                        Applying physics-informed neural networks to model foreign exchange currency relationships. 
-                        Incorporating structural constraints and domain knowledge to improve prediction accuracy and 
-                        interpretability in currency markets [5].
-                    </p>
-                </article>
-
-                <!-- Project 4 -->
-                <article class="project-full-card">
-                    <div class="project-full-header">
-                        <div>
-                            <h2 class="project-full-title">Impact of Corporate Changes on Market Volatility</h2>
-                            <div class="project-status published">Published</div>
+                        <div class="project-info">
+                            <div class="project-header">
+                                <h3 class="project-title">Monte Carlo Variance Reduction</h3>
+                                <span class="project-status in-progress">In Progress</span>
+                            </div>
+                            <p class="project-description">
+                                Research project exploring advanced variance reduction techniques for Monte Carlo simulations. 
+                                Investigating control variates, importance sampling, and antithetic variables to improve computational 
+                                efficiency in financial modeling.
+                            </p>
+                            <div class="project-tags">
+                                <span class="tag">Research</span>
+                                <span class="tag">Monte Carlo Methods</span>
+                                <span class="tag">Statistical Computing</span>
+                            </div>
+                            <div class="project-link">View Project →</div>
                         </div>
-                        <a href="#" class="project-link">View Research →</a>
-                    </div>
-
-                    <div class="project-tags">
-                        <span class="tag">Market Research</span>
-                        <span class="tag">AlgoGators</span>
-                        <span class="tag">Volatility Analysis</span>
-                    </div>
-
-                    <p class="project-full-description">
-                        Published research analyzing how corporate events and leadership changes affect market volatility and returns. 
-                        Conducted for AlgoGators quantitative hedge fund with plans to expand the study with additional market metrics [5].
-                    </p>
-                </article>
-
-                <!-- Project 5 -->
-                <article class="project-full-card">
-                    <div class="project-full-header">
-                        <div>
-                            <h2 class="project-full-title">CHIV LLC</h2>
-                            <div class="project-status launching">Launching Feb 2026</div>
+                    </a>
+                    
+                    <a href="#" class="project-card">
+                        <div class="project-image">
+                            <img src="Trade_Statistics.png" alt="FX Network">
                         </div>
-                        <a href="#" class="project-link">Follow Updates →</a>
-                    </div>
-
-                    <div class="project-tags">
-                        <span class="tag">Startup</span>
-                        <span class="tag">Founder</span>
-                    </div>
-
-                    <p class="project-full-description">
-                        Founded and developing CHIV, a startup project in stealth mode. Six months in development with public 
-                        launch scheduled for February 2026. Building innovative solutions at the intersection of technology and finance [5].
-                    </p>
-                </article>
-            </div>
+                        <div class="project-info">
+                            <div class="project-header">
+                                <h3 class="project-title">Physics-Informed FX Currency Network</h3>
+                                <span class="project-status in-progress">In Progress</span>
+                            </div>
+                            <p class="project-description">
+                                Applying physics-informed neural networks to model foreign exchange currency relationships. 
+                                Incorporating structural constraints and domain knowledge to improve prediction accuracy and 
+                                interpretability in currency markets.
+                            </p>
+                            <div class="project-tags">
+                                <span class="tag">Machine Learning</span>
+                                <span class="tag">Foreign Exchange</span>
+                                <span class="tag">Network Analysis</span>
+                            </div>
+                            <div class="project-link">View Project →</div>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="project-card">
+                        <div class="project-image">
+                            <img src="Trade_Statistics.png" alt="Market Research">
+                        </div>
+                        <div class="project-info">
+                            <div class="project-header">
+                                <h3 class="project-title">Impact of Corporate Changes on Market Volatility</h3>
+                                <span class="project-status published">Published</span>
+                            </div>
+                            <p class="project-description">
+                                Published research analyzing how corporate events and leadership changes affect market volatility and returns. 
+                                Conducted for AlgoGators quantitative hedge fund with plans to expand the study with additional market metrics.
+                            </p>
+                            <div class="project-tags">
+                                <span class="tag">Market Research</span>
+                                <span class="tag">AlgoGators</span>
+                                <span class="tag">Volatility Analysis</span>
+                            </div>
+                            <div class="project-link">View Research →</div>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="project-card">
+                        <div class="project-image">
+                            <img src="CHIV.jpg" alt="CHIV LLC">
+                        </div>
+                        <div class="project-info">
+                            <div class="project-header">
+                                <h3 class="project-title">CHIV LLC</h3>
+                                <span class="project-status launching">Launching Feb 2026</span>
+                            </div>
+                            <p class="project-description">
+                                Founded and developing CHIV, a startup project in stealth mode. Six months in development with public 
+                                launch scheduled for February 2026. Building innovative solutions at the intersection of technology and finance.
+                            </p>
+                            <div class="project-tags">
+                                <span class="tag">Startup</span>
+                                <span class="tag">Founder</span>
+                            </div>
+                            <div class="project-link">Follow Updates →</div>
+                        </div>
+                    </a>
+                </div>
+            </section>
         </div>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>
