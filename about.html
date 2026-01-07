@@ -7,14 +7,19 @@
     <link rel="stylesheet" href="styles-new.css">
 </head>
 <body>
+    <!-- Animated canvas background -->
     <canvas id="canvas" class="bg-canvas"></canvas>
-
-    <!-- Sidebar (same across all pages) -->
+    
+    <!-- Left Sidebar Navigation -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo">AR</div>
+            <div class="profile-photo">
+                <img src="your-photo.jpg" alt="Alexander Robbins">
+            </div>
+            <div class="logo">
+                Alexander<br>Robbins
+            </div>
         </div>
-
         <nav class="nav-links">
             <a href="index.html" class="nav-item">
                 <div class="nav-left">
@@ -23,7 +28,6 @@
                 </div>
                 <span class="nav-shortcut">1</span>
             </a>
-
             <a href="about.html" class="nav-item active">
                 <div class="nav-left">
                     <span class="nav-icon">👤</span>
@@ -31,7 +35,6 @@
                 </div>
                 <span class="nav-shortcut">2</span>
             </a>
-
             <a href="projects.html" class="nav-item">
                 <div class="nav-left">
                     <span class="nav-icon">💼</span>
@@ -39,7 +42,6 @@
                 </div>
                 <span class="nav-shortcut">3</span>
             </a>
-
             <a href="blog.html" class="nav-item">
                 <div class="nav-left">
                     <span class="nav-icon">✍️</span>
@@ -48,7 +50,7 @@
                 <span class="nav-shortcut">4</span>
             </a>
         </nav>
-
+        <!-- Theme Switcher -->
         <div class="theme-switcher">
             <button class="theme-btn active" data-theme="light">Light</button>
             <button class="theme-btn" data-theme="dark">Dark</button>
@@ -56,10 +58,11 @@
             <span class="theme-glider"></span>
         </div>
     </aside>
-
+    
+    <!-- Main Content -->
     <main class="main-content">
         <div class="content-wrapper">
-            <!-- About Header -->
+            <!-- Hero Section -->
             <section class="hero">
                 <h1 class="greeting">About Me</h1>
                 <p class="intro-text">
@@ -67,119 +70,114 @@
                     graduating 2½ years early in 2027.
                 </p>
             </section>
-
-            <!-- Focus Areas -->
+            
+            <!-- Focus Areas Section -->
             <section class="section">
-                <h2 class="section-title">Focus Areas</h2>
+                <div class="section-header">
+                    <h2 class="section-title">Focus Areas</h2>
+                </div>
                 <div class="info-grid">
                     <div class="info-card">
                         <div class="info-icon">📊</div>
                         <div class="info-content">
-                            <h3>Probability & Statistics</h3>
-                            <p>Stochastic processes, Monte Carlo methods, and statistical inference</p>
+                            <h3 class="info-title">Probability & Statistics</h3>
+                            <p class="info-description">Stochastic processes, Monte Carlo methods, and statistical inference</p>
                         </div>
                     </div>
-
                     <div class="info-card">
                         <div class="info-icon">💰</div>
                         <div class="info-content">
-                            <h3>Finance & Markets</h3>
-                            <p>Options pricing, volatility modeling, and quantitative trading strategies</p>
+                            <h3 class="info-title">Finance & Markets</h3>
+                            <p class="info-description">Options pricing, volatility modeling, and quantitative trading strategies</p>
                         </div>
                     </div>
-
                     <div class="info-card">
                         <div class="info-icon">🔬</div>
                         <div class="info-content">
-                            <h3>Simulation</h3>
-                            <p>Computational methods for complex systems and risk analysis</p>
+                            <h3 class="info-title">Simulation</h3>
+                            <p class="info-description">Computational methods for complex systems and risk analysis</p>
                         </div>
                     </div>
-
                     <div class="info-card">
                         <div class="info-icon">📐</div>
                         <div class="info-content">
-                            <h3>Advanced Mathematics</h3>
-                            <p>Real analysis, complex variables, linear algebra, and proof-based mathematics</p>
+                            <h3 class="info-title">Advanced Mathematics</h3>
+                            <p class="info-description">Real analysis, complex variables, linear algebra, and proof-based mathematics</p>
                         </div>
                     </div>
                 </div>
             </section>
-
-            <!-- Experience -->
+            
+            <!-- Experience Section -->
             <section class="section">
-                <h2 class="section-title">Experience</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-header">
-                                <h3>Senior MacroEconomic Analyst</h3>
-                                <span class="timeline-period">Present</span>
+                <div class="section-header">
+                    <h2 class="section-title">Experience</h2>
+                </div>
+                <div class="experience-list">
+                    <div class="experience-card">
+                        <div class="experience-header">
+                            <div class="experience-title-group">
+                                <h3 class="experience-role">Senior MacroEconomic Analyst</h3>
+                                <p class="experience-company">AlgoGators Quantitative Hedge Fund</p>
                             </div>
-                            <p class="timeline-company">AlgoGators Quantitative Hedge Fund</p>
-                            <p class="timeline-description">
-                                Conducting research on market dynamics, volatility patterns, and macroeconomic indicators.
-                                Published analysis on corporate event impacts on market volatility.
-                            </p>
+                            <span class="experience-date">Present</span>
                         </div>
+                        <p class="experience-description">
+                            Conducting research on market dynamics, volatility patterns, and macroeconomic indicators.
+                            Published analysis on corporate event impacts on market volatility.
+                        </p>
                     </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-header">
-                                <h3>CEO and Founder</h3>
-                                <span class="timeline-period">2024 - Present</span>
+                    <div class="experience-card">
+                        <div class="experience-header">
+                            <div class="experience-title-group">
+                                <h3 class="experience-role">CEO and Founder</h3>
+                                <p class="experience-company">CHIV LLC</p>
                             </div>
-                            <p class="timeline-company">CHIV LLC</p>
-                            <p class="timeline-description">
-                                Building innovative solutions at the intersection of technology and finance. 
-                                Launching February 2026.
-                            </p>
+                            <span class="experience-date">2024 - Present</span>
                         </div>
+                        <p class="experience-description">
+                            Building innovative solutions at the intersection of technology and finance. 
+                            Launching February 2026.
+                        </p>
                     </div>
                 </div>
             </section>
-
-            <!-- Coursework -->
+            
+            <!-- Coursework Section -->
             <section class="section">
-                <h2 class="section-title">Completed Coursework</h2>
-                <div class="course-grid">
-                    <div class="course-pill">Operating Systems</div>
-                    <div class="course-pill">Linear Algebra</div>
-                    <div class="course-pill">Data Structures & Algorithms</div>
-                    <div class="course-pill">Probability Theory</div>
-                    <div class="course-pill">Real Analysis</div>
-                    <div class="course-pill">Complex Variables</div>
-                    <div class="course-pill">Abstract Algebra</div>
-                    <div class="course-pill">Statistical Methods</div>
-                    <div class="course-pill">Calculus I-III</div>
+                <div class="section-header">
+                    <h2 class="section-title">Completed Coursework</h2>
+                </div>
+                <div class="coursework-grid">
+                    <span class="course-tag">Operating Systems</span>
+                    <span class="course-tag">Linear Algebra</span>
+                    <span class="course-tag">Data Structures & Algorithms</span>
+                    <span class="course-tag">Probability Theory</span>
+                    <span class="course-tag">Real Analysis</span>
+                    <span class="course-tag">Complex Variables</span>
+                    <span class="course-tag">Abstract Algebra</span>
+                    <span class="course-tag">Statistical Methods</span>
+                    <span class="course-tag">Calculus I-III</span>
                 </div>
             </section>
-
-            <!-- Contact -->
+            
+            <!-- Contact Section -->
             <section class="section">
-                <h2 class="section-title">Get In Touch</h2>
+                <div class="section-header">
+                    <h2 class="section-title">Get In Touch</h2>
+                </div>
                 <p class="contact-text">
                     Interested in quant finance, mathematical modeling, or collaborative projects? 
                     Feel free to reach out.
                 </p>
                 <div class="contact-links">
-                    <a href="mailto:your.email@example.com" class="contact-button">
-                        📧 Email Me
-                    </a>
-                    <a href="https://github.com/yourprofile" class="contact-button" target="_blank">
-                        💻 GitHub
-                    </a>
-                    <a href="https://linkedin.com/in/yourprofile" class="contact-button" target="_blank">
-                        💼 LinkedIn
-                    </a>
+                    <a href="mailto:your-email@example.com" class="contact-btn">📧 Email Me</a>
+                    <a href="https://github.com/yourusername" class="contact-btn">💻 GitHub</a>
+                    <a href="https://linkedin.com/in/yourusername" class="contact-btn">💼 LinkedIn</a>
                 </div>
             </section>
         </div>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>
