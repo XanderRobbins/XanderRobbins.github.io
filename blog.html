@@ -7,13 +7,19 @@
     <link rel="stylesheet" href="styles-new.css">
 </head>
 <body>
+    <!-- Animated canvas background -->
     <canvas id="canvas" class="bg-canvas"></canvas>
-
+    
+    <!-- Left Sidebar Navigation -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo">AR</div>
+            <div class="profile-photo">
+                <img src="your-photo.jpg" alt="Alexander Robbins">
+            </div>
+            <div class="logo">
+                Alexander<br>Robbins
+            </div>
         </div>
-
         <nav class="nav-links">
             <a href="index.html" class="nav-item">
                 <div class="nav-left">
@@ -22,7 +28,6 @@
                 </div>
                 <span class="nav-shortcut">1</span>
             </a>
-
             <a href="about.html" class="nav-item">
                 <div class="nav-left">
                     <span class="nav-icon">👤</span>
@@ -30,7 +35,6 @@
                 </div>
                 <span class="nav-shortcut">2</span>
             </a>
-
             <a href="projects.html" class="nav-item">
                 <div class="nav-left">
                     <span class="nav-icon">💼</span>
@@ -38,7 +42,6 @@
                 </div>
                 <span class="nav-shortcut">3</span>
             </a>
-
             <a href="blog.html" class="nav-item active">
                 <div class="nav-left">
                     <span class="nav-icon">✍️</span>
@@ -47,7 +50,7 @@
                 <span class="nav-shortcut">4</span>
             </a>
         </nav>
-
+        <!-- Theme Switcher -->
         <div class="theme-switcher">
             <button class="theme-btn active" data-theme="light">Light</button>
             <button class="theme-btn" data-theme="dark">Dark</button>
@@ -55,103 +58,82 @@
             <span class="theme-glider"></span>
         </div>
     </aside>
-
+    
+    <!-- Main Content -->
     <main class="main-content">
         <div class="content-wrapper">
+            <!-- Hero Section -->
             <section class="hero">
                 <h1 class="greeting">Blog</h1>
                 <p class="intro-text">
                     Thoughts on learning, mathematics, quantitative finance, and building things.
                 </p>
             </section>
-
+            
+            <!-- Blog Posts Section -->
             <section class="section">
-                <div class="blog-full-list">
-                    <!-- Blog Post 1 -->
-                    <article class="blog-full-card">
-                        <div class="blog-full-header">
-                            <div>
-                                <h2 class="blog-full-title">
-                                    <a href="models-not-answers.html">Why I'm More Interested in Models Than Answers</a>
-                                </h2>
-                                <div class="blog-full-meta">
-                                    <span class="blog-date">December 21, 2025</span>
-                                    <span class="blog-separator">•</span>
-                                    <div class="blog-tags-inline">
-                                        <span class="tag-small">Learning</span>
-                                        <span class="tag-small">Mathematics</span>
-                                    </div>
-                                </div>
+                <div class="blog-list">
+                    <a href="models-not-answers.html" class="blog-item">
+                        <div class="blog-icon">
+                            <img src="https://via.placeholder.com/24" alt="favicon">
+                        </div>
+                        <div class="blog-content">
+                            <h3 class="blog-title">Why I'm More Interested in Models Than Answers</h3>
+                            <p class="blog-excerpt">
+                                For a long time, I cared a lot about answers. Getting the right result. Matching the solution. 
+                                Knowing I was "correct." Somewhere along the way — mostly through math and probability — that shifted. 
+                                Now, I'm far more interested in models than answers.
+                            </p>
+                            <div class="blog-meta-row">
+                                <p class="blog-meta">December 21, 2025</p>
+                                <span class="blog-category">Learning • Mathematics</span>
                             </div>
                         </div>
-
-                        <p class="blog-full-excerpt">
-                            For a long time, I cared a lot about answers. Getting the right result. Matching the solution. 
-                            Knowing I was "correct." Somewhere along the way — mostly through math and probability — that shifted. 
-                            Now, I'm far more interested in models than answers [4].
-                        </p>
-
-                        <a href="models-not-answers.html" class="read-more">Read more →</a>
-                    </article>
-
-                    <!-- Blog Post 2 -->
-                    <article class="blog-full-card">
-                        <div class="blog-full-header">
-                            <div>
-                                <h2 class="blog-full-title">
-                                    <a href="what-to-learn.html">How I Decide What's Worth Learning (And What I Ignore)</a>
-                                </h2>
-                                <div class="blog-full-meta">
-                                    <span class="blog-date">November 14, 2025</span>
-                                    <span class="blog-separator">•</span>
-                                    <div class="blog-tags-inline">
-                                        <span class="tag-small">Learning</span>
-                                        <span class="tag-small">Productivity</span>
-                                    </div>
-                                </div>
+                        <span class="external-icon">→</span>
+                    </a>
+                    
+                    <a href="what-to-learn.html" class="blog-item">
+                        <div class="blog-icon">
+                            <img src="https://via.placeholder.com/24" alt="favicon">
+                        </div>
+                        <div class="blog-content">
+                            <h3 class="blog-title">How I Decide What's Worth Learning (And What I Ignore)</h3>
+                            <p class="blog-excerpt">
+                                One of the hardest parts of learning anything technical isn't understanding the material — it's deciding 
+                                what's worth your time in the first place. There's no shortage of things you could learn. New tools, 
+                                new fields, new buzzwords...
+                            </p>
+                            <div class="blog-meta-row">
+                                <p class="blog-meta">November 14, 2025</p>
+                                <span class="blog-category">Learning • Productivity</span>
                             </div>
                         </div>
-
-                        <p class="blog-full-excerpt">
-                            One of the hardest parts of learning anything technical isn't understanding the material — it's deciding 
-                            what's worth your time in the first place. There's no shortage of things you could learn. New tools, 
-                            new fields, new buzzwords [2]...
-                        </p>
-
-                        <a href="what-to-learn.html" class="read-more">Read more →</a>
-                    </article>
-
-                    <!-- Blog Post 3 -->
-                    <article class="blog-full-card">
-                        <div class="blog-full-header">
-                            <div>
-                                <h2 class="blog-full-title">
-                                    <a href="thinking-like-a-quant.html">Building in Public: How I'm Teaching Myself to Think Like a Quant</a>
-                                </h2>
-                                <div class="blog-full-meta">
-                                    <span class="blog-date">October 21, 2025</span>
-                                    <span class="blog-separator">•</span>
-                                    <div class="blog-tags-inline">
-                                        <span class="tag-small">Quantitative Finance</span>
-                                        <span class="tag-small">Learning</span>
-                                    </div>
-                                </div>
+                        <span class="external-icon">→</span>
+                    </a>
+                    
+                    <a href="thinking-like-a-quant.html" class="blog-item">
+                        <div class="blog-icon">
+                            <img src="https://via.placeholder.com/24" alt="favicon">
+                        </div>
+                        <div class="blog-content">
+                            <h3 class="blog-title">Building in Public: How I'm Teaching Myself to Think Like a Quant</h3>
+                            <p class="blog-excerpt">
+                                I don't think becoming "good at quant" is about memorizing libraries, grinding LeetCode forever, 
+                                or stacking flashy projects on GitHub. For me, it's been about something quieter (and harder): 
+                                learning how to think.
+                            </p>
+                            <div class="blog-meta-row">
+                                <p class="blog-meta">October 21, 2025</p>
+                                <span class="blog-category">Quantitative Finance • Learning</span>
                             </div>
                         </div>
-
-                        <p class="blog-full-excerpt">
-                            I don't think becoming "good at quant" is about memorizing libraries, grinding LeetCode forever, 
-                            or stacking flashy projects on GitHub. For me, it's been about something quieter (and harder): 
-                            learning how to think [3].
-                        </p>
-
-                        <a href="thinking-like-a-quant.html" class="read-more">Read more →</a>
-                    </article>
-                </div>
+                        <span class="external-icon">→</span>
+                        </a>
+                    </div>
             </section>
         </div>
     </main>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
+```
