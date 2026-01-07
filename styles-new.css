@@ -630,5 +630,27 @@ body {
     .bubble {
         font-size: 0.9rem;
         padding: 0.65rem 0.9rem;
+    }/* ==================== */
+/* Homepage iMessage    */
+/* ==================== */
+
+.imessage-container-home {
+    background-color: var(--bg-primary);
+    border-radius: 16px;
+    padding: 2rem 1rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+.imessage-container-home .message {
+    max-width: 70%;
+}
+
+@media (max-width: 768px) {
+    .imessage-container-home .message {
+        max-width: 85%;
     }
 }
+}
+
+
