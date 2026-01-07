@@ -3,423 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects - Alexander Robbins</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background: #fff;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 240px;
-            background: #fafafa;
-            border-right: 1px solid #e5e5e5;
-            padding: 2rem 1.5rem;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            color: #1a1a1a;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 2rem;
-            right: 1.5rem;
-            background: none;
-            border: 1px solid #e5e5e5;
-            border-radius: 6px;
-            padding: 0.5rem;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-        }
-
-        .theme-toggle:hover {
-            background: #f0f0f0;
-        }
-
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0;
-            color: #333;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        .nav-link:hover {
-            color: #000;
-        }
-
-        .nav-link span {
-            margin-left: auto;
-            color: #999;
-            font-size: 0.85rem;
-        }
-
-        .main-content {
-            margin-left: 240px;
-            padding: 3rem 4rem;
-            max-width: 1000px;
-        }
-
-        .page-header {
-            margin-bottom: 3rem;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .projects-grid {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .project-card {
-            background: #fafafa;
-            padding: 2rem;
-            border-radius: 8px;
-            border: 1px solid #e5e5e5;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .project-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-
-        .project-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            flex: 1;
-        }
-
-        .project-status {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-left: 1rem;
-        }
-
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-wip {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-published {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .project-card p {
-            margin-bottom: 1rem;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        .project-meta {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-tag {
-            font-size: 0.85rem;
-            color: #666;
-            background: #f0f0f0;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-        }
-
-        .project-link {
-            display: inline-block;
-            color: #1a1a1a;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .project-link:hover {
-            color: #666;
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-            
-            .main-content {
-                margin-left: 200px;
-                padding: 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                position: static;
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #e5e5e5;
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 2rem 1.5rem;
-            }
-
-            .theme-toggle {
-                top: 1rem;
-                right: 1rem;
-            }
-
-            .project-header {
-                flex-direction: column;
-            }
-
-            .project-status {
-                margin-left: 0;
-                margin-top: 0.5rem;
-            }
-        }
-
-        /* Dark mode styles */
-        body.dark-mode {
-            background: #1a1a1a;
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .sidebar {
-            background: #0a0a0a;
-            border-right-color: #333;
-        }
-
-        body.dark-mode .logo {
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .nav-link {
-            color: #b3b3b3;
-        }
-
-        body.dark-mode .nav-link:hover {
-            color: #fff;
-        }
-
-        body.dark-mode .page-header h1,
-        body.dark-mode .project-card h3 {
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .project-card {
-            background: #0a0a0a;
-            border-color: #333;
-        }
-
-        body.dark-mode .project-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        body.dark-mode .project-card p {
-            color: #888;
-        }
-
-        body.dark-mode .meta-tag {
-            background: #1f1f1f;
-            color: #888;
-        }
-
-        body.dark-mode .status-active {
-            background: #166534;
-            color: #dcfce7;
-        }
-
-        body.dark-mode .status-wip {
-            background: #92400e;
-            color: #fef3c7;
-        }
-
-        body.dark-mode .status-published {
-            background: #1e40af;
-            color: #dbeafe;
-        }
-
-        body.dark-mode .project-link {
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .project-link:hover {
-            color: #b3b3b3;
-        }
-
-        body.dark-mode .theme-toggle {
-            border-color: #333;
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .theme-toggle:hover {
-            background: #1f1f1f;
-        }
-    </style>
+    <title>Alexander Robbins · Projects</title>
+    <link rel="stylesheet" href="styles-new.css">
 </head>
 <body>
+    <canvas id="canvas" class="bg-canvas"></canvas>
+
     <aside class="sidebar">
-        <div class="logo">AR</div>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-            <span id="theme-icon">🌙</span>
-        </button>
-        
-        <nav class="nav-section">
-            <a href="index.html" class="nav-link">Home <span>1</span></a>
-            <a href="about.html" class="nav-link">About <span>2</span></a>
-            <a href="projects.html" class="nav-link">Projects <span>3</span></a>
-            <a href="blog.html" class="nav-link">Blog <span>4</span></a>
+        <div class="sidebar-header">
+            <div class="logo">AR</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="index.html" class="nav-item">
+                <div class="nav-left">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </div>
+                <span class="nav-shortcut">1</span>
+            </a>
+
+            <a href="about.html" class="nav-item">
+                <div class="nav-left">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">About</span>
+                </div>
+                <span class="nav-shortcut">2</span>
+            </a>
+
+            <a href="projects.html" class="nav-item active">
+                <div class="nav-left">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-label">Projects</span>
+                </div>
+                <span class="nav-shortcut">3</span>
+            </a>
+
+            <a href="blog.html" class="nav-item">
+                <div class="nav-left">
+                    <span class="nav-icon">✍️</span>
+                    <span class="nav-label">Blog</span>
+                </div>
+                <span class="nav-shortcut">4</span>
+            </a>
         </nav>
+
+        <div class="theme-switcher">
+            <button class="theme-btn active" data-theme="light">Light</button>
+            <button class="theme-btn" data-theme="dark">Dark</button>
+            <button class="theme-btn" data-theme="auto">Auto</button>
+            <span class="theme-glider"></span>
+        </div>
     </aside>
 
     <main class="main-content">
-        <div class="page-header">
-            <h1>Projects</h1>
-        </div>
+        <div class="content-wrapper">
+            <section class="hero">
+                <h1 class="greeting">Projects</h1>
+                <p class="intro-text">
+                    Technical work spanning quantitative finance, mathematical modeling, and software development.
+                </p>
+            </section>
 
-        <div class="projects-grid">
-            <div class="project-card">
-                <div class="project-header">
-                    <h3>Arbitrage-Free Volatility Surface</h3>
-                    <span class="project-status status-active">Active</span>
-                </div>
-                <div class="project-meta">
-                    <span class="meta-tag">Python</span>
-                    <span class="meta-tag">Quantitative Finance</span>
-                    <span class="meta-tag">Options Pricing</span>
-                </div>
-                <p>Production-grade Python toolkit for computing implied volatilities, enforcing no-arbitrage constraints, fitting SVI models, and calibrating Heston stochastic volatility models to market data. Features robust IV computation, 3D surface visualization, and comprehensive testing.</p>
-                <a href="https://github.com/XanderRobbins/Arbitrage-Free-Volatility-Surface" class="project-link" target="_blank">View Project →</a>
-            </div>
+            <!-- Projects List -->
+            <div class="projects-full">
+                <!-- Project 1 -->
+                <article class="project-full-card">
+                    <div class="project-full-header">
+                        <div>
+                            <h2 class="project-full-title">Arbitrage-Free Volatility Surface</h2>
+                            <div class="project-status active">Active</div>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
 
-            <div class="project-card">
-                <div class="project-header">
-                    <h3>Monte Carlo Variance Reduction</h3>
-                    <span class="project-status status-wip">In Progress</span>
-                </div>
-                <div class="project-meta">
-                    <span class="meta-tag">Research</span>
-                    <span class="meta-tag">Monte Carlo Methods</span>
-                    <span class="meta-tag">Statistical Computing</span>
-                </div>
-                <p>Research project exploring advanced variance reduction techniques for Monte Carlo simulations. Investigating control variates, importance sampling, and antithetic variables to improve computational efficiency in financial modeling.</p>
-                <a href="https://github.com/ChronoInferna/lfmc" class="project-link" target="_blank">View Project →</a>
-            </div>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Quantitative Finance</span>
+                        <span class="tag">Options Pricing</span>
+                    </div>
 
-            <div class="project-card">
-                <div class="project-header">
-                    <h3>Physics-Informed FX Currency Network</h3>
-                    <span class="project-status status-wip">In Progress</span>
-                </div>
-                <div class="project-meta">
-                    <span class="meta-tag">Machine Learning</span>
-                    <span class="meta-tag">Foreign Exchange</span>
-                    <span class="meta-tag">Network Analysis</span>
-                </div>
-                <p>Applying physics-informed neural networks to model foreign exchange currency relationships. Incorporating structural constraints and domain knowledge to improve prediction accuracy and interpretability in currency markets.</p>
-                <a href="research-paper.docx" class="project-link">View Project →</a>
-            </div>
+                    <p class="project-full-description">
+                        Production-grade Python toolkit for computing implied volatilities, enforcing no-arbitrage constraints, 
+                        fitting SVI models, and calibrating Heston stochastic volatility models to market data. Features robust 
+                        IV computation, 3D surface visualization, and comprehensive testing [5].
+                    </p>
 
-            <div class="project-card">
-                <div class="project-header">
-                    <h3>Impact of Corporate Changes on Market Volatility</h3>
-                    <span class="project-status status-published">Published</span>
-                </div>
-                <div class="project-meta">
-                    <span class="meta-tag">Market Research</span>
-                    <span class="meta-tag">AlgoGators</span>
-                    <span class="meta-tag">Volatility Analysis</span>
-                </div>
-                <p>Published research analyzing how corporate events and leadership changes affect market volatility and returns. Conducted for AlgoGators quantitative hedge fund with plans to expand the study with additional market metrics.</p>
-                <a href="https://www.algogators.com/post/impact-of-corporate-changes-on-market-volatility-market-return" class="project-link" target="_blank">View Project →</a>
-            </div>
+                    <div class="project-full-image">
+                        <img src="https://via.placeholder.com/800x400" alt="Volatility Surface">
+                    </div>
+                </article>
 
-            <div class="project-card">
-                <div class="project-header">
-                    <h3>CHIV LLC</h3>
-                    <span class="project-status status-wip">Launching Feb 2026</span>
-                </div>
-                <div class="project-meta">
-                    <span class="meta-tag">Startup</span>
-                    <span class="meta-tag">Founder</span>
-                </div>
-                <p>Founded and developing CHIV, a startup project in stealth mode. Six months in development with public launch scheduled for February 2026. Building innovative solutions at the intersection of technology and finance.</p>
-                <a href="https://www.instagram.com/chiv_co/" class="project-link" target="_blank">Follow Updates →</a>
+                <!-- Project 2 -->
+                <article class="project-full-card">
+                    <div class="project-full-header">
+                        <div>
+                            <h2 class="project-full-title">Monte Carlo Variance Reduction</h2>
+                            <div class="project-status progress">In Progress</div>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+
+                    <div class="project-tags">
+                        <span class="tag">Research</span>
+                        <span class="tag">Monte Carlo Methods</span>
+                        <span class="tag">Statistical Computing</span>
+                    </div>
+
+                    <p class="project-full-description">
+                        Research project exploring advanced variance reduction techniques for Monte Carlo simulations. 
+                        Investigating control variates, importance sampling, and antithetic variables to improve computational 
+                        efficiency in financial modeling [5].
+                    </p>
+                </article>
+
+                <!-- Project 3 -->
+                <article class="project-full-card">
+                    <div class="project-full-header">
+                        <div>
+                            <h2 class="project-full-title">Physics-Informed FX Currency Network</h2>
+                            <div class="project-status progress">In Progress</div>
+                        </div>
+                        <a href="#" class="project-link">View Project →</a>
+                    </div>
+
+                    <div class="project-tags">
+                        <span class="tag">Machine Learning</span>
+                        <span class="tag">Foreign Exchange</span>
+                        <span class="tag">Network Analysis</span>
+                    </div>
+
+                    <p class="project-full-description">
+                        Applying physics-informed neural networks to model foreign exchange currency relationships. 
+                        Incorporating structural constraints and domain knowledge to improve prediction accuracy and 
+                        interpretability in currency markets [5].
+                    </p>
+                </article>
+
+                <!-- Project 4 -->
+                <article class="project-full-card">
+                    <div class="project-full-header">
+                        <div>
+                            <h2 class="project-full-title">Impact of Corporate Changes on Market Volatility</h2>
+                            <div class="project-status published">Published</div>
+                        </div>
+                        <a href="#" class="project-link">View Research →</a>
+                    </div>
+
+                    <div class="project-tags">
+                        <span class="tag">Market Research</span>
+                        <span class="tag">AlgoGators</span>
+                        <span class="tag">Volatility Analysis</span>
+                    </div>
+
+                    <p class="project-full-description">
+                        Published research analyzing how corporate events and leadership changes affect market volatility and returns. 
+                        Conducted for AlgoGators quantitative hedge fund with plans to expand the study with additional market metrics [5].
+                    </p>
+                </article>
+
+                <!-- Project 5 -->
+                <article class="project-full-card">
+                    <div class="project-full-header">
+                        <div>
+                            <h2 class="project-full-title">CHIV LLC</h2>
+                            <div class="project-status launching">Launching Feb 2026</div>
+                        </div>
+                        <a href="#" class="project-link">Follow Updates →</a>
+                    </div>
+
+                    <div class="project-tags">
+                        <span class="tag">Startup</span>
+                        <span class="tag">Founder</span>
+                    </div>
+
+                    <p class="project-full-description">
+                        Founded and developing CHIV, a startup project in stealth mode. Six months in development with public 
+                        launch scheduled for February 2026. Building innovative solutions at the intersection of technology and finance [5].
+                    </p>
+                </article>
             </div>
         </div>
     </main>
 
-    <script>
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('theme-icon').textContent = '☀️';
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                e.preventDefault();
-                toggleTheme();
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
