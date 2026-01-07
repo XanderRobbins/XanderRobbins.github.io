@@ -12,116 +12,218 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: #f5f5f5;
+            color: #1a1a1a;
+            background: #fff;
         }
 
-        nav {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem 0;
-            position: sticky;
+        .sidebar {
+            position: fixed;
+            left: 0;
             top: 0;
+            bottom: 0;
+            width: 240px;
+            background: #fafafa;
+            border-right: 1px solid #e5e5e5;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
             z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        nav ul {
-            list-style: none;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 2rem;
+            right: 1.5rem;
+            background: none;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 0.5rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
+            width: 36px;
+            height: 36px;
         }
 
-        nav a {
-            color: white;
+        .theme-toggle:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+            color: #333;
             text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
+            font-size: 0.95rem;
+            transition: color 0.2s;
         }
 
-        nav a:hover {
-            color: #3498db;
+        .nav-link:hover {
+            color: #000;
         }
 
-        .container {
+        .nav-link span {
+            margin-left: auto;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 3rem 4rem;
             max-width: 900px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
         }
 
         .page-header {
-            text-align: center;
             margin-bottom: 3rem;
         }
 
         .page-header h1 {
             font-size: 2.5rem;
-            color: #2c3e50;
+            font-weight: 600;
             margin-bottom: 0.5rem;
+            color: #1a1a1a;
         }
 
         .about-content {
-            background: white;
+            background: #fafafa;
             padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border: 1px solid #e5e5e5;
         }
 
-        .about-content img {
-            max-width: 200px;
-            border-radius: 50%;
-            display: block;
-            margin: 0 auto 2rem;
+        .about-content h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .about-content h2:first-child {
+            margin-top: 0;
         }
 
         .about-content p {
             margin-bottom: 1rem;
-            font-size: 1.05rem;
+            color: #333;
         }
 
-        .about-content h2 {
-            color: #667eea;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                margin-left: 200px;
+                padding: 2rem;
+            }
         }
 
         @media (max-width: 768px) {
-            .page-header h1 {
-                font-size: 2rem;
+            .sidebar {
+                position: static;
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e5e5e5;
             }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1.5rem;
+            }
+
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #e5e5e5;
+        }
+
+        body.dark-mode .sidebar {
+            background: #0a0a0a;
+            border-right-color: #333;
+        }
+
+        body.dark-mode .logo {
+            color: #e5e5e5;
+        }
+
+        body.dark-mode .nav-link {
+            color: #b3b3b3;
+        }
+
+        body.dark-mode .nav-link:hover {
+            color: #fff;
+        }
+
+        body.dark-mode .page-header h1,
+        body.dark-mode .about-content h2 {
+            color: #e5e5e5;
+        }
+
+        body.dark-mode .about-content {
+            background: #0a0a0a;
+            border-color: #333;
+        }
+
+        body.dark-mode .about-content p {
+            color: #b3b3b3;
+        }
+
+        body.dark-mode .theme-toggle {
+            border-color: #333;
+            color: #e5e5e5;
+        }
+
+        body.dark-mode .theme-toggle:hover {
+            background: #1f1f1f;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="projects.html">Projects</a></li>
-            <li><a href="blog.html">Blog</a></li>
-        </ul>
-    </nav>
+    <aside class="sidebar">
+        <div class="logo">AR</div>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <span id="theme-icon">🌙</span>
+        </button>
+        
+        <nav class="nav-section">
+            <a href="index.html" class="nav-link">Home <span>1</span></a>
+            <a href="about.html" class="nav-link">About <span>2</span></a>
+            <a href="projects.html" class="nav-link">Projects <span>3</span></a>
+            <a href="blog.html" class="nav-link">Blog <span>4</span></a>
+        </nav>
+    </aside>
 
-    <div class="container">
+    <main class="main-content">
         <div class="page-header">
             <h1>About Me</h1>
         </div>
 
         <div class="about-content">
-            <img src="your-photo.jpg" alt="Alexander Robbins">
-            
             <p>University of Florida student majoring in Mathematics, Computer Science, and Economics, graduating 2 1/2 years early in 2027.</p>
 
             <h2>Focus Areas</h2>
@@ -133,10 +235,28 @@
             <h2>Completed Coursework</h2>
             <p>Operating systems, linear algebra, data structures, probability theory, real analysis, functions and complex variables.</p>
         </div>
-    </div>
+    </main>
 
-    <footer>
-        <p>&copy; 2025 Alexander Robbins. All rights reserved.</p>
-    </footer>
+    <script>
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-icon').textContent = '☀️';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                toggleTheme();
+            }
+        });
+    </script>
 </body>
 </html>
