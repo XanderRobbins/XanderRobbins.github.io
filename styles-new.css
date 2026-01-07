@@ -484,3 +484,19 @@ body {
 .info-icon {
     font-size: 2rem;
     flex-shrink: 0;
+
+
+.profile-photo {
+    width: 120px;
+    height: 120px;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 16px; /* rounded corners */
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ensures square crop even if image isn't square */
+    display: block;
+}
