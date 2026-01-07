@@ -3,363 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - Alexander Robbins</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background: #fff;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 240px;
-            background: #fafafa;
-            border-right: 1px solid #e5e5e5;
-            padding: 2rem 1.5rem;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            color: #1a1a1a;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 2rem;
-            right: 1.5rem;
-            background: none;
-            border: 1px solid #e5e5e5;
-            border-radius: 6px;
-            padding: 0.5rem;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-        }
-
-        .theme-toggle:hover {
-            background: #f0f0f0;
-        }
-
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0;
-            color: #333;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        .nav-link:hover {
-            color: #000;
-        }
-
-        .nav-link span {
-            margin-left: auto;
-            color: #999;
-            font-size: 0.85rem;
-        }
-
-        .main-content {
-            margin-left: 240px;
-            padding: 3rem 4rem;
-            max-width: 1000px;
-        }
-
-        .page-header {
-            margin-bottom: 3rem;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .blog-grid {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .blog-post {
-            background: #fafafa;
-            padding: 2rem;
-            border-radius: 8px;
-            border: 1px solid #e5e5e5;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .blog-post:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .blog-post h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .blog-post h2 a {
-            color: #1a1a1a;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .blog-post h2 a:hover {
-            color: #666;
-        }
-
-        .blog-meta {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            align-items: center;
-        }
-
-        .blog-date {
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .blog-tag {
-            font-size: 0.85rem;
-            color: #666;
-            background: #f0f0f0;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-        }
-
-        .blog-excerpt {
-            color: #555;
-            margin-bottom: 1rem;
-            line-height: 1.7;
-        }
-
-        .read-more {
-            color: #1a1a1a;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .read-more:hover {
-            color: #666;
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-            
-            .main-content {
-                margin-left: 200px;
-                padding: 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                position: static;
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #e5e5e5;
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 2rem 1.5rem;
-            }
-
-            .theme-toggle {
-                top: 1rem;
-                right: 1rem;
-            }
-            
-            .blog-post h2 {
-                font-size: 1.3rem;
-            }
-        }
-
-        /* Dark mode styles */
-        body.dark-mode {
-            background: #1a1a1a;
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .sidebar {
-            background: #0a0a0a;
-            border-right-color: #333;
-        }
-
-        body.dark-mode .logo {
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .nav-link {
-            color: #b3b3b3;
-        }
-
-        body.dark-mode .nav-link:hover {
-            color: #fff;
-        }
-
-        body.dark-mode .page-header h1 {
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .blog-post {
-            background: #0a0a0a;
-            border-color: #333;
-        }
-
-        body.dark-mode .blog-post:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        body.dark-mode .blog-post h2 a {
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .blog-post h2 a:hover {
-            color: #b3b3b3;
-        }
-
-        body.dark-mode .blog-date,
-        body.dark-mode .blog-excerpt {
-            color: #888;
-        }
-
-        body.dark-mode .blog-tag {
-            background: #1f1f1f;
-            color: #888;
-        }
-
-        body.dark-mode .read-more {
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .read-more:hover {
-            color: #b3b3b3;
-        }
-
-        body.dark-mode .theme-toggle {
-            border-color: #333;
-            color: #e5e5e5;
-        }
-
-        body.dark-mode .theme-toggle:hover {
-            background: #1f1f1f;
-        }
-    </style>
+    <title>Alexander Robbins · Blog</title>
+    <link rel="stylesheet" href="styles-new.css">
 </head>
 <body>
+    <canvas id="canvas" class="bg-canvas"></canvas>
+
     <aside class="sidebar">
-        <div class="logo">AR</div>
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-            <span id="theme-icon">🌙</span>
-        </button>
-        
-        <nav class="nav-section">
-            <a href="index.html" class="nav-link">Home <span>1</span></a>
-            <a href="about.html" class="nav-link">About <span>2</span></a>
-            <a href="projects.html" class="nav-link">Projects <span>3</span></a>
-            <a href="blog.html" class="nav-link">Blog <span>4</span></a>
+        <div class="sidebar-header">
+            <div class="logo">AR</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="index.html" class="nav-item">
+                <div class="nav-left">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </div>
+                <span class="nav-shortcut">1</span>
+            </a>
+
+            <a href="about.html" class="nav-item">
+                <div class="nav-left">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">About</span>
+                </div>
+                <span class="nav-shortcut">2</span>
+            </a>
+
+            <a href="projects.html" class="nav-item">
+                <div class="nav-left">
+                    <span class="nav-icon">💼</span>
+                    <span class="nav-label">Projects</span>
+                </div>
+                <span class="nav-shortcut">3</span>
+            </a>
+
+            <a href="blog.html" class="nav-item active">
+                <div class="nav-left">
+                    <span class="nav-icon">✍️</span>
+                    <span class="nav-label">Blog</span>
+                </div>
+                <span class="nav-shortcut">4</span>
+            </a>
         </nav>
+
+        <div class="theme-switcher">
+            <button class="theme-btn active" data-theme="light">Light</button>
+            <button class="theme-btn" data-theme="dark">Dark</button>
+            <button class="theme-btn" data-theme="auto">Auto</button>
+            <span class="theme-glider"></span>
+        </div>
     </aside>
 
     <main class="main-content">
-        <div class="page-header">
-            <h1>Blog</h1>
-        </div>
-
-        <div class="blog-grid">
-            <article class="blog-post">
-                <h2><a href="blog/models-not-answers.html">Why I'm More Interested in Models Than Answers</a></h2>
-                <div class="blog-meta">
-                    <div class="blog-date">December 21, 2025</div>
-                    <span class="blog-tag">Learning</span>
-                    <span class="blog-tag">Mathematics</span>
-                </div>
-                <p class="blog-excerpt">
-                    For a long time, I cared a lot about answers. Getting the right result. Matching the solution. Knowing I was "correct." Somewhere along the way — mostly through math and probability — that shifted. Now, I'm far more interested in models than answers.
+        <div class="content-wrapper">
+            <section class="hero">
+                <h1 class="greeting">Blog</h1>
+                <p class="intro-text">
+                    Thoughts on learning, mathematics, quantitative finance, and building things.
                 </p>
-                <a href="blog/models-not-answers.html" class="read-more">Read more →</a>
-            </article>
+            </section>
 
-            <article class="blog-post">
-                <h2><a href="blog/what-to-learn.html">How I Decide What's Worth Learning (And What I Ignore)</a></h2>
-                <div class="blog-meta">
-                    <div class="blog-date">November 14, 2025</div>
-                    <span class="blog-tag">Learning</span>
-                    <span class="blog-tag">Productivity</span>
-                </div>
-                <p class="blog-excerpt">
-                    One of the hardest parts of learning anything technical isn't understanding the material — it's deciding what's worth your time in the first place. There's no shortage of things you could learn. New tools, new fields, new buzzwords...
-                </p>
-                <a href="blog/what-to-learn.html" class="read-more">Read more →</a>
-            </article>
+            <section class="section">
+                <div class="blog-full-list">
+                    <!-- Blog Post 1 -->
+                    <article class="blog-full-card">
+                        <div class="blog-full-header">
+                            <div>
+                                <h2 class="blog-full-title">
+                                    <a href="models-not-answers.html">Why I'm More Interested in Models Than Answers</a>
+                                </h2>
+                                <div class="blog-full-meta">
+                                    <span class="blog-date">December 21, 2025</span>
+                                    <span class="blog-separator">•</span>
+                                    <div class="blog-tags-inline">
+                                        <span class="tag-small">Learning</span>
+                                        <span class="tag-small">Mathematics</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <article class="blog-post">
-                <h2><a href="blog/thinking-like-a-quant.html">Building in Public: How I'm Teaching Myself to Think Like a Quant</a></h2>
-                <div class="blog-meta">
-                    <div class="blog-date">October 21, 2025</div>
-                    <span class="blog-tag">Quantitative Finance</span>
-                    <span class="blog-tag">Learning</span>
+                        <p class="blog-full-excerpt">
+                            For a long time, I cared a lot about answers. Getting the right result. Matching the solution. 
+                            Knowing I was "correct." Somewhere along the way — mostly through math and probability — that shifted. 
+                            Now, I'm far more interested in models than answers [4].
+                        </p>
+
+                        <a href="models-not-answers.html" class="read-more">Read more →</a>
+                    </article>
+
+                    <!-- Blog Post 2 -->
+                    <article class="blog-full-card">
+                        <div class="blog-full-header">
+                            <div>
+                                <h2 class="blog-full-title">
+                                    <a href="what-to-learn.html">How I Decide What's Worth Learning (And What I Ignore)</a>
+                                </h2>
+                                <div class="blog-full-meta">
+                                    <span class="blog-date">November 14, 2025</span>
+                                    <span class="blog-separator">•</span>
+                                    <div class="blog-tags-inline">
+                                        <span class="tag-small">Learning</span>
+                                        <span class="tag-small">Productivity</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="blog-full-excerpt">
+                            One of the hardest parts of learning anything technical isn't understanding the material — it's deciding 
+                            what's worth your time in the first place. There's no shortage of things you could learn. New tools, 
+                            new fields, new buzzwords [2]...
+                        </p>
+
+                        <a href="what-to-learn.html" class="read-more">Read more →</a>
+                    </article>
+
+                    <!-- Blog Post 3 -->
+                    <article class="blog-full-card">
+                        <div class="blog-full-header">
+                            <div>
+                                <h2 class="blog-full-title">
+                                    <a href="thinking-like-a-quant.html">Building in Public: How I'm Teaching Myself to Think Like a Quant</a>
+                                </h2>
+                                <div class="blog-full-meta">
+                                    <span class="blog-date">October 21, 2025</span>
+                                    <span class="blog-separator">•</span>
+                                    <div class="blog-tags-inline">
+                                        <span class="tag-small">Quantitative Finance</span>
+                                        <span class="tag-small">Learning</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="blog-full-excerpt">
+                            I don't think becoming "good at quant" is about memorizing libraries, grinding LeetCode forever, 
+                            or stacking flashy projects on GitHub. For me, it's been about something quieter (and harder): 
+                            learning how to think [3].
+                        </p>
+
+                        <a href="thinking-like-a-quant.html" class="read-more">Read more →</a>
+                    </article>
                 </div>
-                <p class="blog-excerpt">
-                    I don't think becoming "good at quant" is about memorizing libraries, grinding LeetCode forever, or stacking flashy projects on GitHub. For me, it's been about something quieter (and harder): learning how to think.
-                </p>
-                <a href="blog/thinking-like-a-quant.html" class="read-more">Read more →</a>
-            </article>
+            </section>
         </div>
     </main>
 
-    <script>
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('theme-icon').textContent = '☀️';
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                e.preventDefault();
-                toggleTheme();
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
