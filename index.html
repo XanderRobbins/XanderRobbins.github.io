@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alexander Robbins · Home</title>
+    <title>Alexander Robbins - Portfolio</title>
     <style>
         * {
             margin: 0;
@@ -11,609 +11,108 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666;
-            --border-color: #e0e0e0;
-            --accent: #0066ff;
-            --card-bg: #ffffff;
-            --nav-bg: #fafafa;
-        }
-
-        body.dark-mode {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #0f0f0f;
-            --text-primary: #e8e8e8;
-            --text-secondary: #a0a0a0;
-            --border-color: #2a2a2a;
-            --accent: #4d9eff;
-            --card-bg: #1f1f1f;
-            --nav-bg: #141414;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            transition: background-color 0.3s, color 0.3s;
-            display: flex;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
         }
 
-        .sidebar {
-            width: 260px;
-            background: var(--nav-bg);
-            border-right: 1px solid var(--border-color);
-            padding: 2rem 1.5rem;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            transition: background 0.3s;
-        }
-
-        .logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            margin-bottom: 2rem;
+        nav {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         nav ul {
             list-style: none;
-        }
-
-        nav li {
-            margin-bottom: 0.25rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
         }
 
         nav a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            color: var(--text-secondary);
+            color: white;
             text-decoration: none;
-            border-radius: 6px;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
-
-        nav a:hover, nav a.active {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            opacity: 0.7;
-        }
-
-        .divider-text {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            margin: 1.5rem 0 1rem;
-            font-weight: 600;
-        }
-
-        .theme-toggle {
-            margin-top: auto;
-            padding-top: 2rem;
-        }
-
-        .theme-buttons {
-            display: flex;
-            gap: 4px;
-            background: var(--bg-secondary);
-            padding: 4px;
-            border-radius: 8px;
-        }
-
-        .theme-btn {
-            flex: 1;
-            padding: 6px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 11px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .theme-btn.active {
-            background: var(--card-bg);
-            color: var(--text-primary);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 3rem 4rem;
-            max-width: 1400px;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 3rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 3rem 0 1.5rem;
-        }
-
-        .section-header h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .view-all {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-
-        .view-all:hover {
-            color: var(--accent);
-        }
-
-        .about-section {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-
-        .about-section p {
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        body.dark-mode .card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .external-icon {
-            font-size: 0.9rem;
-            opacity: 0.5;
-        }
-
-        .card-desc {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .card-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 0.9rem;
             font-weight: 500;
+            transition: color 0.3s;
         }
 
-        .card-link:hover {
-            text-decoration: underline;
+        nav a:hover {
+            color: #3498db;
         }
 
-        .blog-post {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            transition: all 0.2s;
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 6rem 2rem;
         }
 
-        .blog-post:hover {
-            border-color: var(--accent);
-        }
-
-        .blog-post h3 {
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .blog-date {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .blog-post p {
-            color: var(--text-secondary);
-            line-height: 1.7;
+        .hero h1 {
+            font-size: 3rem;
             margin-bottom: 1rem;
         }
 
-        .blog-post strong {
-            color: var(--text-primary);
-            display: block;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.9;
         }
 
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-            
-            .main-content {
-                margin-left: 200px;
-                padding: 2rem;
-            }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
         }
 
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
+            .hero h1 {
+                font-size: 2rem;
             }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 2rem 1.5rem;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
+            
+            .hero p {
+                font-size: 1.1rem;
             }
         }
     </style>
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="logo"></div>
-        
-        <nav>
-            <ul>
-                <li><a href="#home" class="active">
-                    <span class="nav-icon">🏠</span>
-                    <span>Home</span>
-                </a></li>
-                <li><a href="#about">
-                    <span class="nav-icon">👤</span>
-                    <span>About</span>
-                </a></li>
-                <li><a href="#projects">
-                    <span class="nav-icon">📁</span>
-                    <span>Projects</span>
-                </a></li>
-                <li><a href="#blog">
-                    <span class="nav-icon">✏️</span>
-                    <span>Blog</span>
-                </a></li>
-            </ul>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="blog.html">Blog</a></li>
+        </ul>
+    </nav>
 
-            <div class="divider-text">Connect</div>
+    <section class="hero">
+        <h1>Alexander Robbins</h1>
+        <p>Mathematics | Economics | Computer Science</p>
+    </section>
 
-            <ul>
-                <li><a href="https://github.com/XanderRobbins" target="_blank">
-                    <span class="nav-icon">💻</span>
-                    <span>GitHub</span>
-                </a></li>
-                <li><a href="https://www.instagram.com/chiv_co/" target="_blank">
-                    <span class="nav-icon">📷</span>
-                    <span>CHIV Instagram</span>
-                </a></li>
-            </ul>
-        </nav>
+    <div class="container">
+        <p style="font-size: 1.1rem; text-align: center; margin: 2rem 0;">
+            Welcome to my portfolio. I'm a University of Florida student exploring the intersection 
+            of mathematics, economics, and computer science through quantitative research and development.
+        </p>
+    </div>
 
-        <div class="theme-toggle">
-            <div class="theme-buttons">
-                <button class="theme-btn" onclick="setTheme('light')">Light</button>
-                <button class="theme-btn active" onclick="setTheme('dark')">Dark</button>
-                <button class="theme-btn" onclick="setTheme('auto')">Auto</button>
-            </div>
-        </div>
-    </aside>
-
-    <main class="main-content">
-        <h1>Hello</h1>
-        <p class="subtitle">I'm Alexander Robbins — Welcome to my portfolio.</p>
-
-        <section id="about">
-            <div class="section-header">
-                <h2>About Me</h2>
-            </div>
-            <div class="about-section">
-                <p>
-                    <strong>University of Florida student</strong> majoring in Mathematics, Computer Science, and Economics, graduating 2 1/2 years early in 2027.
-                </p>
-                <p>
-                    <strong>Focuses:</strong> probability, finance, simulation, and advanced mathematics.
-                </p>
-                <p>
-                    <strong>Experience:</strong> Senior MacroEconomic Analyst for AlgoGators Quantitative hedge fund, CEO and Founder of CHIV
-                </p>
-                <p>
-                    <strong>Completed Coursework:</strong> operating systems, linear algebra, data structures, probability theory, real analysis, functions and complex variables.
-                </p>
-            </div>
-        </section>
-
-        <section id="projects">
-            <div class="section-header">
-                <h2>Projects</h2>
-            </div>
-
-            <div class="grid">
-                <div class="card">
-                    <div class="card-title">
-                        Arbitrage-Free Volatility Surface
-                        <span class="external-icon">↗</span>
-                    </div>
-                    <div class="card-desc">
-                        Production-grade Python toolkit for computing implied volatilities, enforcing no-arbitrage constraints, fitting SVI models, and calibrating Heston stochastic volatility models to market data. Features robust IV computation, 3D surface visualization, and comprehensive testing.
-                    </div>
-                    <a href="https://github.com/XanderRobbins/Arbitrage-Free-Volatility-Surface" class="card-link" target="_blank">View Project →</a>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        Monte Carlo Variance Reduction
-                        <span class="external-icon">↗</span>
-                    </div>
-                    <div class="card-desc">
-                        This is a research project that I am working on over the next semester, lookout for updates!
-                    </div>
-                    <a href="https://github.com/ChronoInferna/lfmc" class="card-link" target="_blank">View Project →</a>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        Physics Informed Foreign Exchange Currency Network
-                    </div>
-                    <div class="card-desc">
-                        Another exciting project I am working on. Still a major work in progress.
-                    </div>
-                    <a href="research-paper.docx" class="card-link">View Project →</a>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        Impact of Corporate Changes on Market Volatility & Market Return
-                        <span class="external-icon">↗</span>
-                    </div>
-                    <div class="card-desc">
-                        Published research for AlgoGators, looking to expand with more metrics in the near future
-                    </div>
-                    <a href="https://www.algogators.com/post/impact-of-corporate-changes-on-market-volatility-market-return" class="card-link" target="_blank">View Project →</a>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        CHIV LLC
-                        <span class="external-icon">↗</span>
-                    </div>
-                    <div class="card-desc">
-                        Startup that I have been working on for the last 6 months, should be public by February
-                    </div>
-                    <a href="https://www.instagram.com/chiv_co/" class="card-link" target="_blank">View Project →</a>
-                </div>
-            </div>
-        </section>
-
-        <section id="blog">
-            <div class="section-header">
-                <h2>Blog</h2>
-            </div>
-
-            <div class="blog-post">
-                <h3>Building in Public: How I'm Teaching Myself to Think Like a Quant</h3>
-                <p class="blog-date">October 21, 2025</p>
-                <p>
-                    I don't think becoming "good at quant" is about memorizing libraries, grinding LeetCode forever,
-                    or stacking flashy projects on GitHub. For me, it's been about something quieter (and harder):
-                    learning how to think.
-                </p>
-                <p>
-                    This is a short snapshot of how I'm approaching that process right now — not as an expert,
-                    but as someone actively figuring it out.
-                </p>
-
-                <strong>Thinking > Tools</strong>
-                <p>
-                    Early on, I thought progress meant learning more tools. New Python packages. New frameworks.
-                    New buzzwords. And sure, tools matter — but I've learned they're only useful once the thinking
-                    is already there.
-                </p>
-                <p>
-                    Math has been the biggest driver of that shift. Classes like probability, linear algebra, and
-                    analysis don't just teach techniques; they force precision. You learn what assumptions you're
-                    making, what breaks when they're wrong, and how small changes ripple through an argument.
-                    That mindset transfers directly to data, models, and markets.
-                </p>
-
-                <strong>Coding as a Thinking Tool</strong>
-                <p>
-                    I don't code just to "build things." I code to clarify ideas.
-                </p>
-                <p>
-                    If I can't simulate it, I probably don't understand it. If I can't explain it in code, my
-                    mental model is probably fuzzy. Writing small scripts — especially for probability or data
-                    problems — forces me to be honest about what I actually know versus what I'm hand-waving.
-                </p>
-
-                <strong>Why I Build in Public</strong>
-                <p>
-                    Putting work on GitHub (even when it's imperfect) keeps me accountable. It forces me to
-                    finish thoughts, clean up reasoning, and document why I did something — not just what I did.
-                </p>
-                <p>
-                    Building in public isn't about showing off progress — it's about making learning visible.
-                </p>
-            </div>
-
-            <div class="blog-post">
-                <h3>How I Decide What's Worth Learning (And What I Ignore)</h3>
-                <p class="blog-date">November 14, 2025</p>
-                <p>
-                    One of the hardest parts of learning anything technical isn't understanding the material —
-                    it's deciding what's worth your time in the first place.
-                </p>
-
-                <strong>Does This Strengthen My Thinking or Just My Toolkit?</strong>
-                <p>
-                    The first question I ask is whether something strengthens how I think, or whether it just
-                    adds another tool to the pile.
-                </p>
-                <p>
-                    Things that consistently make the cut: Math that forces precision (probability, linear
-                    algebra, proofs), concepts that transfer across problems, and ideas that change how I
-                    frame questions.
-                </p>
-
-                <strong>Can I Explain This Simply?</strong>
-                <p>
-                    If I can't explain something in plain language — or better yet, implement a small version
-                    of it — I probably don't understand it well enough to justify going deeper.
-                </p>
-
-                <strong>Does This Compound?</strong>
-                <p>
-                    Some things compound quietly. Others don't. Learning a core mathematical idea tends to pay 
-                    dividends across everything else. Learning a niche library often doesn't.
-                </p>
-            </div>
-
-            <div class="blog-post">
-                <h3>Why I'm More Interested in Models Than Answers</h3>
-                <p class="blog-date">December 21, 2025</p>
-                <p>
-                    For a long time, I cared a lot about answers. Getting the right result. Matching the
-                    solution. Knowing I was "correct."
-                </p>
-                <p>
-                    Somewhere along the way — mostly through math and probability — that shifted. Now,
-                    I'm far more interested in models than answers.
-                </p>
-
-                <strong>Answers Are Fragile</strong>
-                <p>
-                    An answer is usually tied to a very specific setup. Change an assumption, tweak a
-                    parameter, or move slightly outside the original context, and the answer can fall apart.
-                </p>
-
-                <strong>Models Force You to Be Honest</strong>
-                <p>
-                    A model, even a simple one, forces clarity. What assumptions are you making? What are you 
-                    ignoring? What happens when those assumptions fail?
-                </p>
-
-                <strong>Models Age Better Than Answers</strong>
-                <p>
-                    Answers expire quickly. Models don't. A numerical result might only be useful today. A good 
-                    model — even an imperfect one — can be adapted, stress-tested, and reused as conditions change.
-                </p>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        function setTheme(theme) {
-            const buttons = document.querySelectorAll('.theme-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            if (theme === 'dark') {
-                document.body.classList.add('dark-mode');
-                localStorage.setItem('theme', 'dark');
-            } else if (theme === 'light') {
-                document.body.classList.remove('dark-mode');
-                localStorage.setItem('theme', 'light');
-            } else {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (prefersDark) {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-                localStorage.setItem('theme', 'auto');
-            }
-        }
-
-        // Initialize theme
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            const buttons = document.querySelectorAll('.theme-btn');
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                buttons[1].classList.add('active');
-            } else if (savedTheme === 'auto') {
-                buttons[2].classList.add('active');
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (prefersDark) document.body.classList.add('dark-mode');
-            }
-        });
-
-        // Smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-    </script>
+    <footer>
+        <p>&copy; 2025 Alexander Robbins. All rights reserved.</p>
+    </footer>
 </body>
 </html>
