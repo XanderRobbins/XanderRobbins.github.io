@@ -630,7 +630,10 @@ body {
     .bubble {
         font-size: 0.9rem;
         padding: 0.65rem 0.9rem;
-    }/* ==================== */
+    }
+    
+    
+/* ==================== */
 /* Homepage iMessage    */
 /* ==================== */
 
@@ -651,6 +654,14 @@ body {
         max-width: 85%;
     }
 }
+}
+
+
+.nav-icon img {
+    width: 20px;
+    height: 20px;
+    display: block;
+    object-fit: contain;
 }
 
 
