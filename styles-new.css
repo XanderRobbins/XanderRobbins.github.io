@@ -664,4 +664,18 @@ body {
     object-fit: contain;
 }
 
+/* Navigation Icon Theme Support */
+.nav-icon img {
+    width: 20px;
+    height: 20px;
+    display: block;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%);
+    transition: filter 0.3s ease;
+}
+
+[data-theme="dark"] .nav-icon img {
+    filter: brightness(0) saturate(100%) invert(1);
+}
+
 
