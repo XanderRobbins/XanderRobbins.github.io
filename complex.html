@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complex Analysis — Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#07091a;color:#e8dccc;font-family:'EB Garamond',Georgia,serif;display:flex;height:100vh;overflow:hidden;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#1e1a30;border-radius:3px;}
+
+aside{width:230px;min-width:230px;background:#050710;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;overflow:hidden;}
+.logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.06);}
+.logo-t{font-size:9px;letter-spacing:4px;color:rgba(212,160,60,.7);text-transform:uppercase;margin-bottom:3px;}
+.logo-big{font:600 18px 'EB Garamond',serif;color:#e8dccc;}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.25);margin-top:2px;}
+.nav-scroll{overflow-y:auto;flex:1;padding:10px 8px;}
+.ncat{font-size:9px;letter-spacing:2.5px;color:rgba(255,255,255,.2);text-transform:uppercase;padding:12px 10px 5px;}
+.nb{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;background:none;border:none;border-left:2.5px solid transparent;color:rgba(232,220,190,.45);font:15px 'EB Garamond',serif;cursor:pointer;border-radius:0 7px 7px 0;text-align:left;transition:all .15s;line-height:1;}
+.nb:hover{background:rgba(212,160,60,.1);color:#d4a03c;}
+.nb.a{background:rgba(212,160,60,.13);color:#d4a03c;border-left-color:#d4a03c;}
+.nb .icon{font-size:14px;width:18px;text-align:center;opacity:.7;}
+
+main{flex:1;overflow-y:auto;padding:28px 36px 60px;}
+.sec{display:none;}.sec.active{display:block;}
+
+h1{font:600 32px 'EB Garamond',serif;color:#e8dccc;letter-spacing:-.5px;margin-bottom:4px;}
+h2{font:600 22px 'EB Garamond',serif;color:#d4a03c;margin:20px 0 8px;}
+h3{font:600 17px 'EB Garamond',serif;color:#88ccff;margin:14px 0 7px;}
+p{font:16px/1.8 'EB Garamond',serif;color:rgba(232,220,190,.82);margin:5px 0;}
+strong{color:#e8dccc;}
+.sub{font-style:italic;color:rgba(212,160,60,.65);font-size:15px;margin-bottom:18px;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+.card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.card-gold{background:rgba(212,160,60,.05);border-color:rgba(212,160,60,.2);}
+
+.fml{background:rgba(212,160,60,.07);border:1px solid rgba(212,160,60,.22);border-radius:8px;padding:12px 18px;font:14px/1.7 'JetBrains Mono',monospace;color:#d4a03c;margin:10px 0;text-align:center;white-space:pre-wrap;}
+.thm{background:rgba(100,180,255,.05);border-left:3px solid rgba(100,180,255,.45);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-style:italic;line-height:1.75;}
+.warn{background:rgba(255,110,60,.06);border-left:3px solid rgba(255,110,60,.45);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;line-height:1.7;}
+.key{background:rgba(100,230,170,.06);border-left:3px solid rgba(100,230,170,.4);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;line-height:1.7;}
+
+.stat-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.stat{background:rgba(255,255,255,.03);border-radius:6px;padding:8px 10px;}
+.stat-l{font-size:10px;color:rgba(255,255,255,.3);margin-bottom:3px;font-family:'JetBrains Mono',monospace;}
+.stat-v{font:13px 'JetBrains Mono',monospace;}
+
+.badge-g{background:rgba(110,231,183,.1);color:#6ee7b7;padding:3px 10px;border-radius:20px;font:11px 'JetBrains Mono',monospace;display:inline-block;}
+.badge-r{background:rgba(255,120,70,.1);color:#ff8068;padding:3px 10px;border-radius:20px;font:11px 'JetBrains Mono',monospace;display:inline-block;}
+
+canvas{display:block;border-radius:8px;background:#030510;}
+input[type=range]{width:100%;accent-color:#d4a03c;cursor:pointer;margin:3px 0;}
+select{background:#0d1230;color:#e8dccc;border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:8px 12px;font:13px 'JetBrains Mono',monospace;cursor:pointer;outline:none;width:100%;}
+label.cb{display:flex;align-items:center;gap:7px;cursor:pointer;font:15px 'EB Garamond',serif;user-select:none;}
+.slider-row{display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;}
+.btn{padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);transition:all .15s;}
+.btn:hover{background:rgba(255,255,255,.08);color:#e8dccc;}
+.btn-gold{background:rgba(212,160,60,.15);border-color:rgba(212,160,60,.35);color:#d4a03c;}
+.btn-gold:hover{background:rgba(212,160,60,.22);}
+
+.mono{font:13px 'JetBrains Mono',monospace;color:#88ccff;}
+.gold{color:#d4a03c;}
+.green{color:#6ee7b7;}
+.blue{color:#88ccff;}
+.purple{color:#c084fc;}
+.red{color:#ff8068;}
+
+.proof-toggle{background:rgba(212,160,60,.08);border:1px solid rgba(212,160,60,.2);border-radius:8px;padding:10px 14px;cursor:pointer;font:15px 'EB Garamond',serif;color:#d4a03c;width:100%;text-align:left;margin:8px 0;}
+.proof-body{display:none;padding:12px 14px;font:15px/1.75 'EB Garamond',serif;color:rgba(232,220,190,.8);border-left:2px solid rgba(212,160,60,.2);margin-top:6px;}
+
+/* stepper */
+.step-container{position:relative;}
+.step-nav{display:flex;gap:8px;align-items:center;margin-top:10px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.12);cursor:pointer;transition:background .2s;}
+.step-dot.a{background:#d4a03c;}
+.step-panel{display:none;}.step-panel.active{display:block;}
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="logo">
+    <div class="logo-t">MAA 4402</div>
+    <div class="logo-big">Complex Analysis</div>
+    <div class="logo-sub">Interactive Exam Prep</div>
+  </div>
+  <div class="nav-scroll">
+    <div class="ncat">Foundations</div>
+    <button class="nb a" onclick="nav('polar')"><span class="icon">◉</span>Polar Form &amp; eⁱᶿ</button>
+    <button class="nb" onclick="nav('multiply')"><span class="icon">×</span>Complex Multiplication</button>
+    <button class="nb" onclick="nav('roots')"><span class="icon">∜</span>nth Roots of Unity</button>
+    <div class="ncat">Differentiation</div>
+    <button class="nb" onclick="nav('cr')"><span class="icon">∂</span>Cauchy-Riemann Eqs</button>
+    <button class="nb" onclick="nav('analytic')"><span class="icon">ƒ</span>Analytic Functions</button>
+    <button class="nb" onclick="nav('harmonic')"><span class="icon">△</span>Harmonic Functions</button>
+    <div class="ncat">Special Functions</div>
+    <button class="nb" onclick="nav('log')"><span class="icon">㏑</span>Complex Logarithm</button>
+    <button class="nb" onclick="nav('power')"><span class="icon">ᶜ</span>Power Function zᶜ</button>
+    <div class="ncat">Integration</div>
+    <button class="nb" onclick="nav('contour')"><span class="icon">∮</span>Contour Integrals</button>
+    <button class="nb" onclick="nav('cauchy')"><span class="icon">◯</span>Cauchy-Goursat Thm</button>
+    <button class="nb" onclick="nav('antider')"><span class="icon">F</span>Antiderivatives</button>
+  </div>
+</aside>
+
+<main>
+
+<!-- ═══════════════════════════════════════ POLAR ═══════════════════════════ -->
+<div id="sec-polar" class="sec active">
+  <h1>Polar Form &amp; e<sup>iθ</sup></h1>
+  <p class="sub">Sections 7–8 · Drag the gold point on the canvas</p>
+  <div class="grid2">
+    <div>
+      <div class="card" style="padding:10px">
+        <canvas id="cv-polar" width="400" height="360" style="width:100%"></canvas>
+      </div>
+      <div class="card">
+        <div class="stat-g">
+          <div class="stat"><div class="stat-l">z (rectangular)</div><div class="stat-v" id="p-rect" style="color:#e8dccc">…</div></div>
+          <div class="stat"><div class="stat-l">|z| = r</div><div class="stat-v" id="p-mod" style="color:#6ee7b7">…</div></div>
+          <div class="stat"><div class="stat-l">Arg(z) rad</div><div class="stat-v" id="p-arg" style="color:#d4a03c">…</div></div>
+          <div class="stat"><div class="stat-l">Arg(z) deg</div><div class="stat-v" id="p-argd" style="color:#d4a03c">…</div></div>
+          <div class="stat" style="grid-column:1/-1"><div class="stat-l">Polar form re<sup>iθ</sup></div><div class="stat-v" id="p-polar" style="color:#c084fc">…</div></div>
+          <div class="stat" style="grid-column:1/-1"><div class="stat-l">e<sup>iθ</sup> = cos θ + i sin θ</div><div class="stat-v" id="p-euler" style="color:#88ccff">…</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">Two Representations</h2>
+        <p>Every nonzero complex number z has two equivalent forms:</p>
+        <div class="fml">z = x + iy  =  r · e<sup>iθ</sup>  =  r(cos θ + i sin θ)</div>
+        <p>where <strong class="green">r = |z| = √(x²+y²)</strong> is the <strong>modulus</strong> and <strong class="gold">θ = Arg(z) ∈ (−π, π]</strong> is the <strong>principal argument</strong>.</p>
+      </div>
+      <div class="card">
+        <h2>Euler's Formula</h2>
+        <div class="fml">e<sup>iθ</sup> = cos θ + i sin θ</div>
+        <p>This is provable from the Taylor series of e<sup>z</sup>, cos z, sin z. The key consequence: <strong>e<sup>iθ</sup> lives on the unit circle</strong> for all real θ. Try dragging the point near the unit circle (|z|≈1).</p>
+        <h3>The Complex Exponential</h3>
+        <div class="fml">e<sup>z</sup> = e<sup>x+iy</sup> = e<sup>x</sup>(cos y + i sin y)</div>
+        <div class="key"><strong class="green">e<sup>z</sup> ≠ 0 for any z ∈ ℂ.</strong> This follows from |e<sup>z</sup>| = e<sup>x</sup> > 0 always.</div>
+        <div class="warn"><strong>⚠ Arg(z) is discontinuous</strong> on ℂ\{0}. It jumps across the negative real axis (from +π to −π). This forces us to make a "branch cut" for Log(z).</div>
+      </div>
+      <div class="card">
+        <h3>Multiple Arguments</h3>
+        <div class="fml">arg(z) = Arg(z) + 2πk,  k ∈ ℤ</div>
+        <p>Any argument differs from the principal one by a multiple of 2π. So z = re<sup>iθ</sup> = re<sup>i(θ+2πk)</sup> for all k ∈ ℤ.</p>
+        <h3>Conjugate in Polar Form</h3>
+        <div class="fml">z̄ = re<sup>−iθ</sup>     z·z̄ = r² = |z|²</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ MULTIPLY ═══════════════════════ -->
+<div id="sec-multiply" class="sec">
+  <h1>Complex Multiplication</h1>
+  <p class="sub">Section 9 · Drag the blue (z₁) or purple (z₂) points</p>
+  <div class="grid2">
+    <div>
+      <div class="card" style="padding:10px">
+        <canvas id="cv-mul" width="400" height="360" style="width:100%"></canvas>
+      </div>
+      <div class="card">
+        <div class="stat-g">
+          <div class="stat"><div class="stat-l">z₁</div><div class="stat-v" id="m-z1" style="color:#88ccff">…</div></div>
+          <div class="stat"><div class="stat-l">z₂</div><div class="stat-v" id="m-z2" style="color:#c084fc">…</div></div>
+          <div class="stat"><div class="stat-l">|z₁z₂| = |z₁|·|z₂|</div><div class="stat-v" id="m-mod" style="color:#d4a03c">…</div></div>
+          <div class="stat"><div class="stat-l">arg(z₁z₂) ≈ θ₁+θ₂</div><div class="stat-v" id="m-arg" style="color:#d4a03c">…</div></div>
+          <div class="stat" style="grid-column:1/-1"><div class="stat-l">z₁·z₂ (rectangular)</div><div class="stat-v" id="m-prod" style="color:#6ee7b7">…</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">The Polar Multiplication Rule</h2>
+        <p>For z₁ = r₁e<sup>iθ₁</sup> and z₂ = r₂e<sup>iθ₂</sup>:</p>
+        <div class="fml">z₁ · z₂  =  r₁r₂ · e<sup>i(θ₁+θ₂)</sup></div>
+        <p><strong>Multiply the moduli</strong> and <strong>add the arguments</strong>. Geometrically: multiplying by z₂ scales by r₂ and rotates by θ₂.</p>
+      </div>
+      <div class="card">
+        <h3>De Moivre's Theorem</h3>
+        <div class="fml">z<sup>n</sup> = r<sup>n</sup> · e<sup>inθ</sup> = r<sup>n</sup>(cos nθ + i sin nθ)</div>
+        <h3>Division &amp; Inverse</h3>
+        <div class="fml">z₁/z₂ = (r₁/r₂)·e<sup>i(θ₁−θ₂)</sup>
+
+1/z = z̄/|z|² = r⁻¹e<sup>−iθ</sup></div>
+        <div class="warn"><strong>⚠ Warning on Arg:</strong> Arg(z₁z₂) ≠ Arg(z₁)+Arg(z₂) in general! The sum may lie outside (−π,π]. Only with ±2πk does additivity hold.</div>
+      </div>
+      <div class="card">
+        <h3>Rectangular Formula</h3>
+        <div class="fml">z₁z₂ = (x₁x₂−y₁y₂) + i(x₁y₂+y₁x₂)</div>
+        <p>Notice this encodes the matrix multiplication for 2×2 matrices of the form <span class="mono">[[a,−b],[b,a]]</span>. Every complex number corresponds to such a rotation-scaling matrix!</p>
+        <div class="key"><strong>Proposition:</strong> If z₁z₂ = 0 then z₁=0 or z₂=0 (ℂ has no zero divisors).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ ROOTS ═══════════════════════════ -->
+<div id="sec-roots" class="sec">
+  <h1>nth Roots</h1>
+  <p class="sub">Section 10 · Solving z<sup>n</sup> = w — adjust n, |w|, and Arg(w)</p>
+  <div class="grid2">
+    <div>
+      <div class="card" style="padding:10px">
+        <canvas id="cv-roots" width="400" height="360" style="width:100%"></canvas>
+      </div>
+      <div class="card">
+        <div class="slider-row"><span>n (number of roots)</span><span id="rn-lbl" class="gold">5</span></div>
+        <input type="range" id="rn" min="1" max="12" value="5" oninput="updateRoots()">
+        <div class="slider-row" style="margin-top:10px"><span>|w| (target modulus)</span><span id="rR-lbl" class="blue">1.00</span></div>
+        <input type="range" id="rR" min="20" max="180" value="100" oninput="updateRoots()">
+        <div class="slider-row" style="margin-top:10px"><span>Arg(w) degrees</span><span id="rT-lbl" class="purple">0°</span></div>
+        <input type="range" id="rT" min="-180" max="180" value="0" oninput="updateRoots()">
+        <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:8px;text-align:center">
+          <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:4px">The n roots lie on a circle of radius</div>
+          <div id="roots-radius" class="gold" style="font:15px 'JetBrains Mono',monospace">R^(1/n) = 1.000</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">Solving z<sup>n</sup> = w</h2>
+        <p>Write w = Re<sup>iΘ</sup>. Set z = ρe<sup>iφ</sup>. Then z<sup>n</sup>=w requires:</p>
+        <div class="fml">ρ<sup>n</sup> = R  →  ρ = R<sup>1/n</sup>
+n·φ = Θ + 2πk  →  φ = (Θ+2πk)/n</div>
+        <p>There are exactly <strong>n distinct solutions</strong> (k=0,1,…,n−1):</p>
+        <div class="fml">z_k = R<sup>1/n</sup> · e<sup>i(Θ+2πk)/n</sup></div>
+      </div>
+      <div class="card">
+        <h3>nth Roots of Unity</h3>
+        <p>Special case w=1 (R=1, Θ=0):</p>
+        <div class="fml">ω_k = e<sup>2πik/n</sup>,  k = 0, 1, …, n−1</div>
+        <p>These form a <strong>regular n-gon</strong> inscribed in the unit circle. Set |w|=1 and Arg(w)=0° in the demo!</p>
+        <h3>Key Trick</h3>
+        <p>If z₀ is <em>any one</em> nth root of w, then ALL nth roots are:</p>
+        <div class="fml">z₀ · ω_k  for  k = 0, 1, …, n−1</div>
+        <div class="key"><strong>Example:</strong> z⁸ = 1 → roots are e<sup>2πik/8</sup> = e<sup>πik/4</sup> for k=0,…,7. These are the 8 corners of a regular octagon on the unit circle.</div>
+      </div>
+      <div class="card">
+        <h3>Example: z² = −1</h3>
+        <p>Here w = −1, R=1, Θ=π. So:</p>
+        <div class="fml">z_k = e<sup>i(π+2πk)/2</sup> = e<sup>iπ/2</sup>, e<sup>i3π/2</sup> = i, −i</div>
+        <p>Set n=2, Arg=180° in the demo to see this!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ CR ══════════════════════════════ -->
+<div id="sec-cr" class="sec">
+  <h1>Cauchy-Riemann Equations</h1>
+  <p class="sub">Sections 17–19 · The necessary (and almost sufficient) condition for complex differentiability</p>
+
+  <div class="card card-gold">
+    <h2 style="margin-top:0">The Setup</h2>
+    <p>Write f(z) = u(x,y) + iv(x,y). If f is complex-differentiable at z₀=(x₀,y₀), evaluating the limit along the real axis and then along the imaginary axis must give the same answer. This forces:</p>
+    <div class="fml" style="font-size:17px">u_x = v_y  &nbsp;&nbsp;&nbsp;&nbsp;  v_x = −u_y</div>
+    <p>These are the <strong>Cauchy-Riemann (CR) equations</strong>. When they hold and partials are continuous: <span class="mono gold">f′(z) = u_x + iv_x = v_y − iu_y</span></p>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <h2>Interactive CR Checker</h2>
+        <select id="cr-fn" onchange="updateCR()">
+          <option value="z2">f(z) = z²  →  u=x²−y², v=2xy</option>
+          <option value="conj">f(z) = z̄  →  u=x, v=−y</option>
+          <option value="mod2">f(z) = |z|²  →  u=x²+y², v=0</option>
+          <option value="ez">f(z) = eᶻ  →  u=eˣcos y, v=eˣsin y</option>
+          <option value="z3">f(z) = z³  →  u=x³−3xy², v=3x²y−y³</option>
+          <option value="abs">f(z) = |z|  →  u=√(x²+y²), v=0</option>
+          <option value="sinz">f(z) = sin z  →  u=sin x·cosh y, v=cos x·sinh y</option>
+        </select>
+        <p style="margin:14px 0 6px;font-size:14px;color:rgba(255,255,255,.4)">Test point z = x + iy:</p>
+        <div class="slider-row"><span>x</span><span id="cr-x-lbl" class="blue">1.00</span></div>
+        <input type="range" id="cr-x" min="-200" max="200" value="100" oninput="updateCR()">
+        <div class="slider-row" style="margin-top:8px"><span>y</span><span id="cr-y-lbl" class="blue">0.50</span></div>
+        <input type="range" id="cr-y" min="-200" max="200" value="50" oninput="updateCR()">
+      </div>
+      <div class="card">
+        <h3>Partial Derivatives at (x,y)</h3>
+        <div class="stat-g" style="margin-bottom:12px">
+          <div class="stat"><div class="stat-l">u_x = ∂u/∂x</div><div id="cr-ux" class="stat-v blue">…</div></div>
+          <div class="stat"><div class="stat-l">v_y = ∂v/∂y</div><div id="cr-vy" class="stat-v green">…</div></div>
+          <div class="stat"><div class="stat-l">v_x = ∂v/∂x</div><div id="cr-vx" class="stat-v blue">…</div></div>
+          <div class="stat"><div class="stat-l">−u_y</div><div id="cr-muy" class="stat-v green">…</div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <div style="flex:1;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px">
+            <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px">u_x = v_y?</div>
+            <span id="cr-b1">…</span>
+          </div>
+          <div style="flex:1;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px">
+            <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px">v_x = −u_y?</div>
+            <span id="cr-b2">…</span>
+          </div>
+        </div>
+        <div id="cr-status" style="padding:10px 14px;border-radius:8px;font:15px 'EB Garamond',serif;line-height:1.7"></div>
+        <div id="cr-deriv" style="margin-top:8px;font:13px 'JetBrains Mono',monospace;color:#d4a03c;padding:8px 12px;background:rgba(212,160,60,.06);border-radius:6px;display:none"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>Necessity vs. Sufficiency</h2>
+        <div class="thm"><strong>Theorem (Necessary):</strong> If f is complex-differentiable at z₀, then the CR equations hold at z₀.</div>
+        <div class="thm"><strong>Theorem (Sufficient):</strong> If CR holds at z₀ <em>and</em> the partial derivatives are continuous at z₀, then f is differentiable at z₀ and f′(z₀) = u_x + iv_x.</div>
+        <div class="warn"><strong>⚠ CR alone is NOT sufficient!</strong> A function can satisfy CR at a point but be non-differentiable there. The continuity of partials is essential. (See the counterexample in your notes: the piecewise function that satisfies CR at 0 but isn't differentiable there.)</div>
+      </div>
+      <div class="card">
+        <h2>CR in Polar Form</h2>
+        <p>Writing f = u(r,θ) + iv(r,θ), the CR equations become:</p>
+        <div class="fml">r · u_r = v_θ  &nbsp;&nbsp;&nbsp;  r · v_r = −u_θ</div>
+        <p>When satisfied with continuous partials:</p>
+        <div class="fml">f′(z) = e<sup>−iθ</sup>(u_r + iv_r)</div>
+        <h3>Polar Example: e<sup>z</sup></h3>
+        <p><span class="mono">e<sup>iθ</sup> = cos θ + i sin θ</span> means u=cos θ, v=sin θ. Then u_r=0, v_θ=−sin θ... wait, let's use z=re<sup>iθ</sup> for e<sup>z</sup> in rectangular form instead. The polar form is most useful for Log, √z, etc.</p>
+      </div>
+      <div class="card">
+        <h2>Matrix Interpretation</h2>
+        <p>If f is complex-differentiable, the Jacobian of f viewed as ℝ²→ℝ² must be of the form:</p>
+        <div class="fml">J_f = [[u_x, u_y], [v_x, v_y]] = [[a, −b], [b, a]]</div>
+        <p>i.e., a <strong>rotation-scaling matrix</strong>. This is exactly what CR says: u_x=v_y (=a) and v_x=−u_y (=b). So complex differentiability = the real Jacobian is a conformal (angle-preserving) linear map.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ ANALYTIC ══════════════════════ -->
+<div id="sec-analytic" class="sec">
+  <h1>Analytic Functions</h1>
+  <p class="sub">Sections 20–22 · The central objects of complex analysis</p>
+  <div class="grid2">
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">Definitions</h2>
+        <p><strong class="gold">Analytic on G:</strong> f is complex-differentiable at every point of the open set G.</p>
+        <p><strong class="gold">Analytic at z₀:</strong> f is analytic on some N_ε(z₀).</p>
+        <p><strong class="gold">Entire:</strong> f is analytic on all of ℂ.</p>
+        <h3>Entire Functions</h3>
+        <p>Polynomials, e<sup>z</sup>, sin z, cos z. Their sums, products, and compositions.</p>
+        <div class="key"><strong>Huge contrast with ℝ:</strong> Over ℝ, once-differentiable doesn't even imply twice-differentiable. But in ℂ: analytic ⟹ infinitely differentiable ⟹ equals its Taylor series. This is a theorem!</div>
+      </div>
+      <div class="card">
+        <h2>Non-Analytic Functions</h2>
+        <p>• <span class="mono">f(z) = z̄</span>: CR gives u_x=1, v_y=−1 — fails everywhere. <span class="badge-r">nowhere analytic</span></p>
+        <p>• <span class="mono">f(z) = |z|²</span>: CR holds only at z=0. <span class="badge-r">not analytic anywhere</span></p>
+        <p>• <span class="mono">f(z) = Re(z)</span>: CR gives 1=0. <span class="badge-r">never differentiable</span></p>
+        <p>• <span class="mono">f(z) = |z|</span>: CR only at z=0, partials not continuous. <span class="badge-r">nowhere analytic</span></p>
+        <h3>Key Identities</h3>
+        <div class="fml">cos z = (e<sup>iz</sup>+e<sup>−iz</sup>)/2
+sin z = (e<sup>iz</sup>−e<sup>−iz</sup>)/(2i)</div>
+        <p>Both entire. <strong>Note:</strong> |sin z| and |cos z| are <em>unbounded</em> on ℂ (unlike on ℝ)!</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>Key Theorems</h2>
+        <div class="thm"><strong>f′≡0 ⟹ f constant</strong> (on a connected domain G)</div>
+        <button class="proof-toggle" onclick="toggleProof('pf1')">▶ Show proof idea</button>
+        <div id="pf1" class="proof-body">If f′=0 everywhere on G, then u_x=v_x=0 everywhere. If two points are connected by a line segment parameterized as γ(s), then d/ds[f(γ(s))] = f′(γ(s))·γ′(s) = 0, so f is constant on the segment. Connectedness of G extends this to all of G.</div>
+
+        <div class="thm"><strong>Re(f) constant ⟹ f constant</strong> (analytic on connected domain)</div>
+        <button class="proof-toggle" onclick="toggleProof('pf2')">▶ Show proof idea</button>
+        <div id="pf2" class="proof-body">If u(x,y) = c (constant), then u_x = u_y = 0. By CR: v_x = −u_y = 0 and v_y = u_x = 0. So f′ = u_x + iv_x = 0. By the previous theorem, f is constant.</div>
+
+        <div class="thm"><strong>|f| constant ⟹ f constant</strong> (analytic on connected domain)</div>
+        <div class="thm"><strong>f analytic, Im(f)=0 ⟹ f constant</strong> (connected domain)</div>
+      </div>
+      <div class="card">
+        <h2>Isolated Zeros &amp; Identity Theorem</h2>
+        <h3>Isolated Zeros Lemma</h3>
+        <p>If f is analytic, f≢0 near z₀, but f(z₀)=0, then ∃m≥1 (the <em>order</em> of the zero) and analytic g with g(z₀)≠0 such that:</p>
+        <div class="fml">f(z) = (z−z₀)<sup>m</sup> · g(z)</div>
+        <p>The zeros of a nonzero analytic function are <strong>isolated</strong>.</p>
+        <div class="thm"><strong>Identity Theorem:</strong> If f, g analytic on domain G, and f(z_n)=g(z_n) for a sequence {z_n}→z₀ ∈ G, then f≡g on G.</div>
+        <div class="key"><strong>Power of this:</strong> An analytic function is completely determined by its values on any convergent sequence in its domain. Two analytic functions that agree on a tiny arc are equal everywhere on the domain!</div>
+        <div class="thm"><strong>Analytic Continuation:</strong> The analytic extension of f to a larger domain is unique if it exists.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ HARMONIC ══════════════════════ -->
+<div id="sec-harmonic" class="sec">
+  <h1>Harmonic Functions</h1>
+  <p class="sub">Section 21 · Blue = u-level curves, Green = v-level curves (they're perpendicular!)</p>
+  <div class="grid2">
+    <div>
+      <div class="card" style="padding:10px">
+        <canvas id="cv-harm" width="400" height="360" style="width:100%"></canvas>
+      </div>
+      <div class="card">
+        <div style="margin-bottom:10px">
+          <select id="harm-fn" onchange="redrawHarm()">
+            <option value="z2">f(z) = z²  (u=x²−y², v=2xy)</option>
+            <option value="ez">f(z) = eᶻ  (u=eˣcos y, v=eˣsin y)</option>
+            <option value="z3">f(z) = z³  (u=x³−3xy², v=3x²y−y³)</option>
+            <option value="logr">f(z) = Log z  (u=ln r, v=Arg z)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:16px">
+          <label class="cb"><input type="checkbox" id="show-u" checked onchange="redrawHarm()"><span class="blue">u-level curves</span></label>
+          <label class="cb"><input type="checkbox" id="show-v" checked onchange="redrawHarm()"><span class="green">v-level curves</span></label>
+        </div>
+        <p style="margin-top:10px;font-size:14px;color:rgba(255,255,255,.4)">Level curves u=c cross v=c at right angles — a visual proof that analytic functions are conformal (angle-preserving).</p>
+      </div>
+    </div>
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">Definition</h2>
+        <p>A real-valued function h: G→ℝ is <strong class="gold">harmonic</strong> if it has continuous second-order partial derivatives and satisfies the <strong>Laplace equation</strong>:</p>
+        <div class="fml">Δh = h_xx + h_yy = 0</div>
+      </div>
+      <div class="card">
+        <h2>Analytic ⟹ Harmonic Parts</h2>
+        <div class="thm"><strong>Theorem:</strong> If f = u+iv is analytic on G, then both u and v are harmonic on G.</div>
+        <button class="proof-toggle" onclick="toggleProof('pf3')">▶ Show proof</button>
+        <div id="pf3" class="proof-body">From CR: u_x = v_y and u_y = −v_x. Differentiate the first: u_xx = v_yx. Differentiate the second: −v_xy = u_yy. Since partials are continuous (a consequence of analyticity), v_yx = v_xy. So u_xx = v_yx = v_xy = −u_yy, giving u_xx + u_yy = 0. ✓ Same argument works for v.</div>
+      </div>
+      <div class="card">
+        <h2>Harmonic Conjugates</h2>
+        <p>Given harmonic u on G, a harmonic conjugate is v such that f = u+iv is analytic.</p>
+        <div class="thm"><strong>Uniqueness:</strong> Any two harmonic conjugates of u on domain G differ by a real constant.</div>
+        <div class="thm"><strong>Existence:</strong> If G is simply connected and u is harmonic on G, then u has a harmonic conjugate.</div>
+        <div class="warn"><strong>Counterexample to existence on non-simply connected domain:</strong> u = ln|z| is harmonic on ℂ\{0}. Its harmonic conjugate would be Arg(z), but Arg is discontinuous on ℂ\{0}. The problem is ℂ\{0} is not simply connected.</div>
+      </div>
+      <div class="card">
+        <h2>Practical Trick</h2>
+        <p>If f = u+iv is analytic on G, then u is automatically harmonic — <strong>no computation needed</strong>! Use this to save time:</p>
+        <div class="fml">u = Re(f)  is harmonic whenever f is analytic</div>
+        <p>For example: Re(z²) = x²−y² is harmonic; Re(e<sup>z</sup>) = e<sup>x</sup>cos y is harmonic; Re(Log z) = ln|z| = ln√(x²+y²) is harmonic on ℂ\{0}.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ LOG ═══════════════════════════ -->
+<div id="sec-log" class="sec">
+  <h1>Complex Logarithm</h1>
+  <p class="sub">Section 24 · The color represents the argument value; the red line is the branch cut</p>
+  <div class="grid2">
+    <div>
+      <div class="card" style="padding:10px">
+        <canvas id="cv-log" width="400" height="360" style="width:100%"></canvas>
+      </div>
+      <div class="card">
+        <select id="log-cut" onchange="redrawLog()">
+          <option value="neg">Principal branch: cut along negative real axis</option>
+          <option value="pos">Cut along positive real axis</option>
+          <option value="top">Cut along positive imaginary axis</option>
+        </select>
+        <p style="margin-top:10px;font-size:14px;color:rgba(255,255,255,.4)">The color represents Arg(z) for the chosen branch. Watch the color jump discontinuously across the red branch cut. That discontinuity is why we must remove the cut from the domain.</p>
+        <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px">
+          <p style="font-size:13px;color:rgba(255,255,255,.4)">Hover or click to see Log(z) at a point:</p>
+          <div id="log-readout" style="font:13px 'JetBrains Mono',monospace;color:#d4a03c;margin-top:5px">Click on canvas...</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">The Problem with log</h2>
+        <p>We want log as an inverse of e<sup>z</sup>. But e<sup>z+2πi</sup>=e<sup>z</sup>, so e<sup>z</sup> is <strong>not injective</strong> — many z map to the same w. Thus log is <strong>multi-valued</strong>:</p>
+        <div class="fml">log(z) = ln|z| + i·arg(z) = ln|z| + i(Arg(z)+2πk)</div>
+        <p>Each choice of k ∈ ℤ gives a different <strong>branch</strong> of the logarithm.</p>
+      </div>
+      <div class="card">
+        <h2>Principal Branch Log</h2>
+        <p>Defined on G = ℂ\(−∞, 0] (cut along negative real axis):</p>
+        <div class="fml">Log(z) = ln|z| + i·Arg(z),  Arg(z) ∈ (−π, π)</div>
+        <p>Properties:</p>
+        <p>• e<sup>Log(z)</sup> = z for all z ∈ G</p>
+        <p>• Log is analytic on G, and <span class="mono">(Log z)′ = 1/z</span></p>
+        <div class="warn"><strong>⚠ Log(z₁z₂) ≠ Log z₁ + Log z₂ in general!</strong> This equality holds only when Arg z₁ + Arg z₂ ∈ (−π,π). If the sum of arguments "wraps around" past ±π, you get a ±2πi discrepancy.</div>
+      </div>
+      <div class="card">
+        <h2>General Branches</h2>
+        <p>A function f: G→ℂ is a <strong>branch of log</strong> on G if e<sup>f(z)</sup>=z for all z∈G.</p>
+        <div class="thm"><strong>Theorem:</strong> Two branches on the same connected domain differ by 2πin for a fixed n∈ℤ.</div>
+        <div class="thm"><strong>Theorem:</strong> Any branch of log is analytic and has derivative 1/z.</div>
+        <h3>Branch Cuts</h3>
+        <p>A <strong>branch cut</strong> is a curve removed from ℂ to make arg single-valued and continuous. It prevents "circling the origin." Branch cuts need not be straight lines!</p>
+        <div class="key"><strong>Why the cut is necessary:</strong> If we try to extend Log to all of ℂ\{0}, we'd need Arg to be continuous there. But going around the origin, Arg increases by 2π — a jump must occur somewhere. The cut is where we accept that jump.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ POWER ══════════════════════════ -->
+<div id="sec-power" class="sec">
+  <h1>Power Function z<sup>c</sup></h1>
+  <p class="sub">Section 25 · Branches of z<sup>c</sup> for complex c</p>
+  <div class="grid2">
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">Definition via Log</h2>
+        <p>For c ∈ ℂ and a branch f of log on domain G:</p>
+        <div class="fml">z<sup>c</sup> := e<sup>c·f(z)</sup></div>
+        <p>defines a <strong>branch of the power function</strong> on G. Different branches of log give different branches of z<sup>c</sup>.</p>
+        <h3>Principal Branch</h3>
+        <div class="fml">z<sup>c</sup> = e<sup>c · Log(z)</sup>,  z ∉ (−∞, 0]</div>
+      </div>
+      <div class="card">
+        <h2>Example: √z</h2>
+        <p>Take c = 1/2 and use Log(z) = ln|z| + iArg(z):</p>
+        <div class="fml">√z = e<sup>½ Log z</sup> = e<sup>½(ln|z|+iArg z)</sup>
+     = √|z| · e<sup>iArg(z)/2</sup></div>
+        <p>This is the principal square root. It extends the positive real square root to G = ℂ\(−∞,0].</p>
+        <p>The <em>other</em> branch (using Log z + 2πi) gives:</p>
+        <div class="fml">e<sup>½(Log z + 2πi)</sup> = e<sup>½Log z</sup>·e<sup>πi</sup> = −√z</div>
+        <p>So the two branches of √z are just negatives of each other — as expected!</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>Example: i<sup>i</sup></h2>
+        <p>Here z=i, c=i. We have |i|=1, Arg(i)=π/2. So:</p>
+        <div class="fml">i<sup>i</sup> = e<sup>i·Log(i)</sup> = e<sup>i(ln1 + iπ/2)</sup>
+   = e<sup>i·iπ/2</sup> = e<sup>−π/2</sup> ≈ 0.208</div>
+        <p><strong>i<sup>i</sup> is real!</strong> (Using the principal branch.) Other branches give e<sup>−π/2+2πk</sup> for k∈ℤ.</p>
+        <h3>General Behavior</h3>
+        <p>Using branch f(z) = Log z + 2πin:</p>
+        <div class="fml">z<sup>c</sup> = e<sup>c(Log z + 2πin)</sup> = e<sup>cLog z</sup>·e<sup>2πinc</sup></div>
+        <p>Different branches relate by multiplying by e<sup>2πinc</sup>. If c is a rational p/q (in lowest terms), there are exactly q distinct branches.</p>
+      </div>
+      <div class="card">
+        <h2>Important Special Cases</h2>
+        <h3>c ∈ ℤ (integer power)</h3>
+        <p>e<sup>2πinc</sup>=1 for all n — all branches give the same value! So z<sup>n</sup> for integer n is single-valued, consistent with z·z·…·z.</p>
+        <h3>c = 1/n (nth root)</h3>
+        <p>e<sup>2πin·(1/n)</sup> = e<sup>2πi</sup> = 1... but e<sup>2πik/n</sup> ≠ 1 for k=1,…,n-1. So there are exactly n branches of z<sup>1/n</sup> — the nth roots.</p>
+        <div class="key"><strong>Derivative:</strong> Any branch of z<sup>c</sup> has derivative c·z<sup>c−1</sup> (using the same branch).</div>
+        <div class="warn"><strong>⚠ z<sup>c</sup> with complex c is NOT the same as repeated multiplication</strong> — it's defined via the logarithm and is branch-dependent!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ CONTOUR ═══════════════════════ -->
+<div id="sec-contour" class="sec">
+  <h1>Contour Integrals</h1>
+  <p class="sub">Sections 29–30 · Integration along curves in ℂ</p>
+  <div class="grid2">
+    <div>
+      <div class="card" style="padding:10px">
+        <canvas id="cv-cont" width="400" height="360" style="width:100%"></canvas>
+      </div>
+      <div class="card">
+        <div class="slider-row"><span>Power n for ∮ z<sup>n</sup> dz</span><span id="cont-n-lbl" class="gold">n = −1</span></div>
+        <input type="range" id="cont-n" min="-4" max="4" step="1" value="-1" oninput="updateContourDemo()">
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn btn-gold" onclick="startContourAnim()" id="cont-btn" style="flex:1">▶ Animate</button>
+          <button class="btn" onclick="resetContourAnim()">Reset</button>
+        </div>
+        <div style="margin-top:12px;padding:12px;background:rgba(255,255,255,.03);border-radius:8px;text-align:center">
+          <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:5px">∮<sub>|z|=1</sub> z<sup>n</sup> dz =</div>
+          <div id="cont-result" style="font:18px 'JetBrains Mono',monospace;color:#d4a03c">…</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">Definition</h2>
+        <p>Given a contour C parameterized by w: [a,b]→ℂ (continuous, piecewise C¹) and f continuous on C:</p>
+        <div class="fml">∫_C f(z) dz := ∫_a^b f(w(t)) · w′(t) dt</div>
+        <p>This reduces to a standard real integral of a complex-valued function of t.</p>
+      </div>
+      <div class="card">
+        <h2>ML Inequality</h2>
+        <div class="thm"><strong>Theorem:</strong> If |f(z)| ≤ M on C and L(C) = arc length of C, then |∫_C f dz| ≤ M·L</div>
+        <div class="fml">|∫_C f(z) dz| ≤ M · L(C)</div>
+        <div class="key"><strong>Main use:</strong> Proving that integrals along large arcs (R→∞) go to zero. If M→0 faster than L(C)=2πR→∞, the integral vanishes.</div>
+      </div>
+      <div class="card">
+        <h2>The Fundamental Calculation</h2>
+        <div class="fml">∮<sub>|z|=1</sub> z<sup>n</sup> dz = 
+  2πi  if n = −1
+  0    if n ≠ −1  (n ∈ ℤ)</div>
+        <p><strong>Proof sketch:</strong> Parameterize by w(t)=e<sup>it</sup>, t∈[0,2π]. Then w′(t)=ie<sup>it</sup> and z<sup>n</sup> = e<sup>int</sup>, giving ∫₀²π e<sup>int</sup>·ie<sup>it</sup>dt = i∫₀²π e<sup>i(n+1)t</sup>dt.</p>
+        <p>For n≠−1: ∫₀²π e<sup>i(n+1)t</sup>dt = [e<sup>i(n+1)t</sup>/(i(n+1))]₀²π = 0.</p>
+        <p>For n=−1: ∫₀²π dt = 2π, times i gives 2πi. ✓</p>
+        <div class="warn"><strong>This 2πi is the heart of everything!</strong> Cauchy's integral formula, residues, everything flows from this.</div>
+      </div>
+      <div class="card">
+        <h2>Properties</h2>
+        <p><strong>Linearity:</strong> ∫_C (αf+βg) = α∫f + β∫g</p>
+        <p><strong>Reversal:</strong> ∫_{−C} f = −∫_C f</p>
+        <p><strong>Concatenation:</strong> ∫_{C₁+C₂} f = ∫_{C₁} f + ∫_{C₂} f</p>
+        <p><strong>Reparameterization:</strong> The value doesn't depend on choice of parameterization (as long as orientation is preserved).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ CAUCHY-GOURSAT ═══════════════ -->
+<div id="sec-cauchy" class="sec">
+  <h1>Cauchy-Goursat Theorem</h1>
+  <p class="sub">Section 32 · The central theorem of complex integration</p>
+  <div class="grid2">
+    <div>
+      <div class="card" style="padding:10px">
+        <canvas id="cv-cg" width="400" height="360" style="width:100%"></canvas>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;color:rgba(255,255,255,.4)">Click to add/remove a singularity (red dot) inside or outside the contour. Watch how the integral changes!</p>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-gold" onclick="toggleSingularity()" id="sing-btn" style="flex:1">Add Singularity</button>
+          <button class="btn" onclick="resetCG()">Reset</button>
+        </div>
+        <div style="margin-top:12px;padding:12px;background:rgba(255,255,255,.03);border-radius:8px">
+          <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:5px">∮_C f(z) dz =</div>
+          <div id="cg-result" style="font:18px 'JetBrains Mono',monospace;color:#6ee7b7">0 (analytic)</div>
+          <div id="cg-explain" style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px">f is analytic inside and on C</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">Cauchy-Goursat Theorem</h2>
+        <div class="thm"><strong>Theorem:</strong> If f is analytic on a simply connected domain G, and C ⊂ G is any closed contour, then ∮_C f(z) dz = 0.</div>
+        <div class="key"><strong>Equivalently:</strong> A closed-loop integral of an analytic function is zero. No singularities inside = zero integral.</div>
+      </div>
+      <div class="card">
+        <h2>Simply Connected Domains</h2>
+        <p>A domain G is <strong>simply connected</strong> if it is connected and every closed curve in G can be continuously shrunk to a point while staying in G. Informally: <strong>no holes</strong>.</p>
+        <p>• ℂ itself: simply connected ✓</p>
+        <p>• Any disk {|z|&lt;R}: simply connected ✓</p>
+        <p>• ℂ\{0}: NOT simply connected (the origin is a hole) ✗</p>
+        <p>• {0&lt;|z|&lt;1} (punctured disk): NOT simply connected ✗</p>
+        <p>• A domain with a hole (like an annulus): NOT simply connected ✗</p>
+      </div>
+      <div class="card">
+        <h2>Corollaries</h2>
+        <div class="thm"><strong>Antiderivative existence:</strong> If G is simply connected and f is analytic on G, then f has an analytic antiderivative F on G (F′=f).</div>
+        <div class="thm"><strong>Path independence:</strong> On a simply connected domain, ∫_C f depends only on the endpoints of C, not the path.</div>
+        <div class="thm"><strong>Harmonic conjugates:</strong> On a simply connected domain, every harmonic u has a harmonic conjugate v.</div>
+        <div class="warn"><strong>Counterexample (not simply connected):</strong> ∮_{|z|=1} (1/z) dz = 2πi ≠ 0. Here f=1/z has a singularity at z=0 inside the contour, and the domain ℂ\{0} is not simply connected.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ ANTIDERIVATIVES ═══════════════ -->
+<div id="sec-antider" class="sec">
+  <h1>Antiderivatives &amp; Path Independence</h1>
+  <p class="sub">Section 31 · The TFAE theorem and using antiderivatives</p>
+  <div class="grid2">
+    <div>
+      <div class="card card-gold">
+        <h2 style="margin-top:0">The Big Theorem (TFAE)</h2>
+        <p>If f is continuous on a domain G, the following are equivalent:</p>
+        <div class="fml" style="text-align:left;padding:14px 18px">1. f has an antiderivative F on G
+   (F analytic, F′ = f)
+
+2. Path independence: for any two 
+   contours C₁, C₂ in G with the same
+   endpoints, ∫_{C₁} f = ∫_{C₂} f
+
+3. For every closed contour C in G:
+   ∮_C f(z) dz = 0</div>
+        <p>Furthermore, if F is an antiderivative and C goes from z₁ to z₂:</p>
+        <div class="fml">∫_C f(z) dz = F(z₂) − F(z₁)</div>
+      </div>
+      <div class="card">
+        <h2>Using This in Practice</h2>
+        <p>To evaluate ∫_C f(z)dz when f has an antiderivative F:</p>
+        <div class="fml">∫_C f(z) dz = F(endpoint) − F(start)</div>
+        <p>This is exactly the complex FTC!</p>
+        <h3>Example</h3>
+        <p>Evaluate ∫_C z² dz from z=0 to z=1+i (any path).</p>
+        <div class="fml">F(z) = z³/3 is an antiderivative of z²
+∫_C z² dz = F(1+i) − F(0)
+= (1+i)³/3 − 0
+= (1+i)²(1+i)/3
+= (2i)(1+i)/3
+= (−2+2i)/3</div>
+        <p>Since z² is entire (analytic on all ℂ, simply connected), the integral is path-independent.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>When Antiderivatives Fail</h2>
+        <p>f = 1/z does NOT have an antiderivative on ℂ\{0} because:</p>
+        <div class="fml">∮_{|z|=1} (1/z) dz = 2πi ≠ 0</div>
+        <p>If it had one, the integral around any closed loop would be 0 (by condition 3).</p>
+        <p>However, 1/z <em>does</em> have an antiderivative on any simply connected subdomain of ℂ\{0}: that antiderivative is a branch of Log!</p>
+        <div class="key"><strong>Subtlety:</strong> ∮ z<sup>−1</sup> dz can be zero on some closed curves (those not encircling z=0) but 2πi on others. This is why the domain matters — antiderivative existence is a global property of the domain.</div>
+      </div>
+      <div class="card">
+        <h2>Step-by-Step: Integrating on a Branch Cut</h2>
+        <p>To evaluate ∫_C f(z)dz when the obvious antiderivative has a branch cut problem:</p>
+        <p><strong>Step 1:</strong> Check if the contour crosses the branch cut of the natural antiderivative.</p>
+        <p><strong>Step 2:</strong> If it does, choose a different branch of the logarithm (with a different cut) that the contour avoids.</p>
+        <p><strong>Step 3:</strong> Verify the new branch is analytic on a domain containing the contour.</p>
+        <p><strong>Step 4:</strong> Apply the FTC with the new branch.</p>
+        <div class="warn"><strong>Key insight:</strong> Different branches of Log give the same derivative (1/z) but different antiderivative values. Choose the branch based on which one is analytic along your path!</div>
+      </div>
+      <div class="card">
+        <h2>Simply Connected Equivalences</h2>
+        <p>Your notes list 8 equivalent conditions for a domain G to be simply connected. The key ones for this exam:</p>
+        <p>• Every closed contour integral of an analytic f equals 0</p>
+        <p>• Every analytic f on G has an antiderivative</p>
+        <p>• Every harmonic function on G has a harmonic conjugate</p>
+        <p>• Every nonvanishing analytic f has an analytic square root</p>
+        <p>• Every nonvanishing analytic f has an analytic logarithm</p>
+        <div class="key">These are all "equivalent" to the topological notion of simple connectedness — no holes!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function nav(id) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('a'));
+  document.getElementById('sec-'+id).classList.add('active');
+  event.currentTarget.classList.add('a');
+  // lazy init
+  if (id==='polar') initPolar();
+  if (id==='multiply') initMul();
+  if (id==='roots') updateRoots();
+  if (id==='cr') updateCR();
+  if (id==='harmonic') redrawHarm();
+  if (id==='log') redrawLog();
+  if (id==='contour') { updateContourDemo(); }
+  if (id==='cauchy') initCG();
+}
+
+function toggleProof(id) {
+  const el = document.getElementById(id);
+  const btn = el.previousElementSibling;
+  if (el.style.display==='block') {
+    el.style.display='none'; btn.textContent=btn.textContent.replace('▼','▶');
+  } else {
+    el.style.display='block'; btn.textContent=btn.textContent.replace('▶','▼');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POLAR
+// ─────────────────────────────────────────────────────────────────────────────
+let polarDrag = false, polarPt = {x:1.5,y:1.0};
+
+function initPolar() {
+  const cv = document.getElementById('cv-polar');
+  if (!cv || cv._init) return; cv._init = true;
+  const ctx = cv.getContext('2d');
+  cv.addEventListener('mousedown', e=>{ polarDrag=true; polarMove(cv,e); });
+  cv.addEventListener('mousemove', e=>{ if(polarDrag) polarMove(cv,e); });
+  cv.addEventListener('mouseup', ()=>polarDrag=false);
+  cv.addEventListener('touchstart', e=>{ polarDrag=true; polarMoveTouch(cv,e); e.preventDefault(); },{passive:false});
+  cv.addEventListener('touchmove', e=>{ polarMoveTouch(cv,e); e.preventDefault(); },{passive:false});
+  cv.addEventListener('touchend', ()=>polarDrag=false);
+  drawPolar(ctx, cv.width, cv.height);
+}
+
+function polarMove(cv, e) {
+  const r = cv.getBoundingClientRect();
+  const scaleX = cv.width / r.width, scaleY = cv.height / r.height;
+  const cx=cv.width/2, cy=cv.height/2, sc=80;
+  polarPt.x = ((e.clientX-r.left)*scaleX - cx)/sc;
+  polarPt.y = -((e.clientY-r.top)*scaleY - cy)/sc;
+  drawPolar(cv.getContext('2d'), cv.width, cv.height);
+  updatePolarStats();
+}
+
+function polarMoveTouch(cv, e) {
+  const t = e.touches[0];
+  const r = cv.getBoundingClientRect();
+  const scaleX = cv.width / r.width, scaleY = cv.height / r.height;
+  const cx=cv.width/2, cy=cv.height/2, sc=80;
+  polarPt.x = ((t.clientX-r.left)*scaleX - cx)/sc;
+  polarPt.y = -((t.clientY-r.top)*scaleY - cy)/sc;
+  drawPolar(cv.getContext('2d'), cv.width, cv.height);
+  updatePolarStats();
+}
+
+function drawPolar(ctx, W, H) {
+  const cx=W/2, cy=H/2, sc=80;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030510'; ctx.fillRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=0.5;
+  for(let i=-4;i<=4;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
+  }
+  // unit circle
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
+  // axes
+  ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='11px JetBrains Mono';
+  ctx.fillText('Re',W-22,cy-6);ctx.fillText('Im',cx+5,14);
+
+  const x=polarPt.x, y=polarPt.y;
+  const r=Math.sqrt(x*x+y*y), theta=Math.atan2(y,x);
+  const px=cx+x*sc, py=cy-y*sc;
+
+  // r vector
+  ctx.strokeStyle='rgba(212,160,60,.5)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke();ctx.setLineDash([]);
+
+  // x,y projections
+  ctx.strokeStyle='rgba(136,204,255,.35)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(cx,py);ctx.stroke();ctx.setLineDash([]);
+
+  // angle arc
+  if(r>0.05){
+    ctx.strokeStyle='rgba(212,160,60,.6)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(cx,cy,Math.min(30,r*sc*0.4),0,-theta,theta<0);ctx.stroke();
+    const ta=theta/2, rad=Math.min(30,r*sc*0.4)+10;
+    ctx.fillStyle='#d4a03c';ctx.font='11px JetBrains Mono';
+    ctx.fillText('θ',cx+rad*Math.cos(-ta)-4,cy+rad*Math.sin(-ta)+4);
+  }
+
+  // point
+  ctx.shadowColor='rgba(212,160,60,.6)';ctx.shadowBlur=12;
+  ctx.fillStyle='#d4a03c';ctx.beginPath();ctx.arc(px,py,6,0,2*Math.PI);ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.fillStyle='#e8dccc';ctx.font='13px JetBrains Mono';
+  const tx=px+10, ty=py-10;
+  ctx.fillText(`z`,tx,ty);
+
+  // label r on vector
+  if(r>0.1){
+    const mx=cx+(px-cx)*0.5, my=cy+(py-cy)*0.5;
+    ctx.fillStyle='#6ee7b7';ctx.font='11px JetBrains Mono';
+    ctx.fillText('r',mx+8,my-4);
+  }
+  updatePolarStats();
+}
+
+function updatePolarStats(){
+  const x=polarPt.x,y=polarPt.y;
+  const r=Math.sqrt(x*x+y*y),th=Math.atan2(y,x);
+  const sgn=y>=0?'+':'-';
+  document.getElementById('p-rect').textContent=`${x.toFixed(3)} ${sgn} ${Math.abs(y).toFixed(3)}i`;
+  document.getElementById('p-mod').textContent=r.toFixed(4);
+  document.getElementById('p-arg').textContent=th.toFixed(4)+' rad';
+  document.getElementById('p-argd').textContent=(th*180/Math.PI).toFixed(2)+'°';
+  const piFrac=(th/Math.PI).toFixed(3);
+  document.getElementById('p-polar').textContent=`${r.toFixed(3)} · e^(${piFrac}πi)`;
+  const costh=Math.cos(th),sinth=Math.sin(th);
+  document.getElementById('p-euler').textContent=`${costh.toFixed(3)} + ${sinth.toFixed(3)}i`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MULTIPLY
+// ─────────────────────────────────────────────────────────────────────────────
+let mulPts={z1:{x:1.2,y:0.5},z2:{x:0.6,y:1.0}}, mulActive=null;
+
+function initMul(){
+  const cv=document.getElementById('cv-mul');
+  if(!cv||cv._init)return;cv._init=true;
+  const ctx=cv.getContext('2d');
+  function getPos(e){
+    const r=cv.getBoundingClientRect(),scaleX=cv.width/r.width,scaleY=cv.height/r.height;
+    const cx=cv.width/2,cy=cv.height/2,sc=70;
+    return{x:((e.clientX-r.left)*scaleX-cx)/sc,y:-((e.clientY-r.top)*scaleY-cy)/sc};
+  }
+  function dist(a,b){return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);}
+  cv.addEventListener('mousedown',e=>{
+    const p=getPos(e);
+    if(dist(p,mulPts.z1)<0.3) mulActive='z1';
+    else if(dist(p,mulPts.z2)<0.3) mulActive='z2';
+  });
+  cv.addEventListener('mousemove',e=>{if(mulActive){const p=getPos(e);mulPts[mulActive]=p;drawMul(ctx,cv.width,cv.height);}});
+  cv.addEventListener('mouseup',()=>mulActive=null);
+  cv.addEventListener('touchstart',e=>{
+    const p=getPos(e.touches[0]);
+    if(dist(p,mulPts.z1)<0.3) mulActive='z1';
+    else if(dist(p,mulPts.z2)<0.3) mulActive='z2';
+    e.preventDefault();
+  },{passive:false});
+  cv.addEventListener('touchmove',e=>{if(mulActive){const p=getPos(e.touches[0]);mulPts[mulActive]=p;drawMul(ctx,cv.width,cv.height);}e.preventDefault();},{passive:false});
+  cv.addEventListener('touchend',()=>mulActive=null);
+  drawMul(ctx,cv.width,cv.height);
+}
+
+function drawMul(ctx,W,H){
+  const cx=W/2,cy=H/2,sc=70;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
+  for(let i=-4;i<=4;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  const {z1,z2}=mulPts;
+  const r1=Math.sqrt(z1.x**2+z1.y**2),t1=Math.atan2(z1.y,z1.x);
+  const r2=Math.sqrt(z2.x**2+z2.y**2),t2=Math.atan2(z2.y,z2.x);
+  const r3=r1*r2,t3=t1+t2;
+  const z3={x:r3*Math.cos(t3),y:r3*Math.sin(t3)};
+
+  function drawVec(z,col,label){
+    const px=cx+z.x*sc,py=cy-z.y*sc;
+    ctx.strokeStyle=col+'99';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke();
+    // arrowhead
+    const ang=Math.atan2(-(py-cy),px-cx);
+    ctx.fillStyle=col;
+    ctx.beginPath();
+    ctx.moveTo(px,py);
+    ctx.lineTo(px-8*Math.cos(ang-0.3),py+8*Math.sin(ang-0.3));
+    ctx.lineTo(px-8*Math.cos(ang+0.3),py+8*Math.sin(ang+0.3));
+    ctx.closePath();ctx.fill();
+    ctx.shadowColor=col+'80';ctx.shadowBlur=10;
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(px,py,5,0,2*Math.PI);ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.fillStyle='#e8dccc';ctx.font='12px JetBrains Mono';
+    ctx.fillText(label,px+8,py-8);
+  }
+  drawVec(z1,'#88ccff','z₁');
+  drawVec(z2,'#c084fc','z₂');
+  drawVec(z3,'#d4a03c','z₁z₂');
+
+  // angle arcs
+  function drawArc(r,col,ang){
+    ctx.strokeStyle=col+'80';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(cx,cy,r*sc*0.35+8,0,-ang,ang<0);ctx.stroke();
+  }
+  if(r1>0.1) drawArc(r1,'#88ccff',t1);
+  if(r2>0.1) drawArc(r2,'#c084fc',t2);
+  if(r3>0.1) drawArc(r3,'#d4a03c',t3);
+
+  // stats
+  const sgn1=z1.y>=0?'+':'-',sgn2=z2.y>=0?'+':'-',sgn3=z3.y>=0?'+':'-';
+  document.getElementById('m-z1').textContent=`${z1.x.toFixed(2)}${sgn1}${Math.abs(z1.y).toFixed(2)}i  |r₁=${r1.toFixed(3)}`;
+  document.getElementById('m-z2').textContent=`${z2.x.toFixed(2)}${sgn2}${Math.abs(z2.y).toFixed(2)}i  |r₂=${r2.toFixed(3)}`;
+  document.getElementById('m-mod').textContent=r3.toFixed(4);
+  document.getElementById('m-arg').textContent=`${t3.toFixed(4)} rad = ${(t3*180/Math.PI).toFixed(1)}°`;
+  document.getElementById('m-prod').textContent=`${z3.x.toFixed(3)} ${sgn3} ${Math.abs(z3.y).toFixed(3)}i`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ROOTS
+// ─────────────────────────────────────────────────────────────────────────────
+function updateRoots(){
+  const n=+document.getElementById('rn').value;
+  const R=+document.getElementById('rR').value/100;
+  const T=+document.getElementById('rT').value*Math.PI/180;
+  document.getElementById('rn-lbl').textContent=n;
+  document.getElementById('rR-lbl').textContent=R.toFixed(2);
+  document.getElementById('rT-lbl').textContent=(T*180/Math.PI).toFixed(0)+'°';
+  document.getElementById('roots-radius').textContent=`R^(1/${n}) = ${Math.pow(R,1/n).toFixed(4)}`;
+  const cv=document.getElementById('cv-roots');
+  if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const cx=W/2,cy=H/2,sc=100;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
+  for(let i=-3;i<=3;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.22)';
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  const rn=Math.pow(R,1/n);
+  // target w
+  const wx=cx+R*Math.cos(T)*sc,wy=cy-R*Math.sin(T)*sc;
+  ctx.fillStyle='rgba(255,120,70,.15)';ctx.strokeStyle='rgba(255,120,70,.4)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(cx,cy,rn*sc,0,2*Math.PI);ctx.stroke();
+  ctx.fillStyle='#ff8068';ctx.beginPath();ctx.arc(wx,wy,7,0,2*Math.PI);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='11px JetBrains Mono';ctx.fillText('w',wx+9,wy-9);
+
+  // roots
+  const hue=['#d4a03c','#88ccff','#6ee7b7','#c084fc','#ff8068','#f97316','#a78bfa','#34d399','#60a5fa','#e879f9','#fb923c','#4ade80'];
+  for(let k=0;k<n;k++){
+    const phi=(T+2*Math.PI*k)/n;
+    const rx=cx+rn*Math.cos(phi)*sc,ry=cy-rn*Math.sin(phi)*sc;
+    const col=hue[k%hue.length];
+    ctx.strokeStyle=col+'55';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(rx,ry);ctx.stroke();ctx.setLineDash([]);
+    ctx.shadowColor=col+'80';ctx.shadowBlur=10;
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(rx,ry,6,0,2*Math.PI);ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='10px JetBrains Mono';
+    ctx.fillText(`z${k}`,rx+7,ry-7);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CR CHECKER
+// ─────────────────────────────────────────────────────────────────────────────
+const crFunctions = {
+  z2:   {ux:(x,y)=>2*x,    uy:(x,y)=>-2*y,   vx:(x,y)=>2*y,   vy:(x,y)=>2*x,   deriv:(x,y)=>`f′(z) = 2x+2iy = 2z`},
+  conj: {ux:(x,y)=>1,      uy:(x,y)=>0,      vx:(x,y)=>0,     vy:(x,y)=>-1,    deriv:(x,y)=>`CR fails: not differentiable`},
+  mod2: {ux:(x,y)=>2*x,    uy:(x,y)=>2*y,    vx:(x,y)=>0,     vy:(x,y)=>0,     deriv:(x,y)=>{if(Math.abs(x)<.02&&Math.abs(y)<.02)return'f′(0) = 0 (only at z=0)';return'CR fails: not differentiable';}},
+  ez:   {ux:(x,y)=>Math.exp(x)*Math.cos(y),uy:(x,y)=>-Math.exp(x)*Math.sin(y),vx:(x,y)=>Math.exp(x)*Math.sin(y),vy:(x,y)=>Math.exp(x)*Math.cos(y),deriv:(x,y)=>`f′(z) = eˣcos y + ieˣsin y = eᶻ`},
+  z3:   {ux:(x,y)=>3*x*x-3*y*y,uy:(x,y)=>-6*x*y,vx:(x,y)=>6*x*y,vy:(x,y)=>3*x*x-3*y*y,deriv:(x,y)=>`f′(z) = (3x²−3y²)+6xyi = 3z²`},
+  abs:  {ux:(x,y)=>x/Math.sqrt(x*x+y*y+1e-12),uy:(x,y)=>y/Math.sqrt(x*x+y*y+1e-12),vx:(x,y)=>0,vy:(x,y)=>0,deriv:(x,y)=>`CR fails everywhere`},
+  sinz: {ux:(x,y)=>Math.cos(x)*Math.cosh(y),uy:(x,y)=>-Math.sin(x)*Math.sinh(y),vx:(x,y)=>Math.sin(x)*Math.sinh(y),vy:(x,y)=>Math.cos(x)*Math.cosh(y),deriv:(x,y)=>`f′(z) = cos z`},
+};
+
+function updateCR(){
+  const fn=document.getElementById('cr-fn').value;
+  const x=+document.getElementById('cr-x').value/100;
+  const y=+document.getElementById('cr-y').value/100;
+  document.getElementById('cr-x-lbl').textContent=x.toFixed(2);
+  document.getElementById('cr-y-lbl').textContent=y.toFixed(2);
+  const f=crFunctions[fn];
+  const ux=f.ux(x,y),uy=f.uy(x,y),vx=f.vx(x,y),vy=f.vy(x,y);
+  document.getElementById('cr-ux').textContent=ux.toFixed(4);
+  document.getElementById('cr-vy').textContent=vy.toFixed(4);
+  document.getElementById('cr-vx').textContent=vx.toFixed(4);
+  document.getElementById('cr-muy').textContent=(-uy).toFixed(4);
+  const eps=1e-8;
+  const cr1=Math.abs(ux-vy)<0.001;
+  const cr2=Math.abs(vx+uy)<0.001;
+  const b1=document.getElementById('cr-b1');
+  const b2=document.getElementById('cr-b2');
+  b1.className=cr1?'badge-g':'badge-r';
+  b1.textContent=cr1?'✓ Yes':'✗ No';
+  b2.className=cr2?'badge-g':'badge-r';
+  b2.textContent=cr2?'✓ Yes':'✗ No';
+  const st=document.getElementById('cr-status');
+  const dr=document.getElementById('cr-deriv');
+  if(cr1&&cr2){
+    st.style.background='rgba(110,231,183,.08)';
+    st.style.borderLeft='3px solid rgba(110,231,183,.5)';
+    st.style.borderRadius='0 8px 8px 0';
+    st.style.padding='10px 14px';
+    st.textContent='✓ CR equations satisfied at this point';
+    dr.style.display='block';
+    dr.textContent=typeof f.deriv==='function'?f.deriv(x,y):f.deriv;
+  } else {
+    st.style.background='rgba(255,110,60,.07)';
+    st.style.borderLeft='3px solid rgba(255,110,60,.4)';
+    st.style.borderRadius='0 8px 8px 0';
+    st.style.padding='10px 14px';
+    st.textContent='✗ CR equations fail at this point — not differentiable here';
+    dr.style.display='none';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HARMONIC
+// ─────────────────────────────────────────────────────────────────────────────
+function redrawHarm(){
+  const cv=document.getElementById('cv-harm');
+  if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const fn=document.getElementById('harm-fn').value;
+  const showU=document.getElementById('show-u').checked;
+  const showV=document.getElementById('show-v').checked;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
+
+  const cx=W/2,cy=H/2,sc=70;
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
+  for(let i=-4;i<=4;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  const N=W, M=H;
+  // marching squares approach for level curves
+  const step=0.005;
+  function getUV(x,y){
+    if(fn==='z2') return{u:x*x-y*y,v:2*x*y};
+    if(fn==='ez'){const ex=Math.exp(x);return{u:ex*Math.cos(y),v:ex*Math.sin(y)};}
+    if(fn==='z3') return{u:x*x*x-3*x*y*y,v:3*x*x*y-y*y*y};
+    if(fn==='logr'){const r=Math.sqrt(x*x+y*y);if(r<1e-10)return{u:0,v:0};return{u:Math.log(r),v:Math.atan2(y,x)};}
+    return{u:0,v:0};
+  }
+
+  // Draw level curves using canvas path tracing on a grid
+  const GW=200,GH=200;
+  const vals_u=new Float32Array(GW*GH);
+  const vals_v=new Float32Array(GW*GH);
+  for(let j=0;j<GH;j++)for(let i=0;i<GW;i++){
+    const x=(i/GW-0.5)*8,y=(j/GH-0.5)*-8;
+    const {u,v}=getUV(x,y);
+    vals_u[j*GW+i]=u;
+    vals_v[j*GW+i]=v;
+  }
+  function drawLevel(vals,color,levels){
+    ctx.strokeStyle=color;ctx.lineWidth=1;
+    for(const lv of levels){
+      for(let j=0;j<GH-1;j++)for(let i=0;i<GW-1;i++){
+        const a=vals[j*GW+i]-lv,b=vals[j*GW+i+1]-lv;
+        const c=vals[(j+1)*GW+i+1]-lv,d=vals[(j+1)*GW+i]-lv;
+        const ix=i=>cx+(i/GW-0.5)*8*sc;
+        const iy=j=>cy-(j/GH-0.5)*-8*sc;
+        function lerp(s,e,vs,ve){const t=vs/(vs-ve);return s+t*(e-s);}
+        const pts=[];
+        if(a*b<0) pts.push([lerp(i,i+1,a,b),j]);
+        if(b*c<0) pts.push([i+1,lerp(j,j+1,b,c)]);
+        if(c*d<0) pts.push([lerp(i+1,i,c,d),j+1]);
+        if(d*a<0) pts.push([i,lerp(j+1,j,d,a)]);
+        if(pts.length===2){
+          ctx.beginPath();
+          ctx.moveTo(ix(pts[0][0]),iy(pts[0][1]));
+          ctx.lineTo(ix(pts[1][0]),iy(pts[1][1]));
+          ctx.stroke();
+        }
+      }
+    }
+  }
+  const uLevels=[-8,-4,-2,-1,-.5,-.25,0,.25,.5,1,2,4,8];
+  const vLevels=fn==='logr'?[-Math.PI,-2*Math.PI/3,-Math.PI/3,0,Math.PI/3,2*Math.PI/3]:[-8,-4,-2,-1,-.5,0,.5,1,2,4,8];
+  if(showU) drawLevel(vals_u,'rgba(136,204,255,.6)',uLevels);
+  if(showV) drawLevel(vals_v,'rgba(110,231,183,.55)',vLevels);
+
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='11px JetBrains Mono';
+  ctx.fillText('Re',W-22,cy-6);ctx.fillText('Im',cx+5,12);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOG BRANCH
+// ─────────────────────────────────────────────────────────────────────────────
+function redrawLog(){
+  const cv=document.getElementById('cv-log');
+  if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const cut=document.getElementById('log-cut').value;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
+  const cx=W/2,cy=H/2,sc=70;
+
+  // Draw argument heatmap
+  const imgd=ctx.createImageData(W,H);
+  for(let py2=0;py2<H;py2++)for(let px2=0;px2<W;px2++){
+    const x=(px2-cx)/sc,y=-(py2-cy)/sc;
+    const r=Math.sqrt(x*x+y*y);
+    if(r<0.05){const i=(py2*W+px2)*4;imgd.data[i]=imgd.data[i+1]=imgd.data[i+2]=30;imgd.data[i+3]=255;continue;}
+    let arg=Math.atan2(y,x);
+    // adjust based on cut
+    if(cut==='pos'){if(arg<0) arg+=2*Math.PI;}
+    else if(cut==='top'){arg=arg-Math.PI/2;if(arg<-Math.PI)arg+=2*Math.PI;}
+    // hue from arg
+    const t=(arg+Math.PI)/(2*Math.PI); // 0..1
+    // color wheel: map t to hue
+    const h360=t*360;
+    const lum=0.3+0.15*(1-Math.min(r,3)/3);
+    const [rr,gg,bb]=hsl(h360,0.7,lum);
+    const i=(py2*W+px2)*4;
+    imgd.data[i]=rr;imgd.data[i+1]=gg;imgd.data[i+2]=bb;imgd.data[i+3]=200;
+  }
+  ctx.putImageData(imgd,0,0);
+
+  // grid lines
+  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=0.5;
+  for(let i=-4;i<=4;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  // unit circle
+  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
+
+  // branch cut
+  ctx.strokeStyle='#ff4444';ctx.lineWidth=2.5;ctx.setLineDash([6,3]);
+  ctx.beginPath();
+  if(cut==='neg'){ctx.moveTo(cx,cy);ctx.lineTo(0,cy);}
+  else if(cut==='pos'){ctx.moveTo(cx,cy);ctx.lineTo(W,cy);}
+  else if(cut==='top'){ctx.moveTo(cx,cy);ctx.lineTo(cx,0);}
+  ctx.stroke();ctx.setLineDash([]);
+
+  // origin dot
+  ctx.fillStyle='#ff4444';ctx.beginPath();ctx.arc(cx,cy,5,0,2*Math.PI);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='11px JetBrains Mono';
+  ctx.fillText('0',cx+8,cy-6);
+
+  // hover readout
+  cv._cut=cut;cv._cx=cx;cv._cy=cy;cv._sc=sc;
+}
+
+function hsl(h,s,l){
+  h/=360;
+  const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
+  function hue(t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+  return[Math.round(hue(h+1/3)*255),Math.round(hue(h)*255),Math.round(hue(h-1/3)*255)];
+}
+
+// Log click readout
+document.addEventListener('DOMContentLoaded',()=>{
+  const cv=document.getElementById('cv-log');
+  if(cv){
+    cv.addEventListener('click',e=>{
+      const r=cv.getBoundingClientRect();
+      const scaleX=cv.width/r.width,scaleY=cv.height/r.height;
+      const x=((e.clientX-r.left)*scaleX-(cv._cx||200))/(cv._sc||70);
+      const y=-((e.clientY-r.top)*scaleY-(cv._cy||180))/(cv._sc||70);
+      const mod=Math.sqrt(x*x+y*y);
+      if(mod<0.05){document.getElementById('log-readout').textContent='z=0: Log undefined';return;}
+      const arg=Math.atan2(y,x);
+      const logR=Math.log(mod);
+      const sgn=arg>=0?'+':'-';
+      document.getElementById('log-readout').textContent=
+        `z=${x.toFixed(2)}+${y.toFixed(2)}i → Log(z)=${logR.toFixed(3)}${sgn}${Math.abs(arg).toFixed(3)}i`;
+    });
+  }
+  // Initialize first section
+  initPolar();
+  setTimeout(()=>{
+    const cv=document.getElementById('cv-polar');
+    if(cv){drawPolar(cv.getContext('2d'),cv.width,cv.height);}
+  },100);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONTOUR INTEGRAL DEMO
+// ─────────────────────────────────────────────────────────────────────────────
+let contAngle=0,contTimer=null,contN=-1;
+
+function updateContourDemo(){
+  contN=+document.getElementById('cont-n').value;
+  document.getElementById('cont-n-lbl').textContent='n = '+contN;
+  const res=contN===-1?'2πi  ≈ 6.283i':'0';
+  document.getElementById('cont-result').textContent=res;
+  document.getElementById('cont-result').style.color=contN===-1?'#d4a03c':'#6ee7b7';
+  drawContour(contAngle);
+}
+
+function drawContour(angle){
+  const cv=document.getElementById('cv-cont');
+  if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const cx=W/2,cy=H/2,sc=100;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
+  for(let i=-3;i<=3;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  // draw unit circle contour
+  ctx.strokeStyle='rgba(212,160,60,.4)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
+
+  // draw progress arc
+  ctx.strokeStyle='#d4a03c';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(cx,cy,sc,-Math.PI/2,-Math.PI/2+angle,false);ctx.stroke();
+
+  // moving point
+  const px=cx+sc*Math.cos(-Math.PI/2+angle),py=cy+sc*Math.sin(-Math.PI/2+angle);
+  ctx.shadowColor='#d4a03c80';ctx.shadowBlur=15;
+  ctx.fillStyle='#d4a03c';ctx.beginPath();ctx.arc(px,py,7,0,2*Math.PI);ctx.fill();
+  ctx.shadowBlur=0;
+
+  // f(z) = z^n at current point
+  const z_re=Math.cos(-Math.PI/2+angle),z_im=Math.sin(-Math.PI/2+angle);
+  const r=1;
+  const fth=contN*(-Math.PI/2+angle);
+  const f_re=Math.cos(fth),f_im=Math.sin(fth);
+  // w'(t) = ie^it
+  const wp_re=-z_im,wp_im=z_re;
+  const integrand_re=f_re*wp_re-f_im*wp_im;
+  const integrand_im=f_re*wp_im+f_im*wp_re;
+
+  // origin label
+  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='11px JetBrains Mono';
+  ctx.fillText('0',cx+5,cy-5);
+  ctx.fillText('1',cx+sc+4,cy+12);
+  ctx.fillText('-1',cx-sc-18,cy+12);
+  ctx.fillText('i',cx+6,cy-sc-4);
+  ctx.fillText('-i',cx+6,cy+sc+12);
+
+  // start arrow
+  ctx.fillStyle='#888';ctx.font='11px JetBrains Mono';
+  ctx.fillText('start',cx+6,cy-sc+14);
+}
+
+function startContourAnim(){
+  if(contTimer){clearInterval(contTimer);contTimer=null;document.getElementById('cont-btn').textContent='▶ Animate';contAngle=0;drawContour(0);return;}
+  contAngle=0;
+  document.getElementById('cont-btn').textContent='⏹ Stop';
+  contTimer=setInterval(()=>{
+    contAngle+=0.04;
+    drawContour(contAngle);
+    if(contAngle>=2*Math.PI){clearInterval(contTimer);contTimer=null;document.getElementById('cont-btn').textContent='▶ Animate';}
+  },30);
+}
+
+function resetContourAnim(){
+  if(contTimer){clearInterval(contTimer);contTimer=null;}
+  contAngle=0;
+  document.getElementById('cont-btn').textContent='▶ Animate';
+  drawContour(0);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CAUCHY-GOURSAT
+// ─────────────────────────────────────────────────────────────────────────────
+let cgSing=false, cgSingPos={x:0,y:0};
+
+function initCG(){
+  const cv=document.getElementById('cv-cg');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const scaleX=cv.width/r.width,scaleY=cv.height/r.height;
+    const cx=cv.width/2,cy=cv.height/2,sc=90;
+    cgSingPos.x=((e.clientX-r.left)*scaleX-cx)/sc;
+    cgSingPos.y=-((e.clientY-r.top)*scaleY-cy)/sc;
+    drawCG(ctx,cv.width,cv.height);
+  });
+  drawCG(ctx,cv.width,cv.height);
+}
+
+function toggleSingularity(){
+  cgSing=!cgSing;
+  document.getElementById('sing-btn').textContent=cgSing?'Remove Singularity':'Add Singularity';
+  const cv=document.getElementById('cv-cg');
+  if(cv)drawCG(cv.getContext('2d'),cv.width,cv.height);
+}
+
+function resetCG(){
+  cgSing=false;cgSingPos={x:0,y:0};
+  document.getElementById('sing-btn').textContent='Add Singularity';
+  const cv=document.getElementById('cv-cg');
+  if(cv)drawCG(cv.getContext('2d'),cv.width,cv.height);
+}
+
+function drawCG(ctx,W,H){
+  const cx=W/2,cy=H/2,sc=90;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
+  for(let i=-3;i<=3;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  // region inside contour (simply connected)
+  const R=sc*1.5;
+  ctx.fillStyle='rgba(100,180,255,.05)';
+  ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);ctx.fill();
+
+  // contour
+  ctx.strokeStyle='#88ccff';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);ctx.stroke();
+  // arrow on contour
+  ctx.fillStyle='#88ccff';
+  ctx.save();ctx.translate(cx+R,cy);ctx.rotate(-Math.PI/2);
+  ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(6,4);ctx.lineTo(-6,4);ctx.closePath();ctx.fill();
+  ctx.restore();
+  ctx.fillStyle='#88ccff';ctx.font='12px JetBrains Mono';
+  ctx.fillText('C',cx+R+8,cy+4);
+
+  // f(z) label
+  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='12px JetBrains Mono';
+  if(!cgSing){
+    ctx.fillText('f analytic inside C',cx-70,cy+20);
+  }
+
+  // singularity
+  if(cgSing){
+    const sx=cx+cgSingPos.x*sc,sy=cy-cgSingPos.y*sc;
+    const inside=Math.sqrt(cgSingPos.x*cgSingPos.x+cgSingPos.y*cgSingPos.y)<1.5;
+    ctx.strokeStyle=inside?'#ff4444':'#888';ctx.lineWidth=inside?2:1;
+    ctx.beginPath();ctx.arc(sx,sy,5,0,2*Math.PI);ctx.stroke();
+    ctx.strokeStyle=inside?'#ff4444':'#888';
+    ctx.beginPath();ctx.moveTo(sx-8,sy-8);ctx.lineTo(sx+8,sy+8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sx+8,sy-8);ctx.lineTo(sx-8,sy+8);ctx.stroke();
+
+    const res=document.getElementById('cg-result');
+    const exp=document.getElementById('cg-explain');
+    if(inside){
+      res.textContent='2πi · Res(f, z₀)';res.style.color='#d4a03c';
+      exp.textContent='Singularity inside C! Integral may be nonzero (Cauchy integral formula needed)';
+    } else {
+      res.textContent='0 (Cauchy-Goursat)';res.style.color='#6ee7b7';
+      exp.textContent='Singularity outside C — f analytic inside and on C → integral = 0';
+    }
+    ctx.fillStyle=inside?'#ff8068':'#888';ctx.font='11px JetBrains Mono';
+    ctx.fillText(inside?'z₀ INSIDE':'z₀ outside',sx+8,sy-8);
+  } else {
+    document.getElementById('cg-result').textContent='0 (Cauchy-Goursat)';
+    document.getElementById('cg-result').style.color='#6ee7b7';
+    document.getElementById('cg-explain').textContent='f is analytic inside and on C';
+  }
+
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='11px JetBrains Mono';
+  ctx.fillText('Re',W-22,cy-6);ctx.fillText('Im',cx+5,14);
+  if(cgSing) ctx.fillText('Click to move singularity',10,H-10);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT ALL ON LOAD
+// ─────────────────────────────────────────────────────────────────────────────
+window.addEventListener('load', ()=>{
+  initPolar();
+  setTimeout(()=>{
+    updateRoots();
+    updateCR();
+    redrawHarm();
+    redrawLog();
+    updateContourDemo();
+    initCG();
+    initMul();
+  }, 200);
+});
+</script>
+</body>
+</html>
