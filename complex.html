@@ -3,1435 +3,2213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Complex Analysis — Exam Prep</title>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>COT 3100 — Discrete Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#07091a;color:#e8dccc;font-family:'EB Garamond',Georgia,serif;display:flex;height:100vh;overflow:hidden;}
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:#1e1a30;border-radius:3px;}
+:root {
+  --bg: #050810;
+  --surface: #0b1120;
+  --surface2: #111827;
+  --blue: #1a73e8;
+  --blue-bright: #4d9fff;
+  --blue-dark: #0d3d80;
+  --blue-glow: rgba(26,115,232,0.3);
+  --cyan: #00d4ff;
+  --text: #f0f4ff;
+  --muted: #6b7a99;
+  --border: rgba(26,115,232,0.25);
+  --font-head: 'Oxanium', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
 
-aside{width:230px;min-width:230px;background:#050710;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;overflow:hidden;}
-.logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.06);}
-.logo-t{font-size:9px;letter-spacing:4px;color:rgba(212,160,60,.7);text-transform:uppercase;margin-bottom:3px;}
-.logo-big{font:600 18px 'EB Garamond',serif;color:#e8dccc;}
-.logo-sub{font-size:11px;color:rgba(255,255,255,.25);margin-top:2px;}
-.nav-scroll{overflow-y:auto;flex:1;padding:10px 8px;}
-.ncat{font-size:9px;letter-spacing:2.5px;color:rgba(255,255,255,.2);text-transform:uppercase;padding:12px 10px 5px;}
-.nb{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;background:none;border:none;border-left:2.5px solid transparent;color:rgba(232,220,190,.45);font:15px 'EB Garamond',serif;cursor:pointer;border-radius:0 7px 7px 0;text-align:left;transition:all .15s;line-height:1;}
-.nb:hover{background:rgba(212,160,60,.1);color:#d4a03c;}
-.nb.a{background:rgba(212,160,60,.13);color:#d4a03c;border-left-color:#d4a03c;}
-.nb .icon{font-size:14px;width:18px;text-align:center;opacity:.7;}
+* { margin:0; padding:0; box-sizing:border-box; }
 
-main{flex:1;overflow-y:auto;padding:28px 36px 60px;}
-.sec{display:none;}.sec.active{display:block;}
+html { scroll-behavior: smooth; }
 
-h1{font:600 32px 'EB Garamond',serif;color:#e8dccc;letter-spacing:-.5px;margin-bottom:4px;}
-h2{font:600 22px 'EB Garamond',serif;color:#d4a03c;margin:20px 0 8px;}
-h3{font:600 17px 'EB Garamond',serif;color:#88ccff;margin:14px 0 7px;}
-p{font:16px/1.8 'EB Garamond',serif;color:rgba(232,220,190,.82);margin:5px 0;}
-strong{color:#e8dccc;}
-.sub{font-style:italic;color:rgba(212,160,60,.65);font-size:15px;margin-bottom:18px;}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
-.card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
-.card-gold{background:rgba(212,160,60,.05);border-color:rgba(212,160,60,.2);}
+/* ---- SIDEBAR ---- */
+#sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
 
-.fml{background:rgba(212,160,60,.07);border:1px solid rgba(212,160,60,.22);border-radius:8px;padding:12px 18px;font:14px/1.7 'JetBrains Mono',monospace;color:#d4a03c;margin:10px 0;text-align:center;white-space:pre-wrap;}
-.thm{background:rgba(100,180,255,.05);border-left:3px solid rgba(100,180,255,.45);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;font-style:italic;line-height:1.75;}
-.warn{background:rgba(255,110,60,.06);border-left:3px solid rgba(255,110,60,.45);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;line-height:1.7;}
-.key{background:rgba(100,230,170,.06);border-left:3px solid rgba(100,230,170,.4);border-radius:0 8px 8px 0;padding:11px 15px;margin:10px 0;line-height:1.7;}
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .badge {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--blue-bright);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+.sidebar-logo h1 {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
 
-.stat-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.stat{background:rgba(255,255,255,.03);border-radius:6px;padding:8px 10px;}
-.stat-l{font-size:10px;color:rgba(255,255,255,.3);margin-bottom:3px;font-family:'JetBrains Mono',monospace;}
-.stat-v{font:13px 'JetBrains Mono',monospace;}
+.sidebar-nav { padding: 12px 0; flex: 1; }
 
-.badge-g{background:rgba(110,231,183,.1);color:#6ee7b7;padding:3px 10px;border-radius:20px;font:11px 'JetBrains Mono',monospace;display:inline-block;}
-.badge-r{background:rgba(255,120,70,.1);color:#ff8068;padding:3px 10px;border-radius:20px;font:11px 'JetBrains Mono',monospace;display:inline-block;}
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 20px 6px;
+}
 
-canvas{display:block;border-radius:8px;background:#030510;}
-input[type=range]{width:100%;accent-color:#d4a03c;cursor:pointer;margin:3px 0;}
-select{background:#0d1230;color:#e8dccc;border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:8px 12px;font:13px 'JetBrains Mono',monospace;cursor:pointer;outline:none;width:100%;}
-label.cb{display:flex;align-items:center;gap:7px;cursor:pointer;font:15px 'EB Garamond',serif;user-select:none;}
-.slider-row{display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;}
-.btn{padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);transition:all .15s;}
-.btn:hover{background:rgba(255,255,255,.08);color:#e8dccc;}
-.btn-gold{background:rgba(212,160,60,.15);border-color:rgba(212,160,60,.35);color:#d4a03c;}
-.btn-gold:hover{background:rgba(212,160,60,.22);}
+.nav-item {
+  display: block;
+  padding: 9px 20px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 400;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--text);
+  border-left-color: var(--blue);
+  background: rgba(26,115,232,0.08);
+}
+.nav-item span { font-size: 11px; margin-right: 6px; }
 
-.mono{font:13px 'JetBrains Mono',monospace;color:#88ccff;}
-.gold{color:#d4a03c;}
-.green{color:#6ee7b7;}
-.blue{color:#88ccff;}
-.purple{color:#c084fc;}
-.red{color:#ff8068;}
+/* ---- MAIN ---- */
+#main {
+  margin-left: 260px;
+  flex: 1;
+  padding: 0;
+}
 
-.proof-toggle{background:rgba(212,160,60,.08);border:1px solid rgba(212,160,60,.2);border-radius:8px;padding:10px 14px;cursor:pointer;font:15px 'EB Garamond',serif;color:#d4a03c;width:100%;text-align:left;margin:8px 0;}
-.proof-body{display:none;padding:12px 14px;font:15px/1.75 'EB Garamond',serif;color:rgba(232,220,190,.8);border-left:2px solid rgba(212,160,60,.2);margin-top:6px;}
+/* ---- HERO ---- */
+.hero {
+  background: linear-gradient(135deg, #050810 0%, #0b1a35 50%, #050810 100%);
+  padding: 80px 60px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  min-height: 380px;
+  display: flex;
+  align-items: center;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(26,115,232,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-venn {
+  position: absolute;
+  right: 60px; top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.15;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-tag {
+  font-family: var(--font-head);
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--blue-bright);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.hero h2 {
+  font-family: var(--font-head);
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #a8c4f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 520px;
+  line-height: 1.7;
+}
+.module-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+.pill {
+  background: rgba(26,115,232,0.15);
+  border: 1px solid var(--border);
+  color: var(--blue-bright);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
+}
 
-/* stepper */
-.step-container{position:relative;}
-.step-nav{display:flex;gap:8px;align-items:center;margin-top:10px;}
-.step-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.12);cursor:pointer;transition:background .2s;}
-.step-dot.a{background:#d4a03c;}
-.step-panel{display:none;}.step-panel.active{display:block;}
+/* ---- SECTIONS ---- */
+.module-section {
+  padding: 60px;
+  border-bottom: 1px solid var(--border);
+}
+.module-section:nth-child(even) { background: rgba(11,17,32,0.5); }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.section-num {
+  font-family: var(--font-head);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--blue-bright);
+  background: rgba(26,115,232,0.12);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.section-header h2 {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.subsection { margin-bottom: 48px; }
+.subsection h3 {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--blue-bright);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.subsection p { font-size: 15px; line-height: 1.75; color: #b8c5e0; margin-bottom: 12px; }
+
+/* CARDS */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  border-color: var(--blue);
+  box-shadow: 0 0 20px var(--blue-glow);
+}
+.card .card-title {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue-bright);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.card p { font-size: 13.5px; color: #8892a4; line-height: 1.6; }
+
+.formula {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--cyan);
+  background: rgba(0,212,255,0.06);
+  border: 1px solid rgba(0,212,255,0.15);
+  border-radius: 6px;
+  padding: 3px 8px;
+  display: inline-block;
+  margin: 2px 0;
+}
+.big-formula {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--cyan);
+  background: rgba(0,212,255,0.06);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 8px;
+  padding: 12px 20px;
+  display: block;
+  margin: 12px 0;
+  text-align: center;
+}
+
+/* TRUTH TABLE */
+.truth-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  margin-top: 16px;
+}
+.truth-table th {
+  background: var(--blue-dark);
+  color: var(--text);
+  padding: 10px 16px;
+  text-align: center;
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+.truth-table td {
+  padding: 9px 16px;
+  text-align: center;
+  border-bottom: 1px solid rgba(26,115,232,0.1);
+}
+.truth-table tr:nth-child(even) td { background: rgba(26,115,232,0.04); }
+.tt-true { color: #4ade80; font-weight: 600; }
+.tt-false { color: #f87171; font-weight: 600; }
+.tt-highlight { color: var(--cyan); }
+
+/* INTERACTIVE TRUTH TABLE BUILDER */
+.tt-builder {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.tt-builder h4 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--blue-bright);
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+.tt-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.tt-input-row input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  flex: 1;
+  min-width: 200px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.tt-input-row input:focus { border-color: var(--blue); }
+.btn {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn:hover { background: var(--blue-bright); transform: translateY(-1px); }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.btn-ghost:hover { border-color: var(--blue); color: var(--blue-bright); background: rgba(26,115,232,0.08); }
+.sym-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.sym-btn {
+  background: rgba(26,115,232,0.12);
+  border: 1px solid var(--border);
+  color: var(--blue-bright);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  transition: background 0.2s;
+}
+.sym-btn:hover { background: rgba(26,115,232,0.25); }
+.help-text { font-size: 12px; color: var(--muted); margin-top: 6px; font-style: italic; }
+.error-msg { color: #f87171; font-size: 13px; margin-top: 8px; }
+
+/* OPERATOR CARDS */
+.op-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.op-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.op-card:hover, .op-card.expanded {
+  border-color: var(--blue);
+  background: rgba(26,115,232,0.08);
+}
+.op-card .op-symbol {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+  display: block;
+}
+.op-card .op-name {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.op-card .op-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.op-detail { display: none; margin-top: 14px; }
+.op-card.expanded .op-detail { display: block; }
+.mini-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; }
+.mini-table th { background: rgba(26,115,232,0.2); padding: 5px 10px; color: var(--blue-bright); }
+.mini-table td { padding: 4px 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* LOGIC GATES */
+.gate-simulator {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.gates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 16px; }
+.gate-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.gate-card h4 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--blue-bright);
+  margin-bottom: 16px;
+}
+.gate-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.gate-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gate-input-row label { font-family: var(--font-mono); font-size: 13px; color: var(--muted); width: 16px; }
+.toggle-btn {
+  width: 50px; height: 26px;
+  background: #1f2937;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+.toggle-btn.on { background: var(--blue); border-color: var(--blue); }
+.toggle-btn::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: left 0.2s;
+}
+.toggle-btn.on::after { left: 29px; }
+.toggle-val { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.gate-output {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.gate-output label { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.gate-result {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.gate-result.true { color: #4ade80; }
+.gate-result.false { color: #f87171; }
+.gate-formula { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-left: auto; }
+
+/* RULES OF INFERENCE */
+.rule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.rule-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.rule-card:hover {
+  border-color: var(--blue);
+  box-shadow: 0 0 20px var(--blue-glow);
+}
+.rule-card h4 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+.rule-premises { margin-bottom: 8px; }
+.rule-premises div {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--text);
+  padding: 2px 0;
+}
+.rule-line {
+  width: 100%;
+  height: 1px;
+  background: var(--blue-bright);
+  margin: 10px 0;
+}
+.rule-conclusion {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: #4ade80;
+}
+.rule-conclusion::before { content: '∴ '; color: var(--blue-bright); }
+.rule-example {
+  display: none;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.rule-card.open .rule-example { display: block; }
+.rule-hint {
+  position: absolute;
+  top: 10px; right: 14px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* EQUIVALENCIES TABLE */
+.eq-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 16px;
+}
+.eq-table th {
+  background: var(--blue-dark);
+  color: var(--text);
+  padding: 10px 16px;
+  text-align: left;
+  font-family: var(--font-head);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.eq-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(26,115,232,0.1);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.eq-table tr:hover td { background: rgba(26,115,232,0.06); }
+.eq-name { color: var(--blue-bright); font-family: var(--font-body) !important; font-size: 13px !important; }
+.eq-formula { color: var(--cyan); }
+
+/* QUANTIFIER VISUAL */
+.quant-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+.quant-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+}
+.quant-box .quant-sym {
+  font-family: var(--font-mono);
+  font-size: 56px;
+  display: block;
+  margin-bottom: 8px;
+}
+.quant-box.universal .quant-sym { color: var(--blue-bright); }
+.quant-box.existential .quant-sym { color: var(--cyan); }
+.quant-box h4 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.quant-box p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.quant-box .when-true, .quant-box .when-false {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: left;
+}
+.when-true { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); color: #4ade80; }
+.when-false { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); color: #f87171; margin-top: 6px; }
+
+/* PRACTICE PROBLEMS */
+.practice-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.practice-box h4 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--blue-bright);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.problem {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(26,115,232,0.1);
+}
+.problem:last-child { border-bottom: none; }
+.problem-q { font-size: 14px; color: var(--text); margin-bottom: 10px; line-height: 1.6; }
+.problem-ans {
+  display: none;
+  margin-top: 10px;
+  background: rgba(26,115,232,0.08);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 13.5px;
+  color: #a8c4f0;
+  line-height: 1.7;
+}
+.problem-ans.shown { display: block; }
+.reveal-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+.reveal-btn:hover { border-color: var(--blue); color: var(--blue-bright); }
+
+/* PROOF STEPPER */
+.proof-stepper {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.proof-stepper h4 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  color: var(--blue-bright);
+  margin-bottom: 16px;
+}
+.proof-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.proof-tab {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s;
+  background: transparent;
+  font-family: var(--font-body);
+}
+.proof-tab.active { border-color: var(--blue); color: var(--blue-bright); background: rgba(26,115,232,0.1); }
+.proof-steps { min-height: 120px; }
+.proof-step {
+  display: none;
+  padding: 12px 16px;
+  border-left: 3px solid var(--blue);
+  margin-bottom: 8px;
+  background: rgba(26,115,232,0.05);
+  border-radius: 0 6px 6px 0;
+  animation: slideIn 0.3s ease;
+}
+.proof-step.visible { display: block; }
+@keyframes slideIn { from { opacity:0; transform: translateX(-10px); } to { opacity:1; transform: translateX(0); } }
+.step-num { font-size: 10px; color: var(--muted); margin-bottom: 4px; font-family: var(--font-head); letter-spacing: 1px; text-transform: uppercase; }
+.step-expr { font-family: var(--font-mono); font-size: 15px; color: var(--cyan); }
+.step-law { font-size: 12px; color: var(--blue-bright); margin-top: 4px; }
+.proof-controls { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+.proof-counter { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+/* TRANSLATOR */
+.translator {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.translator h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
+.trans-examples { display: flex; flex-direction: column; gap: 12px; }
+.trans-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.trans-row:hover { border-color: var(--blue); }
+.trans-english { font-size: 13px; color: var(--text); line-height: 1.5; }
+.trans-arrow { color: var(--blue-bright); font-size: 18px; text-align: center; }
+.trans-logic { font-family: var(--font-mono); font-size: 14px; color: var(--cyan); text-align: right; }
+.trans-row.hidden-logic .trans-logic { color: var(--surface); background: var(--surface); border-radius: 4px; cursor: pointer; user-select: none; }
+.trans-row.hidden-logic .trans-logic::after { content: ' Click to reveal'; color: var(--muted); font-family: var(--font-body); font-size: 11px; }
+
+/* DEMORGAN VISUAL */
+.demorgan-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 16px 0;
+}
+.demorgan-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(26,115,232,0.1);
+}
+.demorgan-row:last-child { border-bottom: none; }
+.dm-orig { font-family: var(--font-mono); font-size: 16px; color: #f87171; min-width: 160px; }
+.dm-arrow { color: var(--muted); font-size: 20px; }
+.dm-equiv { font-family: var(--font-mono); font-size: 16px; color: #4ade80; min-width: 160px; }
+.dm-note { font-size: 12px; color: var(--muted); line-height: 1.5; flex: 1; }
+
+/* VENN SVG */
+svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3; opacity: 0.7; }
+
+/* CONVERSE/INVERSE/CONTRA */
+.cic-builder {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+}
+.cic-builder h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
+.cic-input { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.cic-input input {
+  flex: 1; min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+.cic-input input:focus { border-color: var(--blue); }
+.cic-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cic-result {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.cic-result .cic-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; font-family: var(--font-head); }
+.cic-result.original .cic-label { color: var(--blue-bright); }
+.cic-result.converse .cic-label { color: var(--cyan); }
+.cic-result.inverse .cic-label { color: #f9a8d4; }
+.cic-result.contrapositive .cic-label { color: #4ade80; }
+.cic-result .cic-val { font-size: 13.5px; color: var(--text); line-height: 1.5; }
+
+/* SCROLL ANIMATIONS */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.fade-in.visible { opacity: 1; transform: none; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  #sidebar { width: 220px; }
+  #main { margin-left: 220px; }
+  .module-section { padding: 40px 30px; }
+  .quant-compare { grid-template-columns: 1fr; }
+  .cic-results { grid-template-columns: 1fr; }
+}
+
+.info-box {
+  background: rgba(26,115,232,0.08);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #a8c4f0;
+}
+.warn-box {
+  background: rgba(251,191,36,0.06);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-left: 3px solid #fbbf24;
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #fde68a;
+}
 </style>
 </head>
 <body>
 
-<aside>
-  <div class="logo">
-    <div class="logo-t">MAA 4402</div>
-    <div class="logo-big">Complex Analysis</div>
-    <div class="logo-sub">Interactive Exam Prep</div>
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <span class="badge">COT 3100</span>
+    <h1>Discrete<br>Structures</h1>
   </div>
-  <div class="nav-scroll">
-    <div class="ncat">Foundations</div>
-    <button class="nb a" onclick="nav('polar')"><span class="icon">◉</span>Polar Form &amp; eⁱᶿ</button>
-    <button class="nb" onclick="nav('multiply')"><span class="icon">×</span>Complex Multiplication</button>
-    <button class="nb" onclick="nav('roots')"><span class="icon">∜</span>nth Roots of Unity</button>
-    <div class="ncat">Differentiation</div>
-    <button class="nb" onclick="nav('cr')"><span class="icon">∂</span>Cauchy-Riemann Eqs</button>
-    <button class="nb" onclick="nav('analytic')"><span class="icon">ƒ</span>Analytic Functions</button>
-    <button class="nb" onclick="nav('harmonic')"><span class="icon">△</span>Harmonic Functions</button>
-    <div class="ncat">Special Functions</div>
-    <button class="nb" onclick="nav('log')"><span class="icon">㏑</span>Complex Logarithm</button>
-    <button class="nb" onclick="nav('power')"><span class="icon">ᶜ</span>Power Function zᶜ</button>
-    <div class="ncat">Integration</div>
-    <button class="nb" onclick="nav('contour')"><span class="icon">∮</span>Contour Integrals</button>
-    <button class="nb" onclick="nav('cauchy')"><span class="icon">◯</span>Cauchy-Goursat Thm</button>
-    <button class="nb" onclick="nav('antider')"><span class="icon">F</span>Antiderivatives</button>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Modules</div>
+    <a class="nav-item" href="#prop"><span>01</span> Propositional Logic</a>
+    <a class="nav-item" href="#equiv"><span>02</span> Propositional Equivalencies</a>
+    <a class="nav-item" href="#gates"><span>03</span> Logic Gates</a>
+    <a class="nav-item" href="#pred"><span>04</span> Predicates & Quantifiers</a>
+    <a class="nav-item" href="#nested"><span>05</span> Nested Quantifiers</a>
+    <a class="nav-item" href="#rules"><span>06</span> Rules of Inference</a>
+    <div class="nav-section-label">Tools</div>
+    <a class="nav-item" href="#tt-builder">↪ Truth Table Builder</a>
+    <a class="nav-item" href="#gate-sim">↪ Gate Simulator</a>
+    <a class="nav-item" href="#proof-step">↪ Proof Stepper</a>
   </div>
-</aside>
+</nav>
 
-<main>
+<!-- MAIN -->
+<div id="main">
 
-<!-- ═══════════════════════════════════════ POLAR ═══════════════════════════ -->
-<div id="sec-polar" class="sec active">
-  <h1>Polar Form &amp; e<sup>iθ</sup></h1>
-  <p class="sub">Sections 7–8 · Drag the gold point on the canvas</p>
-  <div class="grid2">
-    <div>
-      <div class="card" style="padding:10px">
-        <canvas id="cv-polar" width="400" height="360" style="width:100%"></canvas>
-      </div>
-      <div class="card">
-        <div class="stat-g">
-          <div class="stat"><div class="stat-l">z (rectangular)</div><div class="stat-v" id="p-rect" style="color:#e8dccc">…</div></div>
-          <div class="stat"><div class="stat-l">|z| = r</div><div class="stat-v" id="p-mod" style="color:#6ee7b7">…</div></div>
-          <div class="stat"><div class="stat-l">Arg(z) rad</div><div class="stat-v" id="p-arg" style="color:#d4a03c">…</div></div>
-          <div class="stat"><div class="stat-l">Arg(z) deg</div><div class="stat-v" id="p-argd" style="color:#d4a03c">…</div></div>
-          <div class="stat" style="grid-column:1/-1"><div class="stat-l">Polar form re<sup>iθ</sup></div><div class="stat-v" id="p-polar" style="color:#c084fc">…</div></div>
-          <div class="stat" style="grid-column:1/-1"><div class="stat-l">e<sup>iθ</sup> = cos θ + i sin θ</div><div class="stat-v" id="p-euler" style="color:#88ccff">…</div></div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">Two Representations</h2>
-        <p>Every nonzero complex number z has two equivalent forms:</p>
-        <div class="fml">z = x + iy  =  r · e<sup>iθ</sup>  =  r(cos θ + i sin θ)</div>
-        <p>where <strong class="green">r = |z| = √(x²+y²)</strong> is the <strong>modulus</strong> and <strong class="gold">θ = Arg(z) ∈ (−π, π]</strong> is the <strong>principal argument</strong>.</p>
-      </div>
-      <div class="card">
-        <h2>Euler's Formula</h2>
-        <div class="fml">e<sup>iθ</sup> = cos θ + i sin θ</div>
-        <p>This is provable from the Taylor series of e<sup>z</sup>, cos z, sin z. The key consequence: <strong>e<sup>iθ</sup> lives on the unit circle</strong> for all real θ. Try dragging the point near the unit circle (|z|≈1).</p>
-        <h3>The Complex Exponential</h3>
-        <div class="fml">e<sup>z</sup> = e<sup>x+iy</sup> = e<sup>x</sup>(cos y + i sin y)</div>
-        <div class="key"><strong class="green">e<sup>z</sup> ≠ 0 for any z ∈ ℂ.</strong> This follows from |e<sup>z</sup>| = e<sup>x</sup> > 0 always.</div>
-        <div class="warn"><strong>⚠ Arg(z) is discontinuous</strong> on ℂ\{0}. It jumps across the negative real axis (from +π to −π). This forces us to make a "branch cut" for Log(z).</div>
-      </div>
-      <div class="card">
-        <h3>Multiple Arguments</h3>
-        <div class="fml">arg(z) = Arg(z) + 2πk,  k ∈ ℤ</div>
-        <p>Any argument differs from the principal one by a multiple of 2π. So z = re<sup>iθ</sup> = re<sup>i(θ+2πk)</sup> for all k ∈ ℤ.</p>
-        <h3>Conjugate in Polar Form</h3>
-        <div class="fml">z̄ = re<sup>−iθ</sup>     z·z̄ = r² = |z|²</div>
-      </div>
+<!-- HERO -->
+<div class="hero">
+  <svg class="hero-venn" width="280" height="280" viewBox="0 0 280 280">
+    <circle cx="110" cy="110" r="90" fill="#1a73e8" fill-opacity="0.25" stroke="#1a73e8" stroke-width="2"/>
+    <circle cx="170" cy="110" r="90" fill="#1a73e8" fill-opacity="0.25" stroke="#1a73e8" stroke-width="2"/>
+    <circle cx="140" cy="170" r="90" fill="#1a73e8" fill-opacity="0.25" stroke="#1a73e8" stroke-width="2"/>
+  </svg>
+  <div class="hero-content">
+    <div class="hero-tag">Week 1 · Logic Foundations</div>
+    <h2>Discrete<br>Structures</h2>
+    <p>Master propositional logic, predicates, quantifiers, and rules of inference — the building blocks of mathematical reasoning and computer science.</p>
+    <div class="module-pills">
+      <span class="pill">Propositional Logic</span>
+      <span class="pill">Truth Tables</span>
+      <span class="pill">Quantifiers</span>
+      <span class="pill">Nested Quantifiers</span>
+      <span class="pill">Rules of Inference</span>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════ MULTIPLY ═══════════════════════ -->
-<div id="sec-multiply" class="sec">
-  <h1>Complex Multiplication</h1>
-  <p class="sub">Section 9 · Drag the blue (z₁) or purple (z₂) points</p>
-  <div class="grid2">
-    <div>
-      <div class="card" style="padding:10px">
-        <canvas id="cv-mul" width="400" height="360" style="width:100%"></canvas>
+<!-- ==================== MODULE 1: PROPOSITIONAL LOGIC ==================== -->
+<section class="module-section" id="prop">
+  <div class="section-header">
+    <span class="section-num">Module 01</span>
+    <h2>Propositional Logic</h2>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>What is a Proposition?</h3>
+    <p>A <strong>proposition</strong> is a declarative sentence that is either <span style="color:#4ade80">true</span> or <span style="color:#f87171">false</span>, but not both. Whether the statement is obviously true or false does not determine whether it is a proposition — we only need to know that a true or false value <em>can</em> be established.</p>
+    <div class="info-box">Interrogative and imperative sentences like "Did you try binary search?" or "Always comment your code" are <strong>NOT</strong> propositions — they can't be true or false.</div>
+    <div class="card-grid">
+      <div class="card"><div class="card-title">✅ Proposition</div><p>"Washington D.C. is the capital of the USA." — Has a definite truth value (True).</p></div>
+      <div class="card"><div class="card-title">✅ Proposition</div><p>"33 is a prime number." — Has a definite truth value (False: 33 = 3×11).</p></div>
+      <div class="card"><div class="card-title">✅ Proposition</div><p>"Every even integer &gt; 2 is the sum of two primes." — Has a truth value (Goldbach's Conjecture, unknown but valid proposition).</p></div>
+      <div class="card"><div class="card-title">❌ Not a Proposition</div><p>"What time is it?" — Interrogative, cannot be true or false.</p></div>
+      <div class="card"><div class="card-title">❌ Not a Proposition</div><p>"x + 1 = 3" — Contains a free variable; truth depends on x.</p></div>
+    </div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Logical Operators</h3>
+    <p>Click any operator to expand its truth table and details.</p>
+    <div class="op-grid">
+      <div class="op-card" onclick="toggleOp(this)">
+        <span class="op-symbol">¬</span>
+        <div class="op-name">Negation (NOT)</div>
+        <div class="op-desc">Flips the truth value. ¬p is true when p is false.</div>
+        <div class="op-detail">
+          <table class="mini-table"><tr><th>p</th><th>¬p</th></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td></tr></table>
+          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Code: <span style="color:var(--cyan)">!p</span></p>
+        </div>
       </div>
-      <div class="card">
-        <div class="stat-g">
-          <div class="stat"><div class="stat-l">z₁</div><div class="stat-v" id="m-z1" style="color:#88ccff">…</div></div>
-          <div class="stat"><div class="stat-l">z₂</div><div class="stat-v" id="m-z2" style="color:#c084fc">…</div></div>
-          <div class="stat"><div class="stat-l">|z₁z₂| = |z₁|·|z₂|</div><div class="stat-v" id="m-mod" style="color:#d4a03c">…</div></div>
-          <div class="stat"><div class="stat-l">arg(z₁z₂) ≈ θ₁+θ₂</div><div class="stat-v" id="m-arg" style="color:#d4a03c">…</div></div>
-          <div class="stat" style="grid-column:1/-1"><div class="stat-l">z₁·z₂ (rectangular)</div><div class="stat-v" id="m-prod" style="color:#6ee7b7">…</div></div>
+      <div class="op-card" onclick="toggleOp(this)">
+        <span class="op-symbol">∧</span>
+        <div class="op-name">Conjunction (AND)</div>
+        <div class="op-desc">True only when BOTH p and q are true.</div>
+        <div class="op-detail">
+          <table class="mini-table"><tr><th>p</th><th>q</th><th>p∧q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-false">F</td></tr></table>
+          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Code: <span style="color:var(--cyan)">p && q</span></p>
+        </div>
+      </div>
+      <div class="op-card" onclick="toggleOp(this)">
+        <span class="op-symbol">∨</span>
+        <div class="op-name">Disjunction (OR)</div>
+        <div class="op-desc">True when at least one of p or q is true (inclusive or).</div>
+        <div class="op-detail">
+          <table class="mini-table"><tr><th>p</th><th>q</th><th>p∨q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-false">F</td></tr></table>
+          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Code: <span style="color:var(--cyan)">p || q</span></p>
+        </div>
+      </div>
+      <div class="op-card" onclick="toggleOp(this)">
+        <span class="op-symbol">⊕</span>
+        <div class="op-name">Exclusive Or (XOR)</div>
+        <div class="op-desc">True when exactly ONE of p or q is true (not both).</div>
+        <div class="op-detail">
+          <table class="mini-table"><tr><th>p</th><th>q</th><th>p⊕q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-false">F</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-false">F</td></tr></table>
+          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Code: <span style="color:var(--cyan)">p ^ q</span></p>
+        </div>
+      </div>
+      <div class="op-card" onclick="toggleOp(this)">
+        <span class="op-symbol">→</span>
+        <div class="op-name">Conditional (IF-THEN)</div>
+        <div class="op-desc">False only when p is true and q is false. "If p then q."</div>
+        <div class="op-detail">
+          <table class="mini-table"><tr><th>p</th><th>q</th><th>p→q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-true">T</td></tr></table>
+          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Precedence: 5 (low)</p>
+        </div>
+      </div>
+      <div class="op-card" onclick="toggleOp(this)">
+        <span class="op-symbol">↔</span>
+        <div class="op-name">Biconditional (IFF)</div>
+        <div class="op-desc">True when p and q have the SAME truth value. "p if and only if q."</div>
+        <div class="op-detail">
+          <table class="mini-table"><tr><th>p</th><th>q</th><th>p↔q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-true">T</td></tr></table>
+          <p style="margin-top:10px;font-size:12px;color:var(--muted)">Precedence: 6 (lowest)</p>
         </div>
       </div>
     </div>
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">The Polar Multiplication Rule</h2>
-        <p>For z₁ = r₁e<sup>iθ₁</sup> and z₂ = r₂e<sup>iθ₂</sup>:</p>
-        <div class="fml">z₁ · z₂  =  r₁r₂ · e<sup>i(θ₁+θ₂)</sup></div>
-        <p><strong>Multiply the moduli</strong> and <strong>add the arguments</strong>. Geometrically: multiplying by z₂ scales by r₂ and rotates by θ₂.</p>
-      </div>
-      <div class="card">
-        <h3>De Moivre's Theorem</h3>
-        <div class="fml">z<sup>n</sup> = r<sup>n</sup> · e<sup>inθ</sup> = r<sup>n</sup>(cos nθ + i sin nθ)</div>
-        <h3>Division &amp; Inverse</h3>
-        <div class="fml">z₁/z₂ = (r₁/r₂)·e<sup>i(θ₁−θ₂)</sup>
+  </div>
 
-1/z = z̄/|z|² = r⁻¹e<sup>−iθ</sup></div>
-        <div class="warn"><strong>⚠ Warning on Arg:</strong> Arg(z₁z₂) ≠ Arg(z₁)+Arg(z₂) in general! The sum may lie outside (−π,π]. Only with ±2πk does additivity hold.</div>
+  <div class="subsection fade-in">
+    <h3>Operator Precedence</h3>
+    <p>Like arithmetic, logical operators have a precedence order. Higher precedence operators are applied first.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:16px;">
+      <div style="text-align:center;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;"><div style="font-family:var(--font-mono);font-size:24px;color:var(--cyan)">¬</div><div style="font-family:var(--font-head);font-size:11px;color:var(--muted);margin-top:6px">Precedence 1</div><div style="font-size:11px;color:#4ade80">HIGHEST</div></div>
+      <div style="text-align:center;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;"><div style="font-family:var(--font-mono);font-size:24px;color:var(--cyan)">∧</div><div style="font-family:var(--font-head);font-size:11px;color:var(--muted);margin-top:6px">Precedence 2</div></div>
+      <div style="text-align:center;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;"><div style="font-family:var(--font-mono);font-size:24px;color:var(--cyan)">⊕</div><div style="font-family:var(--font-head);font-size:11px;color:var(--muted);margin-top:6px">Precedence 3</div></div>
+      <div style="text-align:center;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;"><div style="font-family:var(--font-mono);font-size:24px;color:var(--cyan)">∨</div><div style="font-family:var(--font-head);font-size:11px;color:var(--muted);margin-top:6px">Precedence 4</div></div>
+      <div style="text-align:center;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;"><div style="font-family:var(--font-mono);font-size:24px;color:var(--cyan)">→</div><div style="font-family:var(--font-head);font-size:11px;color:var(--muted);margin-top:6px">Precedence 5</div></div>
+      <div style="text-align:center;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;"><div style="font-family:var(--font-mono);font-size:24px;color:var(--cyan)">↔</div><div style="font-family:var(--font-head);font-size:11px;color:var(--muted);margin-top:6px">Precedence 6</div><div style="font-size:11px;color:#f87171">LOWEST</div></div>
+    </div>
+    <div class="info-box" style="margin-top:16px">Example: <span class="formula">p ∧ q ∨ r</span> is parsed as <span class="formula">(p ∧ q) ∨ r</span> because ∧ has higher precedence than ∨.</div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Conditional Statements — Multiple Forms</h3>
+    <p>The conditional statement <span class="formula">p → q</span> ("if p then q") can be expressed many ways in English. All of the following mean the same thing:</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:16px;">
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"if p, then q"</div>
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"p implies q"</div>
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"p only if q"</div>
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"q if p"</div>
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"q whenever p"</div>
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"q is necessary for p"</div>
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"p is sufficient for q"</div>
+      <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"q unless ¬p"</div>
+    </div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Converse, Inverse, Contrapositive</h3>
+    <p>From an implication <span class="formula">p → q</span>, we can derive three related statements:</p>
+    <div class="cic-builder">
+      <h4>🔄 Interactive Builder — enter p and q in plain English</h4>
+      <div class="cic-input">
+        <input id="cic-p" placeholder="p: e.g. it is raining" oninput="updateCIC()">
+        <input id="cic-q" placeholder="q: e.g. I need an umbrella" oninput="updateCIC()">
       </div>
-      <div class="card">
-        <h3>Rectangular Formula</h3>
-        <div class="fml">z₁z₂ = (x₁x₂−y₁y₂) + i(x₁y₂+y₁x₂)</div>
-        <p>Notice this encodes the matrix multiplication for 2×2 matrices of the form <span class="mono">[[a,−b],[b,a]]</span>. Every complex number corresponds to such a rotation-scaling matrix!</p>
-        <div class="key"><strong>Proposition:</strong> If z₁z₂ = 0 then z₁=0 or z₂=0 (ℂ has no zero divisors).</div>
+      <div class="cic-results">
+        <div class="cic-result original"><div class="cic-label">Original (p → q)</div><div class="cic-val" id="cic-orig">If it is raining, then I need an umbrella.</div></div>
+        <div class="cic-result converse"><div class="cic-label">Converse (q → p)</div><div class="cic-val" id="cic-conv">If I need an umbrella, then it is raining.</div></div>
+        <div class="cic-result inverse"><div class="cic-label">Inverse (¬p → ¬q)</div><div class="cic-val" id="cic-inv">If it is not raining, then I do not need an umbrella.</div></div>
+        <div class="cic-result contrapositive"><div class="cic-label">Contrapositive (¬q → ¬p)</div><div class="cic-val" id="cic-contra">If I do not need an umbrella, then it is not raining.</div></div>
+      </div>
+      <div class="info-box" style="margin-top:16px">💡 The original and contrapositive are <strong>logically equivalent</strong>. The converse and inverse are logically equivalent to each other.</div>
+    </div>
+  </div>
+
+  <!-- TRUTH TABLE BUILDER -->
+  <div class="subsection fade-in" id="tt-builder">
+    <h3>Interactive Truth Table Builder</h3>
+    <p>Enter a logical expression using variables p, q, r and operators. Click the symbol buttons to insert operators.</p>
+    <div class="tt-builder">
+      <h4>⚡ Truth Table Generator</h4>
+      <div class="sym-btns">
+        <button class="sym-btn" onclick="insertSym('¬')">¬</button>
+        <button class="sym-btn" onclick="insertSym('∧')">∧</button>
+        <button class="sym-btn" onclick="insertSym('∨')">∨</button>
+        <button class="sym-btn" onclick="insertSym('⊕')">⊕</button>
+        <button class="sym-btn" onclick="insertSym('→')">→</button>
+        <button class="sym-btn" onclick="insertSym('↔')">↔</button>
+        <button class="sym-btn" onclick="insertSym('(')">( )</button>
+      </div>
+      <div class="tt-input-row">
+        <input type="text" id="tt-expr" placeholder="e.g. (p → q) ∧ ¬r" onkeyup="if(event.key==='Enter')buildTT()">
+        <button class="btn" onclick="buildTT()">Generate</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('tt-expr').value='';document.getElementById('tt-output').innerHTML=''">Clear</button>
+      </div>
+      <div class="help-text">Use p, q, r for variables. Supports ¬ ∧ ∨ ⊕ → ↔ and parentheses.</div>
+      <div class="help-text">Quick examples: 
+        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p → q')">p → q</span> · 
+        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('(p ∧ q) → r')">( p ∧ q ) → r</span> · 
+        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p ↔ ¬p')">p ↔ ¬p</span> · 
+        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p ∨ ¬p')">p ∨ ¬p</span>
+      </div>
+      <div id="tt-output" style="margin-top:20px;overflow-x:auto"></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==================== MODULE 2: EQUIVALENCIES ==================== -->
+<section class="module-section" id="equiv">
+  <div class="section-header">
+    <span class="section-num">Module 02</span>
+    <h2>Propositional Equivalencies</h2>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Tautologies, Contradictions, and Contingencies</h3>
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(74,222,128,0.3)">
+        <div class="card-title" style="color:#4ade80">✅ Tautology</div>
+        <p>A compound proposition that is <strong>always true</strong> regardless of truth assignments.</p>
+        <div class="big-formula" style="margin-top:12px;font-size:16px">p ∨ ¬p ≡ T</div>
+      </div>
+      <div class="card" style="border-color:rgba(248,113,113,0.3)">
+        <div class="card-title" style="color:#f87171">❌ Contradiction</div>
+        <p>A compound proposition that is <strong>always false</strong>. Also called an unsatisfiable proposition.</p>
+        <div class="big-formula" style="margin-top:12px;font-size:16px">p ∧ ¬p ≡ F</div>
+      </div>
+      <div class="card" style="border-color:rgba(251,191,36,0.3)">
+        <div class="card-title" style="color:#fbbf24">⚡ Contingency</div>
+        <p>Neither a tautology nor a contradiction — sometimes true, sometimes false.</p>
+        <div class="big-formula" style="margin-top:12px;font-size:16px">p → q</div>
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:16px">A proposition is <strong>satisfiable</strong> if it is true under at least one truth assignment. Tautologies and contingencies are satisfiable. Contradictions are not.</div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Logical Equivalence Laws</h3>
+    <p>Two propositions p and q are <strong>logically equivalent</strong> (written p ≡ q) if they have the same truth value under every truth assignment — i.e., p ↔ q is a tautology.</p>
+    <table class="eq-table">
+      <thead><tr><th>Equivalence</th><th>Name</th></tr></thead>
+      <tbody>
+        <tr><td class="eq-formula">p ∧ T ≡ p &nbsp;&nbsp; p ∨ F ≡ p</td><td class="eq-name">Identity Laws</td></tr>
+        <tr><td class="eq-formula">p ∨ T ≡ T &nbsp;&nbsp; p ∧ F ≡ F</td><td class="eq-name">Domination Laws</td></tr>
+        <tr><td class="eq-formula">p ∨ p ≡ p &nbsp;&nbsp; p ∧ p ≡ p</td><td class="eq-name">Idempotent Laws</td></tr>
+        <tr><td class="eq-formula">¬(¬p) ≡ p</td><td class="eq-name">Double Negation Law</td></tr>
+        <tr><td class="eq-formula">p ∨ q ≡ q ∨ p &nbsp;&nbsp; p ∧ q ≡ q ∧ p</td><td class="eq-name">Commutative Laws</td></tr>
+        <tr><td class="eq-formula">(p ∨ q) ∨ r ≡ p ∨ (q ∨ r)</td><td class="eq-name">Associative Laws</td></tr>
+        <tr><td class="eq-formula">p ∨ (q ∧ r) ≡ (p ∨ q) ∧ (p ∨ r)</td><td class="eq-name">Distributive Laws</td></tr>
+        <tr><td class="eq-formula">p ∧ (q ∨ r) ≡ (p ∧ q) ∨ (p ∧ r)</td><td class="eq-name">Distributive Laws</td></tr>
+        <tr><td class="eq-formula">¬(p ∧ q) ≡ ¬p ∨ ¬q</td><td class="eq-name">De Morgan's Law (1st)</td></tr>
+        <tr><td class="eq-formula">¬(p ∨ q) ≡ ¬p ∧ ¬q</td><td class="eq-name">De Morgan's Law (2nd)</td></tr>
+        <tr><td class="eq-formula">p ∨ (p ∧ q) ≡ p &nbsp;&nbsp; p ∧ (p ∨ q) ≡ p</td><td class="eq-name">Absorption Laws</td></tr>
+        <tr><td class="eq-formula">p ∨ ¬p ≡ T &nbsp;&nbsp; p ∧ ¬p ≡ F</td><td class="eq-name">Negation Laws</td></tr>
+        <tr><td class="eq-formula">p → q ≡ ¬p ∨ q</td><td class="eq-name">Conditional as Disjunction</td></tr>
+        <tr><td class="eq-formula">p → q ≡ ¬q → ¬p</td><td class="eq-name">Contrapositive</td></tr>
+        <tr><td class="eq-formula">¬(p → q) ≡ p ∧ ¬q</td><td class="eq-name">Negation of Conditional</td></tr>
+        <tr><td class="eq-formula">p ↔ q ≡ (p → q) ∧ (q → p)</td><td class="eq-name">Biconditional Expansion</td></tr>
+        <tr><td class="eq-formula">p ↔ q ≡ (p ∧ q) ∨ (¬p ∧ ¬q)</td><td class="eq-name">Biconditional as Conjunction</td></tr>
+        <tr><td class="eq-formula">¬(p ↔ q) ≡ p ↔ ¬q</td><td class="eq-name">Negation of Biconditional</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection fade-in" id="proof-step">
+    <h3>Algebraic Manipulation — Step-Through Proofs</h3>
+    <div class="proof-stepper">
+      <h4>🔬 Interactive Proof Viewer</h4>
+      <div class="proof-selector">
+        <button class="proof-tab active" onclick="loadProof(0,this)">¬(p ∨ (¬p ∧ q)) ≡ ¬p ∧ ¬q</button>
+        <button class="proof-tab" onclick="loadProof(1,this)">(p ∨ q) ∧ ¬p ≡ ¬p ∧ q</button>
+        <button class="proof-tab" onclick="loadProof(2,this)">p ∨ (p ∧ q) ≡ p</button>
+        <button class="proof-tab" onclick="loadProof(3,this)">(¬p ∧ (p ∨ q)) → q</button>
+      </div>
+      <div class="proof-steps" id="proof-steps"></div>
+      <div class="proof-controls">
+        <button class="btn btn-sm" onclick="prevStep()">← Prev</button>
+        <span class="proof-counter" id="step-counter">Step 0/0</span>
+        <button class="btn btn-sm" onclick="nextStep()">Next →</button>
+        <button class="btn btn-sm btn-ghost" onclick="resetProof()">Reset</button>
+        <button class="btn btn-sm btn-ghost" onclick="showAllSteps()">Show All</button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════ ROOTS ═══════════════════════════ -->
-<div id="sec-roots" class="sec">
-  <h1>nth Roots</h1>
-  <p class="sub">Section 10 · Solving z<sup>n</sup> = w — adjust n, |w|, and Arg(w)</p>
-  <div class="grid2">
-    <div>
-      <div class="card" style="padding:10px">
-        <canvas id="cv-roots" width="400" height="360" style="width:100%"></canvas>
-      </div>
-      <div class="card">
-        <div class="slider-row"><span>n (number of roots)</span><span id="rn-lbl" class="gold">5</span></div>
-        <input type="range" id="rn" min="1" max="12" value="5" oninput="updateRoots()">
-        <div class="slider-row" style="margin-top:10px"><span>|w| (target modulus)</span><span id="rR-lbl" class="blue">1.00</span></div>
-        <input type="range" id="rR" min="20" max="180" value="100" oninput="updateRoots()">
-        <div class="slider-row" style="margin-top:10px"><span>Arg(w) degrees</span><span id="rT-lbl" class="purple">0°</span></div>
-        <input type="range" id="rT" min="-180" max="180" value="0" oninput="updateRoots()">
-        <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:8px;text-align:center">
-          <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:4px">The n roots lie on a circle of radius</div>
-          <div id="roots-radius" class="gold" style="font:15px 'JetBrains Mono',monospace">R^(1/n) = 1.000</div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">Solving z<sup>n</sup> = w</h2>
-        <p>Write w = Re<sup>iΘ</sup>. Set z = ρe<sup>iφ</sup>. Then z<sup>n</sup>=w requires:</p>
-        <div class="fml">ρ<sup>n</sup> = R  →  ρ = R<sup>1/n</sup>
-n·φ = Θ + 2πk  →  φ = (Θ+2πk)/n</div>
-        <p>There are exactly <strong>n distinct solutions</strong> (k=0,1,…,n−1):</p>
-        <div class="fml">z_k = R<sup>1/n</sup> · e<sup>i(Θ+2πk)/n</sup></div>
-      </div>
-      <div class="card">
-        <h3>nth Roots of Unity</h3>
-        <p>Special case w=1 (R=1, Θ=0):</p>
-        <div class="fml">ω_k = e<sup>2πik/n</sup>,  k = 0, 1, …, n−1</div>
-        <p>These form a <strong>regular n-gon</strong> inscribed in the unit circle. Set |w|=1 and Arg(w)=0° in the demo!</p>
-        <h3>Key Trick</h3>
-        <p>If z₀ is <em>any one</em> nth root of w, then ALL nth roots are:</p>
-        <div class="fml">z₀ · ω_k  for  k = 0, 1, …, n−1</div>
-        <div class="key"><strong>Example:</strong> z⁸ = 1 → roots are e<sup>2πik/8</sup> = e<sup>πik/4</sup> for k=0,…,7. These are the 8 corners of a regular octagon on the unit circle.</div>
-      </div>
-      <div class="card">
-        <h3>Example: z² = −1</h3>
-        <p>Here w = −1, R=1, Θ=π. So:</p>
-        <div class="fml">z_k = e<sup>i(π+2πk)/2</sup> = e<sup>iπ/2</sup>, e<sup>i3π/2</sup> = i, −i</div>
-        <p>Set n=2, Arg=180° in the demo to see this!</p>
-      </div>
-    </div>
-  </div>
-</div>
+</section>
 
-<!-- ═══════════════════════════════════════ CR ══════════════════════════════ -->
-<div id="sec-cr" class="sec">
-  <h1>Cauchy-Riemann Equations</h1>
-  <p class="sub">Sections 17–19 · The necessary (and almost sufficient) condition for complex differentiability</p>
-
-  <div class="card card-gold">
-    <h2 style="margin-top:0">The Setup</h2>
-    <p>Write f(z) = u(x,y) + iv(x,y). If f is complex-differentiable at z₀=(x₀,y₀), evaluating the limit along the real axis and then along the imaginary axis must give the same answer. This forces:</p>
-    <div class="fml" style="font-size:17px">u_x = v_y  &nbsp;&nbsp;&nbsp;&nbsp;  v_x = −u_y</div>
-    <p>These are the <strong>Cauchy-Riemann (CR) equations</strong>. When they hold and partials are continuous: <span class="mono gold">f′(z) = u_x + iv_x = v_y − iu_y</span></p>
+<!-- ==================== MODULE 3: LOGIC GATES ==================== -->
+<section class="module-section" id="gates">
+  <div class="section-header">
+    <span class="section-num">Module 03</span>
+    <h2>Logic Gates &amp; Circuits</h2>
   </div>
 
-  <div class="grid2">
-    <div>
-      <div class="card">
-        <h2>Interactive CR Checker</h2>
-        <select id="cr-fn" onchange="updateCR()">
-          <option value="z2">f(z) = z²  →  u=x²−y², v=2xy</option>
-          <option value="conj">f(z) = z̄  →  u=x, v=−y</option>
-          <option value="mod2">f(z) = |z|²  →  u=x²+y², v=0</option>
-          <option value="ez">f(z) = eᶻ  →  u=eˣcos y, v=eˣsin y</option>
-          <option value="z3">f(z) = z³  →  u=x³−3xy², v=3x²y−y³</option>
-          <option value="abs">f(z) = |z|  →  u=√(x²+y²), v=0</option>
-          <option value="sinz">f(z) = sin z  →  u=sin x·cosh y, v=cos x·sinh y</option>
-        </select>
-        <p style="margin:14px 0 6px;font-size:14px;color:rgba(255,255,255,.4)">Test point z = x + iy:</p>
-        <div class="slider-row"><span>x</span><span id="cr-x-lbl" class="blue">1.00</span></div>
-        <input type="range" id="cr-x" min="-200" max="200" value="100" oninput="updateCR()">
-        <div class="slider-row" style="margin-top:8px"><span>y</span><span id="cr-y-lbl" class="blue">0.50</span></div>
-        <input type="range" id="cr-y" min="-200" max="200" value="50" oninput="updateCR()">
-      </div>
-      <div class="card">
-        <h3>Partial Derivatives at (x,y)</h3>
-        <div class="stat-g" style="margin-bottom:12px">
-          <div class="stat"><div class="stat-l">u_x = ∂u/∂x</div><div id="cr-ux" class="stat-v blue">…</div></div>
-          <div class="stat"><div class="stat-l">v_y = ∂v/∂y</div><div id="cr-vy" class="stat-v green">…</div></div>
-          <div class="stat"><div class="stat-l">v_x = ∂v/∂x</div><div id="cr-vx" class="stat-v blue">…</div></div>
-          <div class="stat"><div class="stat-l">−u_y</div><div id="cr-muy" class="stat-v green">…</div></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-bottom:12px">
-          <div style="flex:1;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px">
-            <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px">u_x = v_y?</div>
-            <span id="cr-b1">…</span>
+  <div class="subsection fade-in">
+    <h3>Basic Logic Gates</h3>
+    <p>Logic gates are physical implementations of boolean operations. Toggle the inputs below to see how each gate responds.</p>
+  </div>
+
+  <div id="gate-sim" class="fade-in">
+    <div class="gates-grid">
+      <!-- NOT GATE -->
+      <div class="gate-card">
+        <h4>Inverter (NOT) — ¬p</h4>
+        <div class="gate-inputs">
+          <div class="gate-input-row">
+            <label>p</label>
+            <div class="toggle-btn" id="not-p" onclick="toggleGate('not-p');updateGates()"></div>
+            <span class="toggle-val" id="not-p-val">0</span>
           </div>
-          <div style="flex:1;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px">
-            <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:5px">v_x = −u_y?</div>
-            <span id="cr-b2">…</span>
-          </div>
         </div>
-        <div id="cr-status" style="padding:10px 14px;border-radius:8px;font:15px 'EB Garamond',serif;line-height:1.7"></div>
-        <div id="cr-deriv" style="margin-top:8px;font:13px 'JetBrains Mono',monospace;color:#d4a03c;padding:8px 12px;background:rgba(212,160,60,.06);border-radius:6px;display:none"></div>
+        <div class="gate-output">
+          <label>Output:</label>
+          <span class="gate-result false" id="not-out">1</span>
+          <span class="gate-formula">¬p</span>
+        </div>
       </div>
-    </div>
-    <div>
-      <div class="card">
-        <h2>Necessity vs. Sufficiency</h2>
-        <div class="thm"><strong>Theorem (Necessary):</strong> If f is complex-differentiable at z₀, then the CR equations hold at z₀.</div>
-        <div class="thm"><strong>Theorem (Sufficient):</strong> If CR holds at z₀ <em>and</em> the partial derivatives are continuous at z₀, then f is differentiable at z₀ and f′(z₀) = u_x + iv_x.</div>
-        <div class="warn"><strong>⚠ CR alone is NOT sufficient!</strong> A function can satisfy CR at a point but be non-differentiable there. The continuity of partials is essential. (See the counterexample in your notes: the piecewise function that satisfies CR at 0 but isn't differentiable there.)</div>
+      <!-- AND GATE -->
+      <div class="gate-card">
+        <h4>AND Gate — p ∧ q</h4>
+        <div class="gate-inputs">
+          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="and-p" onclick="toggleGate('and-p');updateGates()"></div><span class="toggle-val" id="and-p-val">0</span></div>
+          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="and-q" onclick="toggleGate('and-q');updateGates()"></div><span class="toggle-val" id="and-q-val">0</span></div>
+        </div>
+        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="and-out">0</span><span class="gate-formula">p ∧ q</span></div>
       </div>
-      <div class="card">
-        <h2>CR in Polar Form</h2>
-        <p>Writing f = u(r,θ) + iv(r,θ), the CR equations become:</p>
-        <div class="fml">r · u_r = v_θ  &nbsp;&nbsp;&nbsp;  r · v_r = −u_θ</div>
-        <p>When satisfied with continuous partials:</p>
-        <div class="fml">f′(z) = e<sup>−iθ</sup>(u_r + iv_r)</div>
-        <h3>Polar Example: e<sup>z</sup></h3>
-        <p><span class="mono">e<sup>iθ</sup> = cos θ + i sin θ</span> means u=cos θ, v=sin θ. Then u_r=0, v_θ=−sin θ... wait, let's use z=re<sup>iθ</sup> for e<sup>z</sup> in rectangular form instead. The polar form is most useful for Log, √z, etc.</p>
+      <!-- OR GATE -->
+      <div class="gate-card">
+        <h4>OR Gate — p ∨ q</h4>
+        <div class="gate-inputs">
+          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="or-p" onclick="toggleGate('or-p');updateGates()"></div><span class="toggle-val" id="or-p-val">0</span></div>
+          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="or-q" onclick="toggleGate('or-q');updateGates()"></div><span class="toggle-val" id="or-q-val">0</span></div>
+        </div>
+        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="or-out">0</span><span class="gate-formula">p ∨ q</span></div>
       </div>
-      <div class="card">
-        <h2>Matrix Interpretation</h2>
-        <p>If f is complex-differentiable, the Jacobian of f viewed as ℝ²→ℝ² must be of the form:</p>
-        <div class="fml">J_f = [[u_x, u_y], [v_x, v_y]] = [[a, −b], [b, a]]</div>
-        <p>i.e., a <strong>rotation-scaling matrix</strong>. This is exactly what CR says: u_x=v_y (=a) and v_x=−u_y (=b). So complex differentiability = the real Jacobian is a conformal (angle-preserving) linear map.</p>
+      <!-- XOR GATE -->
+      <div class="gate-card">
+        <h4>XOR Gate — p ⊕ q</h4>
+        <div class="gate-inputs">
+          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="xor-p" onclick="toggleGate('xor-p');updateGates()"></div><span class="toggle-val" id="xor-p-val">0</span></div>
+          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="xor-q" onclick="toggleGate('xor-q');updateGates()"></div><span class="toggle-val" id="xor-q-val">0</span></div>
+        </div>
+        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="xor-out">0</span><span class="gate-formula">p ⊕ q</span></div>
+      </div>
+      <!-- NAND GATE -->
+      <div class="gate-card">
+        <h4>NAND Gate — ¬(p ∧ q)</h4>
+        <div class="gate-inputs">
+          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="nand-p" onclick="toggleGate('nand-p');updateGates()"></div><span class="toggle-val" id="nand-p-val">0</span></div>
+          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="nand-q" onclick="toggleGate('nand-q');updateGates()"></div><span class="toggle-val" id="nand-q-val">0</span></div>
+        </div>
+        <div class="gate-output"><label>Output:</label><span class="gate-result true" id="nand-out">1</span><span class="gate-formula">¬(p ∧ q)</span></div>
+      </div>
+      <!-- NOR GATE -->
+      <div class="gate-card">
+        <h4>NOR Gate — ¬(p ∨ q)</h4>
+        <div class="gate-inputs">
+          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="nor-p" onclick="toggleGate('nor-p');updateGates()"></div><span class="toggle-val" id="nor-p-val">0</span></div>
+          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="nor-q" onclick="toggleGate('nor-q');updateGates()"></div><span class="toggle-val" id="nor-q-val">0</span></div>
+        </div>
+        <div class="gate-output"><label>Output:</label><span class="gate-result true" id="nor-out">1</span><span class="gate-formula">¬(p ∨ q)</span></div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════ ANALYTIC ══════════════════════ -->
-<div id="sec-analytic" class="sec">
-  <h1>Analytic Functions</h1>
-  <p class="sub">Sections 20–22 · The central objects of complex analysis</p>
-  <div class="grid2">
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">Definitions</h2>
-        <p><strong class="gold">Analytic on G:</strong> f is complex-differentiable at every point of the open set G.</p>
-        <p><strong class="gold">Analytic at z₀:</strong> f is analytic on some N_ε(z₀).</p>
-        <p><strong class="gold">Entire:</strong> f is analytic on all of ℂ.</p>
-        <h3>Entire Functions</h3>
-        <p>Polynomials, e<sup>z</sup>, sin z, cos z. Their sums, products, and compositions.</p>
-        <div class="key"><strong>Huge contrast with ℝ:</strong> Over ℝ, once-differentiable doesn't even imply twice-differentiable. But in ℂ: analytic ⟹ infinitely differentiable ⟹ equals its Taylor series. This is a theorem!</div>
+  <div class="subsection fade-in" style="margin-top:36px">
+    <h3>Practice: Circuit Output</h3>
+    <div class="practice-box">
+      <h4>Practice Problems</h4>
+      <div class="problem">
+        <div class="problem-q">What is the output of a circuit with inputs p and q, where p goes through a NOT gate, q goes through a NOT gate, both outputs go to an AND gate, and then that AND gate output goes with another AND(p,r) into an OR gate?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Answer</button>
+        <div class="problem-ans">The circuit computes: <strong>(¬p ∧ ¬q) ∨ (p ∧ r)</strong><br>This is equivalent to the expression from the lecture notes: <span class="formula">(¬p ∧ ¬q) ∨ (p ∧ r)</span></div>
       </div>
-      <div class="card">
-        <h2>Non-Analytic Functions</h2>
-        <p>• <span class="mono">f(z) = z̄</span>: CR gives u_x=1, v_y=−1 — fails everywhere. <span class="badge-r">nowhere analytic</span></p>
-        <p>• <span class="mono">f(z) = |z|²</span>: CR holds only at z=0. <span class="badge-r">not analytic anywhere</span></p>
-        <p>• <span class="mono">f(z) = Re(z)</span>: CR gives 1=0. <span class="badge-r">never differentiable</span></p>
-        <p>• <span class="mono">f(z) = |z|</span>: CR only at z=0, partials not continuous. <span class="badge-r">nowhere analytic</span></p>
-        <h3>Key Identities</h3>
-        <div class="fml">cos z = (e<sup>iz</sup>+e<sup>−iz</sup>)/2
-sin z = (e<sup>iz</sup>−e<sup>−iz</sup>)/(2i)</div>
-        <p>Both entire. <strong>Note:</strong> |sin z| and |cos z| are <em>unbounded</em> on ℂ (unlike on ℝ)!</p>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <h2>Key Theorems</h2>
-        <div class="thm"><strong>f′≡0 ⟹ f constant</strong> (on a connected domain G)</div>
-        <button class="proof-toggle" onclick="toggleProof('pf1')">▶ Show proof idea</button>
-        <div id="pf1" class="proof-body">If f′=0 everywhere on G, then u_x=v_x=0 everywhere. If two points are connected by a line segment parameterized as γ(s), then d/ds[f(γ(s))] = f′(γ(s))·γ′(s) = 0, so f is constant on the segment. Connectedness of G extends this to all of G.</div>
-
-        <div class="thm"><strong>Re(f) constant ⟹ f constant</strong> (analytic on connected domain)</div>
-        <button class="proof-toggle" onclick="toggleProof('pf2')">▶ Show proof idea</button>
-        <div id="pf2" class="proof-body">If u(x,y) = c (constant), then u_x = u_y = 0. By CR: v_x = −u_y = 0 and v_y = u_x = 0. So f′ = u_x + iv_x = 0. By the previous theorem, f is constant.</div>
-
-        <div class="thm"><strong>|f| constant ⟹ f constant</strong> (analytic on connected domain)</div>
-        <div class="thm"><strong>f analytic, Im(f)=0 ⟹ f constant</strong> (connected domain)</div>
-      </div>
-      <div class="card">
-        <h2>Isolated Zeros &amp; Identity Theorem</h2>
-        <h3>Isolated Zeros Lemma</h3>
-        <p>If f is analytic, f≢0 near z₀, but f(z₀)=0, then ∃m≥1 (the <em>order</em> of the zero) and analytic g with g(z₀)≠0 such that:</p>
-        <div class="fml">f(z) = (z−z₀)<sup>m</sup> · g(z)</div>
-        <p>The zeros of a nonzero analytic function are <strong>isolated</strong>.</p>
-        <div class="thm"><strong>Identity Theorem:</strong> If f, g analytic on domain G, and f(z_n)=g(z_n) for a sequence {z_n}→z₀ ∈ G, then f≡g on G.</div>
-        <div class="key"><strong>Power of this:</strong> An analytic function is completely determined by its values on any convergent sequence in its domain. Two analytic functions that agree on a tiny arc are equal everywhere on the domain!</div>
-        <div class="thm"><strong>Analytic Continuation:</strong> The analytic extension of f to a larger domain is unique if it exists.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════ HARMONIC ══════════════════════ -->
-<div id="sec-harmonic" class="sec">
-  <h1>Harmonic Functions</h1>
-  <p class="sub">Section 21 · Blue = u-level curves, Green = v-level curves (they're perpendicular!)</p>
-  <div class="grid2">
-    <div>
-      <div class="card" style="padding:10px">
-        <canvas id="cv-harm" width="400" height="360" style="width:100%"></canvas>
-      </div>
-      <div class="card">
-        <div style="margin-bottom:10px">
-          <select id="harm-fn" onchange="redrawHarm()">
-            <option value="z2">f(z) = z²  (u=x²−y², v=2xy)</option>
-            <option value="ez">f(z) = eᶻ  (u=eˣcos y, v=eˣsin y)</option>
-            <option value="z3">f(z) = z³  (u=x³−3xy², v=3x²y−y³)</option>
-            <option value="logr">f(z) = Log z  (u=ln r, v=Arg z)</option>
-          </select>
-        </div>
-        <div style="display:flex;gap:16px">
-          <label class="cb"><input type="checkbox" id="show-u" checked onchange="redrawHarm()"><span class="blue">u-level curves</span></label>
-          <label class="cb"><input type="checkbox" id="show-v" checked onchange="redrawHarm()"><span class="green">v-level curves</span></label>
-        </div>
-        <p style="margin-top:10px;font-size:14px;color:rgba(255,255,255,.4)">Level curves u=c cross v=c at right angles — a visual proof that analytic functions are conformal (angle-preserving).</p>
-      </div>
-    </div>
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">Definition</h2>
-        <p>A real-valued function h: G→ℝ is <strong class="gold">harmonic</strong> if it has continuous second-order partial derivatives and satisfies the <strong>Laplace equation</strong>:</p>
-        <div class="fml">Δh = h_xx + h_yy = 0</div>
-      </div>
-      <div class="card">
-        <h2>Analytic ⟹ Harmonic Parts</h2>
-        <div class="thm"><strong>Theorem:</strong> If f = u+iv is analytic on G, then both u and v are harmonic on G.</div>
-        <button class="proof-toggle" onclick="toggleProof('pf3')">▶ Show proof</button>
-        <div id="pf3" class="proof-body">From CR: u_x = v_y and u_y = −v_x. Differentiate the first: u_xx = v_yx. Differentiate the second: −v_xy = u_yy. Since partials are continuous (a consequence of analyticity), v_yx = v_xy. So u_xx = v_yx = v_xy = −u_yy, giving u_xx + u_yy = 0. ✓ Same argument works for v.</div>
-      </div>
-      <div class="card">
-        <h2>Harmonic Conjugates</h2>
-        <p>Given harmonic u on G, a harmonic conjugate is v such that f = u+iv is analytic.</p>
-        <div class="thm"><strong>Uniqueness:</strong> Any two harmonic conjugates of u on domain G differ by a real constant.</div>
-        <div class="thm"><strong>Existence:</strong> If G is simply connected and u is harmonic on G, then u has a harmonic conjugate.</div>
-        <div class="warn"><strong>Counterexample to existence on non-simply connected domain:</strong> u = ln|z| is harmonic on ℂ\{0}. Its harmonic conjugate would be Arg(z), but Arg is discontinuous on ℂ\{0}. The problem is ℂ\{0} is not simply connected.</div>
-      </div>
-      <div class="card">
-        <h2>Practical Trick</h2>
-        <p>If f = u+iv is analytic on G, then u is automatically harmonic — <strong>no computation needed</strong>! Use this to save time:</p>
-        <div class="fml">u = Re(f)  is harmonic whenever f is analytic</div>
-        <p>For example: Re(z²) = x²−y² is harmonic; Re(e<sup>z</sup>) = e<sup>x</sup>cos y is harmonic; Re(Log z) = ln|z| = ln√(x²+y²) is harmonic on ℂ\{0}.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════ LOG ═══════════════════════════ -->
-<div id="sec-log" class="sec">
-  <h1>Complex Logarithm</h1>
-  <p class="sub">Section 24 · The color represents the argument value; the red line is the branch cut</p>
-  <div class="grid2">
-    <div>
-      <div class="card" style="padding:10px">
-        <canvas id="cv-log" width="400" height="360" style="width:100%"></canvas>
-      </div>
-      <div class="card">
-        <select id="log-cut" onchange="redrawLog()">
-          <option value="neg">Principal branch: cut along negative real axis</option>
-          <option value="pos">Cut along positive real axis</option>
-          <option value="top">Cut along positive imaginary axis</option>
-        </select>
-        <p style="margin-top:10px;font-size:14px;color:rgba(255,255,255,.4)">The color represents Arg(z) for the chosen branch. Watch the color jump discontinuously across the red branch cut. That discontinuity is why we must remove the cut from the domain.</p>
-        <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px">
-          <p style="font-size:13px;color:rgba(255,255,255,.4)">Hover or click to see Log(z) at a point:</p>
-          <div id="log-readout" style="font:13px 'JetBrains Mono',monospace;color:#d4a03c;margin-top:5px">Click on canvas...</div>
+      <div class="problem">
+        <div class="problem-q">Design a circuit for: <span class="formula">((¬p ∨ ¬r) ∧ ¬q) ∨ (¬p ∧ (q ∨ r))</span></div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Steps</button>
+        <div class="problem-ans">
+          1. Compute ¬p, ¬q, ¬r using three NOT (Inverter) gates<br>
+          2. Compute ¬p ∨ ¬r using an OR gate on outputs of step 1<br>
+          3. Compute (¬p ∨ ¬r) ∧ ¬q using an AND gate<br>
+          4. Compute q ∨ r using an OR gate on original inputs<br>
+          5. Compute ¬p ∧ (q ∨ r) using an AND gate<br>
+          6. Combine results of steps 3 and 5 with a final OR gate
         </div>
       </div>
     </div>
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">The Problem with log</h2>
-        <p>We want log as an inverse of e<sup>z</sup>. But e<sup>z+2πi</sup>=e<sup>z</sup>, so e<sup>z</sup> is <strong>not injective</strong> — many z map to the same w. Thus log is <strong>multi-valued</strong>:</p>
-        <div class="fml">log(z) = ln|z| + i·arg(z) = ln|z| + i(Arg(z)+2πk)</div>
-        <p>Each choice of k ∈ ℤ gives a different <strong>branch</strong> of the logarithm.</p>
+  </div>
+</section>
+
+<!-- ==================== MODULE 4: PREDICATES & QUANTIFIERS ==================== -->
+<section class="module-section" id="pred">
+  <div class="section-header">
+    <span class="section-num">Module 04</span>
+    <h2>Predicates &amp; Quantifiers</h2>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>When Propositional Logic Fails</h3>
+    <p>Propositional logic can't capture statements like:</p>
+    <div class="info-box">
+      "All candy made with chocolate is delicious."<br>
+      "M&M's are made with chocolate."<br>
+      <strong>∴ M&M's are delicious.</strong>
+    </div>
+    <p>We need <strong>predicate logic</strong> — which adds <em>variables</em>, <em>predicates</em>, and <em>quantifiers</em>.</p>
+
+    <div class="card-grid" style="margin-top:20px">
+      <div class="card"><div class="card-title">Variables</div><p>x, y, z — the subjects of our statements. Like variables in programming, they represent elements from a domain.</p></div>
+      <div class="card"><div class="card-title">Predicates</div><p>Properties that variables can have. P(x): "x is greater than 3". Denoted with capital letters: P(x), Q(x,y).</p></div>
+      <div class="card"><div class="card-title">Domain (Universe U)</div><p>The set of all possible values for variables. Must be specified! E.g., integers, real numbers, students in class.</p></div>
+    </div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Propositional Functions</h3>
+    <p>A propositional function <span class="formula">P(x)</span> becomes a proposition (with a truth value) when we substitute a specific value for x from the domain.</p>
+    <div class="practice-box">
+      <h4>Interactive Examples — P(x) = "x > 0" with domain ℤ</h4>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+        <span style="padding:8px 16px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#f87171">P(−3) = False</span>
+        <span style="padding:8px 16px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#f87171">P(0) = False</span>
+        <span style="padding:8px 16px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#4ade80">P(3) = True</span>
+        <span style="padding:8px 16px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#4ade80">P(100) = True</span>
       </div>
-      <div class="card">
-        <h2>Principal Branch Log</h2>
-        <p>Defined on G = ℂ\(−∞, 0] (cut along negative real axis):</p>
-        <div class="fml">Log(z) = ln|z| + i·Arg(z),  Arg(z) ∈ (−π, π)</div>
-        <p>Properties:</p>
-        <p>• e<sup>Log(z)</sup> = z for all z ∈ G</p>
-        <p>• Log is analytic on G, and <span class="mono">(Log z)′ = 1/z</span></p>
-        <div class="warn"><strong>⚠ Log(z₁z₂) ≠ Log z₁ + Log z₂ in general!</strong> This equality holds only when Arg z₁ + Arg z₂ ∈ (−π,π). If the sum of arguments "wraps around" past ±π, you get a ±2πi discrepancy.</div>
+      <div class="problem">
+        <div class="problem-q">Let R(x,y,z) denote "x + y = z" with domain ℤ. Find: R(2, −1, 5).</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans">R(2, −1, 5): Is 2 + (−1) = 5? → 1 = 5? → <strong style="color:#f87171">False</strong></div>
       </div>
-      <div class="card">
-        <h2>General Branches</h2>
-        <p>A function f: G→ℂ is a <strong>branch of log</strong> on G if e<sup>f(z)</sup>=z for all z∈G.</p>
-        <div class="thm"><strong>Theorem:</strong> Two branches on the same connected domain differ by 2πin for a fixed n∈ℤ.</div>
-        <div class="thm"><strong>Theorem:</strong> Any branch of log is analytic and has derivative 1/z.</div>
-        <h3>Branch Cuts</h3>
-        <p>A <strong>branch cut</strong> is a curve removed from ℂ to make arg single-valued and continuous. It prevents "circling the origin." Branch cuts need not be straight lines!</p>
-        <div class="key"><strong>Why the cut is necessary:</strong> If we try to extend Log to all of ℂ\{0}, we'd need Arg to be continuous there. But going around the origin, Arg increases by 2π — a jump must occur somewhere. The cut is where we accept that jump.</div>
+      <div class="problem">
+        <div class="problem-q">Let R(x,y,z) denote "x + y = z". Find: R(3, 4, 7).</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans">R(3, 4, 7): Is 3 + 4 = 7? → 7 = 7? → <strong style="color:#4ade80">True</strong></div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════ POWER ══════════════════════════ -->
-<div id="sec-power" class="sec">
-  <h1>Power Function z<sup>c</sup></h1>
-  <p class="sub">Section 25 · Branches of z<sup>c</sup> for complex c</p>
-  <div class="grid2">
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">Definition via Log</h2>
-        <p>For c ∈ ℂ and a branch f of log on domain G:</p>
-        <div class="fml">z<sup>c</sup> := e<sup>c·f(z)</sup></div>
-        <p>defines a <strong>branch of the power function</strong> on G. Different branches of log give different branches of z<sup>c</sup>.</p>
-        <h3>Principal Branch</h3>
-        <div class="fml">z<sup>c</sup> = e<sup>c · Log(z)</sup>,  z ∉ (−∞, 0]</div>
+  <div class="subsection fade-in">
+    <h3>Quantifiers</h3>
+    <p>Quantifiers turn propositional functions into propositions by specifying <em>how many</em> elements in the domain satisfy the predicate.</p>
+    <div class="quant-compare">
+      <div class="quant-box universal">
+        <span class="quant-sym">∀</span>
+        <h4>Universal Quantifier — "For All"</h4>
+        <p><span class="formula">∀x P(x)</span> — P(x) is true for <strong>every</strong> x in the domain.</p>
+        <p style="margin-top:8px">Think: ∀x P(x) ≡ P(x₁) ∧ P(x₂) ∧ ... ∧ P(xₙ)</p>
+        <div class="when-true">True when: P(x) holds for every x in the domain</div>
+        <div class="when-false">False when: There exists at least one x where P(x) is false (a counterexample)</div>
       </div>
-      <div class="card">
-        <h2>Example: √z</h2>
-        <p>Take c = 1/2 and use Log(z) = ln|z| + iArg(z):</p>
-        <div class="fml">√z = e<sup>½ Log z</sup> = e<sup>½(ln|z|+iArg z)</sup>
-     = √|z| · e<sup>iArg(z)/2</sup></div>
-        <p>This is the principal square root. It extends the positive real square root to G = ℂ\(−∞,0].</p>
-        <p>The <em>other</em> branch (using Log z + 2πi) gives:</p>
-        <div class="fml">e<sup>½(Log z + 2πi)</sup> = e<sup>½Log z</sup>·e<sup>πi</sup> = −√z</div>
-        <p>So the two branches of √z are just negatives of each other — as expected!</p>
+      <div class="quant-box existential">
+        <span class="quant-sym">∃</span>
+        <h4>Existential Quantifier — "There Exists"</h4>
+        <p><span class="formula">∃x P(x)</span> — P(x) is true for <strong>at least one</strong> x in the domain.</p>
+        <p style="margin-top:8px">Think: ∃x P(x) ≡ P(x₁) ∨ P(x₂) ∨ ... ∨ P(xₙ)</p>
+        <div class="when-true">True when: There is at least one x in the domain where P(x) is true</div>
+        <div class="when-false">False when: P(x) is false for every x in the domain</div>
       </div>
     </div>
-    <div>
-      <div class="card">
-        <h2>Example: i<sup>i</sup></h2>
-        <p>Here z=i, c=i. We have |i|=1, Arg(i)=π/2. So:</p>
-        <div class="fml">i<sup>i</sup> = e<sup>i·Log(i)</sup> = e<sup>i(ln1 + iπ/2)</sup>
-   = e<sup>i·iπ/2</sup> = e<sup>−π/2</sup> ≈ 0.208</div>
-        <p><strong>i<sup>i</sup> is real!</strong> (Using the principal branch.) Other branches give e<sup>−π/2+2πk</sup> for k∈ℤ.</p>
-        <h3>General Behavior</h3>
-        <p>Using branch f(z) = Log z + 2πin:</p>
-        <div class="fml">z<sup>c</sup> = e<sup>c(Log z + 2πin)</sup> = e<sup>cLog z</sup>·e<sup>2πinc</sup></div>
-        <p>Different branches relate by multiplying by e<sup>2πinc</sup>. If c is a rational p/q (in lowest terms), there are exactly q distinct branches.</p>
+
+    <div class="practice-box" style="margin-top:20px">
+      <h4>Quick Evaluation Practice</h4>
+      <div class="problem">
+        <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∀x P(x)</span> true?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#f87171">False</strong> — P(0) = "0² > 0" = "0 > 0" = False. x = 0 is a counterexample!</div>
       </div>
-      <div class="card">
-        <h2>Important Special Cases</h2>
-        <h3>c ∈ ℤ (integer power)</h3>
-        <p>e<sup>2πinc</sup>=1 for all n — all branches give the same value! So z<sup>n</sup> for integer n is single-valued, consistent with z·z·…·z.</p>
-        <h3>c = 1/n (nth root)</h3>
-        <p>e<sup>2πin·(1/n)</sup> = e<sup>2πi</sup> = 1... but e<sup>2πik/n</sup> ≠ 1 for k=1,…,n-1. So there are exactly n branches of z<sup>1/n</sup> — the nth roots.</p>
-        <div class="key"><strong>Derivative:</strong> Any branch of z<sup>c</sup> has derivative c·z<sup>c−1</sup> (using the same branch).</div>
-        <div class="warn"><strong>⚠ z<sup>c</sup> with complex c is NOT the same as repeated multiplication</strong> — it's defined via the logarithm and is branch-dependent!</div>
+      <div class="problem">
+        <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∃x P(x)</span> true?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — P(1) = "1² > 0" = "1 > 0" = True. x = 1 (and many others) satisfy P(x).</div>
+      </div>
+      <div class="problem">
+        <div class="problem-q">∃! is the <em>uniqueness quantifier</em>. ∃!x P(x) means P(x) is true for <em>exactly one</em> x. With P(x) = "2x = 4" over ℤ, is ∃!x P(x) true?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — Only x = 2 satisfies 2x = 4. There is exactly one solution.</div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════ CONTOUR ═══════════════════════ -->
-<div id="sec-contour" class="sec">
-  <h1>Contour Integrals</h1>
-  <p class="sub">Sections 29–30 · Integration along curves in ℂ</p>
-  <div class="grid2">
-    <div>
-      <div class="card" style="padding:10px">
-        <canvas id="cv-cont" width="400" height="360" style="width:100%"></canvas>
+  <div class="subsection fade-in">
+    <h3>De Morgan's Laws for Quantifiers — Negation</h3>
+    <p>Just like De Morgan's laws for propositions, there are rules for negating quantifiers:</p>
+    <div class="demorgan-box">
+      <div class="demorgan-row">
+        <div class="dm-orig">¬∀x P(x)</div>
+        <div class="dm-arrow">≡</div>
+        <div class="dm-equiv">∃x ¬P(x)</div>
+        <div class="dm-note">Negating "for all" gives "there exists some x where it fails"</div>
       </div>
-      <div class="card">
-        <div class="slider-row"><span>Power n for ∮ z<sup>n</sup> dz</span><span id="cont-n-lbl" class="gold">n = −1</span></div>
-        <input type="range" id="cont-n" min="-4" max="4" step="1" value="-1" oninput="updateContourDemo()">
-        <div style="display:flex;gap:10px;margin-top:12px">
-          <button class="btn btn-gold" onclick="startContourAnim()" id="cont-btn" style="flex:1">▶ Animate</button>
-          <button class="btn" onclick="resetContourAnim()">Reset</button>
-        </div>
-        <div style="margin-top:12px;padding:12px;background:rgba(255,255,255,.03);border-radius:8px;text-align:center">
-          <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:5px">∮<sub>|z|=1</sub> z<sup>n</sup> dz =</div>
-          <div id="cont-result" style="font:18px 'JetBrains Mono',monospace;color:#d4a03c">…</div>
-        </div>
+      <div class="demorgan-row">
+        <div class="dm-orig">¬∃x P(x)</div>
+        <div class="dm-arrow">≡</div>
+        <div class="dm-equiv">∀x ¬P(x)</div>
+        <div class="dm-note">Negating "there exists" gives "it fails for all x"</div>
       </div>
     </div>
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">Definition</h2>
-        <p>Given a contour C parameterized by w: [a,b]→ℂ (continuous, piecewise C¹) and f continuous on C:</p>
-        <div class="fml">∫_C f(z) dz := ∫_a^b f(w(t)) · w′(t) dt</div>
-        <p>This reduces to a standard real integral of a complex-valued function of t.</p>
+    <div class="practice-box" style="margin-top:20px">
+      <h4>Negation Practice</h4>
+      <div class="problem">
+        <div class="problem-q">Negate: "There is an honest politician."</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
+        <div class="problem-ans">Original: ∃x H(x) [H(x) = "x is honest"]<br>Negation: ¬∃x H(x) ≡ <strong>∀x ¬H(x)</strong><br>In English: "No politician is honest" (every politician is dishonest).</div>
       </div>
-      <div class="card">
-        <h2>ML Inequality</h2>
-        <div class="thm"><strong>Theorem:</strong> If |f(z)| ≤ M on C and L(C) = arc length of C, then |∫_C f dz| ≤ M·L</div>
-        <div class="fml">|∫_C f(z) dz| ≤ M · L(C)</div>
-        <div class="key"><strong>Main use:</strong> Proving that integrals along large arcs (R→∞) go to zero. If M→0 faster than L(C)=2πR→∞, the integral vanishes.</div>
-      </div>
-      <div class="card">
-        <h2>The Fundamental Calculation</h2>
-        <div class="fml">∮<sub>|z|=1</sub> z<sup>n</sup> dz = 
-  2πi  if n = −1
-  0    if n ≠ −1  (n ∈ ℤ)</div>
-        <p><strong>Proof sketch:</strong> Parameterize by w(t)=e<sup>it</sup>, t∈[0,2π]. Then w′(t)=ie<sup>it</sup> and z<sup>n</sup> = e<sup>int</sup>, giving ∫₀²π e<sup>int</sup>·ie<sup>it</sup>dt = i∫₀²π e<sup>i(n+1)t</sup>dt.</p>
-        <p>For n≠−1: ∫₀²π e<sup>i(n+1)t</sup>dt = [e<sup>i(n+1)t</sup>/(i(n+1))]₀²π = 0.</p>
-        <p>For n=−1: ∫₀²π dt = 2π, times i gives 2πi. ✓</p>
-        <div class="warn"><strong>This 2πi is the heart of everything!</strong> Cauchy's integral formula, residues, everything flows from this.</div>
-      </div>
-      <div class="card">
-        <h2>Properties</h2>
-        <p><strong>Linearity:</strong> ∫_C (αf+βg) = α∫f + β∫g</p>
-        <p><strong>Reversal:</strong> ∫_{−C} f = −∫_C f</p>
-        <p><strong>Concatenation:</strong> ∫_{C₁+C₂} f = ∫_{C₁} f + ∫_{C₂} f</p>
-        <p><strong>Reparameterization:</strong> The value doesn't depend on choice of parameterization (as long as orientation is preserved).</p>
+      <div class="problem">
+        <div class="problem-q">Negate: "All Americans eat cheeseburgers."</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
+        <div class="problem-ans">Original: ∀x C(x) [C(x) = "x eats cheeseburgers"]<br>Negation: ¬∀x C(x) ≡ <strong>∃x ¬C(x)</strong><br>In English: "There is some American who does not eat cheeseburgers."</div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════ CAUCHY-GOURSAT ═══════════════ -->
-<div id="sec-cauchy" class="sec">
-  <h1>Cauchy-Goursat Theorem</h1>
-  <p class="sub">Section 32 · The central theorem of complex integration</p>
-  <div class="grid2">
-    <div>
-      <div class="card" style="padding:10px">
-        <canvas id="cv-cg" width="400" height="360" style="width:100%"></canvas>
-      </div>
-      <div class="card">
-        <p style="font-size:14px;color:rgba(255,255,255,.4)">Click to add/remove a singularity (red dot) inside or outside the contour. Watch how the integral changes!</p>
-        <div style="display:flex;gap:10px;margin-top:10px">
-          <button class="btn btn-gold" onclick="toggleSingularity()" id="sing-btn" style="flex:1">Add Singularity</button>
-          <button class="btn" onclick="resetCG()">Reset</button>
+  <div class="subsection fade-in">
+    <h3>Translation Practice</h3>
+    <p>Click any row to reveal the logical translation.</p>
+    <div class="translator">
+      <h4>↔ English ↔ Logic Translator</h4>
+      <div class="trans-examples">
+        <div class="trans-row hidden-logic" onclick="revealTrans(this)">
+          <div class="trans-english">Some student in this class has visited Mexico.<br><small style="color:var(--muted)">Domain: students in class, M(x): "x has visited Mexico"</small></div>
+          <div class="trans-arrow">→</div>
+          <div class="trans-logic">∃x M(x)</div>
         </div>
-        <div style="margin-top:12px;padding:12px;background:rgba(255,255,255,.03);border-radius:8px">
-          <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:5px">∮_C f(z) dz =</div>
-          <div id="cg-result" style="font:18px 'JetBrains Mono',monospace;color:#6ee7b7">0 (analytic)</div>
-          <div id="cg-explain" style="font-size:13px;color:rgba(255,255,255,.4);margin-top:6px">f is analytic inside and on C</div>
+        <div class="trans-row hidden-logic" onclick="revealTrans(this)">
+          <div class="trans-english">Every student in this class has visited Canada or Mexico.<br><small style="color:var(--muted)">C(x): "x visited Canada", M(x): "x visited Mexico"</small></div>
+          <div class="trans-arrow">→</div>
+          <div class="trans-logic">∀x (C(x) ∨ M(x))</div>
+        </div>
+        <div class="trans-row hidden-logic" onclick="revealTrans(this)">
+          <div class="trans-english">Every student in class sent an email to Joe.<br><small style="color:var(--muted)">E(x,y): "x sent y an email", domain: students</small></div>
+          <div class="trans-arrow">→</div>
+          <div class="trans-logic">∀x E(x, Joe)</div>
+        </div>
+        <div class="trans-row hidden-logic" onclick="revealTrans(this)">
+          <div class="trans-english">The sum of two positive integers is always positive.<br><small style="color:var(--muted)">Domain: positive integers</small></div>
+          <div class="trans-arrow">→</div>
+          <div class="trans-logic">∀x ∀y (x+y > 0)</div>
         </div>
       </div>
     </div>
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">Cauchy-Goursat Theorem</h2>
-        <div class="thm"><strong>Theorem:</strong> If f is analytic on a simply connected domain G, and C ⊂ G is any closed contour, then ∮_C f(z) dz = 0.</div>
-        <div class="key"><strong>Equivalently:</strong> A closed-loop integral of an analytic function is zero. No singularities inside = zero integral.</div>
+  </div>
+</section>
+
+<!-- ==================== MODULE 5: NESTED QUANTIFIERS ==================== -->
+<section class="module-section" id="nested">
+  <div class="section-header">
+    <span class="section-num">Module 05</span>
+    <h2>Nested Quantifiers</h2>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Nested Quantifiers</h3>
+    <p>We can use multiple quantifiers together. The <strong>order matters</strong> for mixed quantifiers (∀∃ ≠ ∃∀)!</p>
+    <div class="info-box">"Every real number has an additive inverse."<br><span class="formula" style="margin-top:8px;display:inline-block">∀x ∃y (x + y = 0)</span></div>
+
+    <div class="card-grid" style="margin-top:24px">
+      <div class="card">
+        <div class="card-title">∀x ∀y P(x,y)</div>
+        <p>For all x and for all y, P(x,y) is true. <em>Symmetric — order doesn't matter here.</em></p>
       </div>
       <div class="card">
-        <h2>Simply Connected Domains</h2>
-        <p>A domain G is <strong>simply connected</strong> if it is connected and every closed curve in G can be continuously shrunk to a point while staying in G. Informally: <strong>no holes</strong>.</p>
-        <p>• ℂ itself: simply connected ✓</p>
-        <p>• Any disk {|z|&lt;R}: simply connected ✓</p>
-        <p>• ℂ\{0}: NOT simply connected (the origin is a hole) ✗</p>
-        <p>• {0&lt;|z|&lt;1} (punctured disk): NOT simply connected ✗</p>
-        <p>• A domain with a hole (like an annulus): NOT simply connected ✗</p>
+        <div class="card-title">∃x ∃y P(x,y)</div>
+        <p>There exist some x and y such that P(x,y) is true. <em>Symmetric — order doesn't matter here.</em></p>
       </div>
       <div class="card">
-        <h2>Corollaries</h2>
-        <div class="thm"><strong>Antiderivative existence:</strong> If G is simply connected and f is analytic on G, then f has an analytic antiderivative F on G (F′=f).</div>
-        <div class="thm"><strong>Path independence:</strong> On a simply connected domain, ∫_C f depends only on the endpoints of C, not the path.</div>
-        <div class="thm"><strong>Harmonic conjugates:</strong> On a simply connected domain, every harmonic u has a harmonic conjugate v.</div>
-        <div class="warn"><strong>Counterexample (not simply connected):</strong> ∮_{|z|=1} (1/z) dz = 2πi ≠ 0. Here f=1/z has a singularity at z=0 inside the contour, and the domain ℂ\{0} is not simply connected.</div>
+        <div class="card-title" style="color:#fbbf24">∀x ∃y P(x,y)</div>
+        <p>For every x, there exists some y (possibly different for each x!) such that P(x,y) holds.</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#f87171">∃y ∀x P(x,y)</div>
+        <p>There is a SINGLE y that works for ALL x simultaneously. Much stronger than ∀x ∃y!</p>
+      </div>
+    </div>
+
+    <div class="warn-box">⚠️ <strong>Critical distinction:</strong> ∀x ∃y P(x,y) means each x can have its own y. But ∃y ∀x P(x,y) requires one fixed y that works for every x. These are usually NOT equivalent!</div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Truth Value Evaluation</h3>
+    <div class="practice-box">
+      <h4>P(x,y) = "xy = yx" over domain ℝ</h4>
+      <div class="problem">
+        <div class="problem-q">Is <span class="formula">∀x ∀y P(x,y)</span> true?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — Multiplication is commutative over the reals: xy = yx for all real x and y.</div>
+      </div>
+      <div class="problem">
+        <div class="problem-q">Let Q(x,y) = "x + y = 5" over domain ℝ. Is <span class="formula">∀x ∃y Q(x,y)</span> true?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — For any x, choose y = 5 − x. Then x + (5 − x) = 5. Each x gets its own y.</div>
+      </div>
+      <div class="problem">
+        <div class="problem-q">Is <span class="formula">∃y ∀x Q(x,y)</span> true (where Q(x,y) = "x + y = 5")?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#f87171">False</strong> — This asks if there is ONE fixed y that makes x + y = 5 for ALL x simultaneously. But if y = 3, it only works for x = 2. No single y satisfies all x at once.</div>
+      </div>
+      <div class="problem">
+        <div class="problem-q">Let P(x,y) = "x·y = 0" over domain ℝ. Evaluate ∀x∀y P(x,y), ∀x∃y P(x,y), ∃x∀y P(x,y), ∃x∃y P(x,y).</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate All</button>
+        <div class="problem-ans">
+          <strong>∀x∀y P(x,y):</strong> <span style="color:#f87171">False</span> — 2·3 = 6 ≠ 0<br>
+          <strong>∀x∃y P(x,y):</strong> <span style="color:#4ade80">True</span> — For any x, choose y = 0. Then x·0 = 0 ✓<br>
+          <strong>∃x∀y P(x,y):</strong> <span style="color:#4ade80">True</span> — Choose x = 0. Then 0·y = 0 for all y ✓<br>
+          <strong>∃x∃y P(x,y):</strong> <span style="color:#4ade80">True</span> — x = 0, y = 0 works ✓
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════ ANTIDERIVATIVES ═══════════════ -->
-<div id="sec-antider" class="sec">
-  <h1>Antiderivatives &amp; Path Independence</h1>
-  <p class="sub">Section 31 · The TFAE theorem and using antiderivatives</p>
-  <div class="grid2">
-    <div>
-      <div class="card card-gold">
-        <h2 style="margin-top:0">The Big Theorem (TFAE)</h2>
-        <p>If f is continuous on a domain G, the following are equivalent:</p>
-        <div class="fml" style="text-align:left;padding:14px 18px">1. f has an antiderivative F on G
-   (F analytic, F′ = f)
-
-2. Path independence: for any two 
-   contours C₁, C₂ in G with the same
-   endpoints, ∫_{C₁} f = ∫_{C₂} f
-
-3. For every closed contour C in G:
-   ∮_C f(z) dz = 0</div>
-        <p>Furthermore, if F is an antiderivative and C goes from z₁ to z₂:</p>
-        <div class="fml">∫_C f(z) dz = F(z₂) − F(z₁)</div>
+  <div class="subsection fade-in">
+    <h3>Negating Nested Quantifiers</h3>
+    <p>Push the negation inside, flipping quantifiers each time you pass one:</p>
+    <div class="demorgan-box">
+      <div class="demorgan-row">
+        <div class="dm-orig">¬∀x ∃y P(x,y)</div>
+        <div class="dm-arrow">≡</div>
+        <div class="dm-equiv">∃x ∀y ¬P(x,y)</div>
+        <div class="dm-note">Flip ∀→∃, then ∃→∀, negate the predicate</div>
       </div>
-      <div class="card">
-        <h2>Using This in Practice</h2>
-        <p>To evaluate ∫_C f(z)dz when f has an antiderivative F:</p>
-        <div class="fml">∫_C f(z) dz = F(endpoint) − F(start)</div>
-        <p>This is exactly the complex FTC!</p>
-        <h3>Example</h3>
-        <p>Evaluate ∫_C z² dz from z=0 to z=1+i (any path).</p>
-        <div class="fml">F(z) = z³/3 is an antiderivative of z²
-∫_C z² dz = F(1+i) − F(0)
-= (1+i)³/3 − 0
-= (1+i)²(1+i)/3
-= (2i)(1+i)/3
-= (−2+2i)/3</div>
-        <p>Since z² is entire (analytic on all ℂ, simply connected), the integral is path-independent.</p>
+      <div class="demorgan-row">
+        <div class="dm-orig">¬∃x ∀y P(x,y)</div>
+        <div class="dm-arrow">≡</div>
+        <div class="dm-equiv">∀x ∃y ¬P(x,y)</div>
+        <div class="dm-note">Flip ∃→∀, then ∀→∃, negate the predicate</div>
       </div>
     </div>
-    <div>
-      <div class="card">
-        <h2>When Antiderivatives Fail</h2>
-        <p>f = 1/z does NOT have an antiderivative on ℂ\{0} because:</p>
-        <div class="fml">∮_{|z|=1} (1/z) dz = 2πi ≠ 0</div>
-        <p>If it had one, the integral around any closed loop would be 0 (by condition 3).</p>
-        <p>However, 1/z <em>does</em> have an antiderivative on any simply connected subdomain of ℂ\{0}: that antiderivative is a branch of Log!</p>
-        <div class="key"><strong>Subtlety:</strong> ∮ z<sup>−1</sup> dz can be zero on some closed curves (those not encircling z=0) but 2πi on others. This is why the domain matters — antiderivative existence is a global property of the domain.</div>
+
+    <div class="practice-box" style="margin-top:20px">
+      <h4>Negation Practice</h4>
+      <div class="problem">
+        <div class="problem-q">Find the negation of ∀x ∃y P(x,y) where P(x,y) = "(x = −y)" over ℝ. Express in English.</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
+        <div class="problem-ans">
+          ¬∀x ∃y P(x,y) ≡ <strong>∃x ∀y ¬P(x,y)</strong> ≡ ∃x ∀y (x ≠ −y)<br><br>
+          In English: "There exists a real number x such that for all real y, x ≠ −y."<br>
+          (The original says every real number has an additive inverse; the negation says some real number does not.)
+        </div>
       </div>
-      <div class="card">
-        <h2>Step-by-Step: Integrating on a Branch Cut</h2>
-        <p>To evaluate ∫_C f(z)dz when the obvious antiderivative has a branch cut problem:</p>
-        <p><strong>Step 1:</strong> Check if the contour crosses the branch cut of the natural antiderivative.</p>
-        <p><strong>Step 2:</strong> If it does, choose a different branch of the logarithm (with a different cut) that the contour avoids.</p>
-        <p><strong>Step 3:</strong> Verify the new branch is analytic on a domain containing the contour.</p>
-        <p><strong>Step 4:</strong> Apply the FTC with the new branch.</p>
-        <div class="warn"><strong>Key insight:</strong> Different branches of Log give the same derivative (1/z) but different antiderivative values. Choose the branch based on which one is analytic along your path!</div>
-      </div>
-      <div class="card">
-        <h2>Simply Connected Equivalences</h2>
-        <p>Your notes list 8 equivalent conditions for a domain G to be simply connected. The key ones for this exam:</p>
-        <p>• Every closed contour integral of an analytic f equals 0</p>
-        <p>• Every analytic f on G has an antiderivative</p>
-        <p>• Every harmonic function on G has a harmonic conjugate</p>
-        <p>• Every nonvanishing analytic f has an analytic square root</p>
-        <p>• Every nonvanishing analytic f has an analytic logarithm</p>
-        <div class="key">These are all "equivalent" to the topological notion of simple connectedness — no holes!</div>
+      <div class="problem">
+        <div class="problem-q">Translate: "There is a man that has taken a flight on every airline in the world." Let M(x): "x is a man", F(x,y): "x has taken flight y", A(y,z): "y operates on airline z".</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Translation</button>
+        <div class="problem-ans">
+          <strong>∃m ∀a ∃f (M(m) ∧ F(m,f) ∧ A(f,a))</strong><br>
+          "There exists a man m such that for every airline a, there exists a flight f taken by m on airline a."
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-</main>
+<!-- ==================== MODULE 6: RULES OF INFERENCE ==================== -->
+<section class="module-section" id="rules">
+  <div class="section-header">
+    <span class="section-num">Module 06</span>
+    <h2>Rules of Inference</h2>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Arguments and Valid Arguments</h3>
+    <p>An <strong>argument</strong> is a sequence of propositions (premises) that lead to a conclusion. An argument is <strong>valid</strong> if whenever all premises are true, the conclusion must also be true.</p>
+    <div class="info-box">
+      <strong>Example:</strong><br>
+      If it is raining, I will need an umbrella. [Premise 1]<br>
+      It is raining. [Premise 2]<br>
+      <hr style="border-color:rgba(255,255,255,0.2);margin:8px 0">
+      ∴ I will need an umbrella. [Conclusion]
+    </div>
+    <p>Click each rule card to see an English example.</p>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Rules of Inference — Propositional Logic</h3>
+    <div class="rule-grid">
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Modus Ponens</h4>
+        <div class="rule-premises"><div>p → q</div><div>p</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">q</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "If it rains, I carry an umbrella." (p → q)<br>
+          "It is raining." (p)<br>
+          ∴ "I carry an umbrella." (q)<br><br>
+          <strong>Key insight:</strong> Affirming the antecedent lets us conclude the consequent.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Modus Tollens</h4>
+        <div class="rule-premises"><div>p → q</div><div>¬q</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">¬p</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "If it rains, the ground gets wet." (p → q)<br>
+          "The ground is NOT wet." (¬q)<br>
+          ∴ "It did NOT rain." (¬p)<br><br>
+          <strong>Key insight:</strong> Denying the consequent lets us deny the antecedent.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Hypothetical Syllogism</h4>
+        <div class="rule-premises"><div>p → q</div><div>q → r</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">p → r</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "If I study, I'll pass." (p → q)<br>
+          "If I pass, I'll graduate." (q → r)<br>
+          ∴ "If I study, I'll graduate." (p → r)<br><br>
+          <strong>Key insight:</strong> Chain of implications — transitivity of →.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Disjunctive Syllogism</h4>
+        <div class="rule-premises"><div>p ∨ q</div><div>¬p</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">q</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "I'll take CS or Math." (p ∨ q)<br>
+          "I won't take CS." (¬p)<br>
+          ∴ "I'll take Math." (q)<br><br>
+          <strong>Key insight:</strong> If you eliminate one option from a disjunction, the other must hold.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Addition</h4>
+        <div class="rule-premises"><div>p</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">p ∨ q</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "It is raining." (p)<br>
+          ∴ "It is raining or I am a cat." (p ∨ q)<br><br>
+          <strong>Key insight:</strong> If p is true, p ∨ (anything) is true. You can always "add" a disjunct.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Simplification</h4>
+        <div class="rule-premises"><div>p ∧ q</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">q</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "It is raining AND cold." (p ∧ q)<br>
+          ∴ "It is cold." (q)<br><br>
+          <strong>Key insight:</strong> If a conjunction is true, each conjunct is individually true. (You can also conclude p!)
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Conjunction</h4>
+        <div class="rule-premises"><div>p</div><div>q</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">p ∧ q</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "It is raining." (p)<br>
+          "It is cold." (q)<br>
+          ∴ "It is raining and cold." (p ∧ q)<br><br>
+          <strong>Key insight:</strong> Two true propositions can be joined into a conjunction.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Resolution</h4>
+        <div class="rule-premises"><div>¬p ∨ r</div><div>p ∨ q</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">q ∨ r</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "Either you didn't study or you'll pass." (¬p ∨ r)<br>
+          "Either you studied or you cheated." (p ∨ q)<br>
+          ∴ "Either you cheated or you'll pass." (q ∨ r)<br><br>
+          <strong>Key insight:</strong> The p and ¬p cancel out. Fundamental to automated theorem proving.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Rules of Inference — Quantified Statements</h3>
+    <div class="rule-grid">
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Universal Instantiation (UI)</h4>
+        <div class="rule-premises"><div>∀x P(x)</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">P(c)</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "Every dog has 4 legs." (∀x D(x) → L(x))<br>
+          "Oliver is a dog." (D(Oliver))<br>
+          ∴ UI gives us: D(Oliver) → L(Oliver)<br><br>
+          If something is true for ALL elements, it is true for any specific element c.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Universal Generalization (UG)</h4>
+        <div class="rule-premises"><div>P(c) for arbitrary c</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">∀x P(x)</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          If you can prove P(c) for an <em>arbitrary</em> (unspecified) c in the domain, you can conclude it holds for all x.<br><br>
+          Used in math proofs where "let c be an arbitrary element."
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Existential Instantiation (EI)</h4>
+        <div class="rule-premises"><div>∃x P(x)</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">P(c) for some c</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "Someone in class didn't read the book." (∃x ¬B(x))<br>
+          We can give that person a name: call them c.<br>
+          Then: ¬B(c) for this particular (but unspecified) c.<br><br>
+          The c must be a NEW constant not used before.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Existential Generalization (EG)</h4>
+        <div class="rule-premises"><div>P(c) for some element c</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">∃x P(x)</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "Alice has taken Discrete Math." P(Alice)<br>
+          ∴ "There exists someone who has taken Discrete Math." ∃x P(x)<br><br>
+          If a specific element satisfies P, then there exists at least one element satisfying P.
+        </div>
+      </div>
+
+      <div class="rule-card" onclick="toggleRule(this)">
+        <span class="rule-hint">CLICK FOR EXAMPLE</span>
+        <h4>Universal Modus Ponens</h4>
+        <div class="rule-premises"><div>∀x (P(x) → Q(x))</div><div>P(a) — for particular a</div></div>
+        <div class="rule-line"></div>
+        <div class="rule-conclusion">Q(a)</div>
+        <div class="rule-example">
+          <strong>Example:</strong><br>
+          "Every dog has 4 legs." ∀x (D(x) → L(x))<br>
+          "Oliver is a dog." D(Oliver)<br>
+          ∴ "Oliver has 4 legs." L(Oliver)<br><br>
+          Combines UI and Modus Ponens in one step.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection fade-in">
+    <h3>Proof Example — Step-Through</h3>
+    <div class="practice-box">
+      <h4>Example: Show that "John will not make any friends" follows from the given premises</h4>
+      <div style="margin-bottom:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:13px;color:#a8c4f0;line-height:1.8">
+          <span style="color:#ff9ec0">p</span> = "John works hard"<br>
+          <span style="color:#fbbf24">p → q</span> = "If John works hard then he isn't having fun"<br>
+          <span style="color:#4ade80">q → r</span> = "If John isn't having fun, he won't make any friends"<br>
+          <span style="color:var(--cyan)">∴ r</span> = "John will not make any friends"
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 1</span>
+          <span style="font-family:var(--font-mono);font-size:14px;color:#ff9ec0">p</span>
+          <span style="font-size:12px;color:var(--muted)">Premise</span>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 2</span>
+          <span style="font-family:var(--font-mono);font-size:14px;color:#fbbf24">p → q</span>
+          <span style="font-size:12px;color:var(--muted)">Premise</span>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 3</span>
+          <span style="font-family:var(--font-mono);font-size:14px;color:#a8c4f0">q</span>
+          <span style="font-size:12px;color:var(--muted)">Modus Ponens (1, 2)</span>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 4</span>
+          <span style="font-family:var(--font-mono);font-size:14px;color:#4ade80">q → r</span>
+          <span style="font-size:12px;color:var(--muted)">Premise</span>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);border-radius:6px">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 5</span>
+          <span style="font-family:var(--font-mono);font-size:14px;color:var(--cyan)">∴ r</span>
+          <span style="font-size:12px;color:var(--cyan)">Modus Ponens (3, 4) ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="practice-box" style="margin-top:20px">
+      <h4>Practice Problems</h4>
+      <div class="problem">
+        <div class="problem-q">From p ∧ (p → q), show that q is a conclusion.</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
+        <div class="problem-ans">
+          Step 1: p ∧ (p → q) &nbsp;&nbsp; [Premise]<br>
+          Step 2: p &nbsp;&nbsp; [Simplification on Step 1]<br>
+          Step 3: p → q &nbsp;&nbsp; [Simplification on Step 1]<br>
+          Step 4: ∴ q &nbsp;&nbsp; [Modus Ponens, Steps 2 and 3] ✓
+        </div>
+      </div>
+      <div class="problem">
+        <div class="problem-q">Show "Oliver has 4 legs" follows from "Every dog has 4 legs" and "Oliver is a dog." Use quantifiers D(x)="x is a dog", L(x)="x has 4 legs".</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
+        <div class="problem-ans">
+          Step 1: ∀x (D(x) → L(x)) &nbsp;&nbsp; [Premise: every dog has 4 legs]<br>
+          Step 2: D(Oliver) &nbsp;&nbsp; [Premise: Oliver is a dog]<br>
+          Step 3: D(Oliver) → L(Oliver) &nbsp;&nbsp; [Universal Instantiation on Step 1, c = Oliver]<br>
+          Step 4: ∴ L(Oliver) &nbsp;&nbsp; [Modus Ponens, Steps 2 and 3] ✓
+        </div>
+      </div>
+      <div class="problem">
+        <div class="problem-q">Premises: (p ∧ t) → (r ∨ s), &nbsp;q → (u ∧ t), &nbsp;(u → p), &nbsp;¬s, &nbsp;q. Conclusion: q → r. Is it valid?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
+        <div class="problem-ans">
+          Step 1: q &nbsp;&nbsp; [Premise]<br>
+          Step 2: q → (u ∧ t) &nbsp;&nbsp; [Premise]<br>
+          Step 3: u ∧ t &nbsp;&nbsp; [Modus Ponens, 1,2]<br>
+          Step 4: u &nbsp;&nbsp; [Simplification, 3]<br>
+          Step 5: t &nbsp;&nbsp; [Simplification, 3]<br>
+          Step 6: u → p &nbsp;&nbsp; [Premise]<br>
+          Step 7: p &nbsp;&nbsp; [Modus Ponens, 4,6]<br>
+          Step 8: p ∧ t &nbsp;&nbsp; [Conjunction, 7,5]<br>
+          Step 9: (p ∧ t) → (r ∨ s) &nbsp;&nbsp; [Premise]<br>
+          Step 10: r ∨ s &nbsp;&nbsp; [Modus Ponens, 8,9]<br>
+          Step 11: ¬s &nbsp;&nbsp; [Premise]<br>
+          Step 12: ∴ r &nbsp;&nbsp; [Disjunctive Syllogism, 10,11] ✓<br><br>
+          Since we derived r from q (through the premises), q → r is valid.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+</div><!-- end #main -->
 
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
-function nav(id) {
-  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('a'));
-  document.getElementById('sec-'+id).classList.add('active');
-  event.currentTarget.classList.add('a');
-  // lazy init
-  if (id==='polar') initPolar();
-  if (id==='multiply') initMul();
-  if (id==='roots') updateRoots();
-  if (id==='cr') updateCR();
-  if (id==='harmonic') redrawHarm();
-  if (id==='log') redrawLog();
-  if (id==='contour') { updateContourDemo(); }
-  if (id==='cauchy') initCG();
+// ============================================================
+// NAVIGATION ACTIVE STATE
+// ============================================================
+const sections = document.querySelectorAll('section[id], div[id="tt-builder"], div[id="gate-sim"], div[id="proof-step"]');
+const navItems = document.querySelectorAll('.nav-item');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 200) current = s.id;
+  });
+  navItems.forEach(n => {
+    n.classList.remove('active');
+    if (n.getAttribute('href') === '#' + current) n.classList.add('active');
+  });
+});
+
+// ============================================================
+// FADE IN ANIMATIONS
+// ============================================================
+const fadeEls = document.querySelectorAll('.fade-in');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+fadeEls.forEach(el => observer.observe(el));
+
+// ============================================================
+// OPERATOR CARDS TOGGLE
+// ============================================================
+function toggleOp(card) {
+  card.classList.toggle('expanded');
 }
 
-function toggleProof(id) {
+// ============================================================
+// TRUTH TABLE BUILDER
+// ============================================================
+let ttInput = document.getElementById('tt-expr');
+
+function insertSym(sym) {
+  const pos = ttInput.selectionStart;
+  const before = ttInput.value.substring(0, pos);
+  const after = ttInput.value.substring(pos);
+  ttInput.value = before + sym + (sym === '(' ? ')' : '') + after;
+  ttInput.focus();
+  ttInput.selectionStart = ttInput.selectionEnd = pos + 1;
+}
+
+function loadExample(expr) {
+  ttInput.value = expr;
+  buildTT();
+}
+
+// --- Parser ---
+class Parser {
+  constructor(expr) {
+    this.tokens = this.tokenize(expr);
+    this.pos = 0;
+  }
+  
+  tokenize(expr) {
+    const result = [];
+    let i = 0;
+    while (i < expr.length) {
+      const c = expr[i];
+      if (/\s/.test(c)) { i++; continue; }
+      if (c === 'p' || c === 'q' || c === 'r' || c === 'T' || c === 'F') {
+        result.push({type:'VAR', val:c}); i++;
+      } else if (c === '¬' || c === '!') {
+        result.push({type:'NOT'}); i++;
+      } else if (c === '∧' || c === '&') {
+        result.push({type:'AND'}); i++;
+      } else if (c === '∨' || c === '|') {
+        result.push({type:'OR'}); i++;
+      } else if (c === '⊕') {
+        result.push({type:'XOR'}); i++;
+      } else if (c === '→' || c === '>') {
+        result.push({type:'IMPLIES'}); i++;
+      } else if (c === '↔') {
+        result.push({type:'IFF'}); i++;
+      } else if (c === '(') {
+        result.push({type:'LPAREN'}); i++;
+      } else if (c === ')') {
+        result.push({type:'RPAREN'}); i++;
+      } else { throw new Error('Unknown symbol: ' + c); }
+    }
+    result.push({type:'EOF'});
+    return result;
+  }
+  
+  peek() { return this.tokens[this.pos]; }
+  consume() { return this.tokens[this.pos++]; }
+  
+  parseExpr(vars) { return this.parseIff(vars); }
+  
+  parseIff(vars) {
+    let left = this.parseImplies(vars);
+    while (this.peek().type === 'IFF') {
+      this.consume();
+      const right = this.parseImplies(vars);
+      const l = left, r = right;
+      left = (v) => l(v) === r(v);
+    }
+    return left;
+  }
+  
+  parseImplies(vars) {
+    let left = this.parseOr(vars);
+    while (this.peek().type === 'IMPLIES') {
+      this.consume();
+      const right = this.parseOr(vars);
+      const l = left, r = right;
+      left = (v) => !l(v) || r(v);
+    }
+    return left;
+  }
+  
+  parseOr(vars) {
+    let left = this.parseXor(vars);
+    while (this.peek().type === 'OR') {
+      this.consume();
+      const right = this.parseXor(vars);
+      const l = left, r = right;
+      left = (v) => l(v) || r(v);
+    }
+    return left;
+  }
+  
+  parseXor(vars) {
+    let left = this.parseAnd(vars);
+    while (this.peek().type === 'XOR') {
+      this.consume();
+      const right = this.parseAnd(vars);
+      const l = left, r = right;
+      left = (v) => l(v) !== r(v);
+    }
+    return left;
+  }
+  
+  parseAnd(vars) {
+    let left = this.parseNot(vars);
+    while (this.peek().type === 'AND') {
+      this.consume();
+      const right = this.parseNot(vars);
+      const l = left, r = right;
+      left = (v) => l(v) && r(v);
+    }
+    return left;
+  }
+  
+  parseNot(vars) {
+    if (this.peek().type === 'NOT') {
+      this.consume();
+      const inner = this.parseNot(vars);
+      return (v) => !inner(v);
+    }
+    return this.parseAtom(vars);
+  }
+  
+  parseAtom(vars) {
+    const tok = this.peek();
+    if (tok.type === 'VAR') {
+      this.consume();
+      const varName = tok.val;
+      if (varName === 'T') return (v) => true;
+      if (varName === 'F') return (v) => false;
+      vars.add(varName);
+      return (v) => v[varName];
+    }
+    if (tok.type === 'LPAREN') {
+      this.consume();
+      const inner = this.parseExpr(vars);
+      if (this.peek().type !== 'RPAREN') throw new Error('Expected )');
+      this.consume();
+      return inner;
+    }
+    throw new Error('Unexpected token: ' + tok.type + ' at position ' + this.pos);
+  }
+}
+
+function buildTT() {
+  const expr = ttInput.value.trim();
+  const out = document.getElementById('tt-output');
+  if (!expr) { out.innerHTML = ''; return; }
+  
+  try {
+    const vars = new Set();
+    const parser = new Parser(expr);
+    const evalFn = parser.parseExpr(vars);
+    if (parser.peek().type !== 'EOF') throw new Error('Unexpected input after expression');
+    
+    const varList = [...vars].sort();
+    const numVars = varList.length;
+    const rows = Math.pow(2, numVars);
+    
+    // Build HTML
+    let html = '<table class="truth-table"><thead><tr>';
+    varList.forEach(v => { html += `<th>${v}</th>`; });
+    html += `<th class="tt-highlight">${expr}</th></tr></thead><tbody>`;
+    
+    let isTauto = true, isContrad = true, isSatisf = false;
+    
+    for (let i = 0; i < rows; i++) {
+      const assignment = {};
+      varList.forEach((v, idx) => {
+        assignment[v] = !!(i & (1 << (numVars - 1 - idx)));
+      });
+      
+      const result = evalFn(assignment);
+      if (result) { isContrad = false; isSatisf = true; } else { isTauto = false; }
+      
+      html += '<tr>';
+      varList.forEach(v => {
+        html += `<td class="${assignment[v] ? 'tt-true' : 'tt-false'}">${assignment[v] ? 'T' : 'F'}</td>`;
+      });
+      html += `<td class="${result ? 'tt-true' : 'tt-false'} tt-highlight">${result ? 'T' : 'F'}</td>`;
+      html += '</tr>';
+    }
+    
+    html += '</tbody></table>';
+    
+    let badge = '';
+    if (isTauto) badge = '<span style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.4);color:#4ade80;padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--font-head)">✅ TAUTOLOGY</span>';
+    else if (isContrad) badge = '<span style="background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.4);color:#f87171;padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--font-head)">❌ CONTRADICTION</span>';
+    else badge = '<span style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--font-head)">⚡ CONTINGENCY</span>';
+    
+    out.innerHTML = `<div style="margin-bottom:12px">${badge} <span style="font-size:12px;color:var(--muted);margin-left:8px">${isSatisf?'Satisfiable':'Unsatisfiable'}</span></div>` + html;
+  } catch(e) {
+    out.innerHTML = `<div class="error-msg">❌ Error: ${e.message}. Check your expression syntax.</div>`;
+  }
+}
+
+// ============================================================
+// LOGIC GATES
+// ============================================================
+const gateStates = {};
+
+function toggleGate(id) {
+  gateStates[id] = !gateStates[id];
+  const btn = document.getElementById(id);
+  btn.classList.toggle('on', gateStates[id]);
+  const val = document.getElementById(id + '-val');
+  if (val) val.textContent = gateStates[id] ? '1' : '0';
+}
+
+function setGateResult(id, val) {
   const el = document.getElementById(id);
-  const btn = el.previousElementSibling;
-  if (el.style.display==='block') {
-    el.style.display='none'; btn.textContent=btn.textContent.replace('▼','▶');
-  } else {
-    el.style.display='block'; btn.textContent=btn.textContent.replace('▶','▼');
+  el.textContent = val ? '1' : '0';
+  el.className = 'gate-result ' + (val ? 'true' : 'false');
+}
+
+function updateGates() {
+  const p = !!gateStates['not-p'];
+  setGateResult('not-out', !p);
+  
+  const ap = !!gateStates['and-p'], aq = !!gateStates['and-q'];
+  setGateResult('and-out', ap && aq);
+  
+  const op = !!gateStates['or-p'], oq = !!gateStates['or-q'];
+  setGateResult('or-out', op || oq);
+  
+  const xp = !!gateStates['xor-p'], xq = !!gateStates['xor-q'];
+  setGateResult('xor-out', xp !== xq);
+  
+  const np = !!gateStates['nand-p'], nq = !!gateStates['nand-q'];
+  setGateResult('nand-out', !(np && nq));
+  
+  const rp = !!gateStates['nor-p'], rq = !!gateStates['nor-q'];
+  setGateResult('nor-out', !(rp || rq));
+}
+
+// init gate displays
+updateGates();
+
+// ============================================================
+// RULES OF INFERENCE TOGGLE
+// ============================================================
+function toggleRule(card) {
+  card.classList.toggle('open');
+}
+
+// ============================================================
+// PRACTICE PROBLEMS — REVEAL
+// ============================================================
+function toggleAns(btn) {
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('shown');
+  btn.textContent = ans.classList.contains('shown') ? 'Hide Answer' : 'Reveal Answer';
+}
+
+// ============================================================
+// CONVERSE / INVERSE / CONTRAPOSITIVE
+// ============================================================
+function updateCIC() {
+  const p = document.getElementById('cic-p').value || 'it is raining';
+  const q = document.getElementById('cic-q').value || 'I need an umbrella';
+  document.getElementById('cic-orig').textContent = `If ${p}, then ${q}.`;
+  document.getElementById('cic-conv').textContent = `If ${q}, then ${p}.`;
+  document.getElementById('cic-inv').textContent = `If it is not the case that ${p}, then it is not the case that ${q}.`;
+  document.getElementById('cic-contra').textContent = `If it is not the case that ${q}, then it is not the case that ${p}.`;
+}
+
+// ============================================================
+// PROOF STEPPER
+// ============================================================
+const proofs = [
+  {
+    title: '¬(p ∨ (¬p ∧ q)) ≡ ¬p ∧ ¬q',
+    steps: [
+      { expr: '¬(p ∨ (¬p ∧ q))', law: 'Starting expression' },
+      { expr: '¬p ∧ ¬(¬p ∧ q)', law: "De Morgan's Law: ¬(A ∨ B) ≡ ¬A ∧ ¬B" },
+      { expr: '¬p ∧ (¬(¬p) ∨ ¬q)', law: "De Morgan's Law: ¬(A ∧ B) ≡ ¬A ∨ ¬B" },
+      { expr: '¬p ∧ (p ∨ ¬q)', law: 'Double Negation: ¬(¬p) ≡ p' },
+      { expr: '(¬p ∧ p) ∨ (¬p ∧ ¬q)', law: 'Distributive Law: A ∧ (B ∨ C) ≡ (A ∧ B) ∨ (A ∧ C)' },
+      { expr: 'F ∨ (¬p ∧ ¬q)', law: 'Negation Law: ¬p ∧ p ≡ F' },
+      { expr: '¬p ∧ ¬q', law: 'Identity Law: F ∨ A ≡ A ✓' },
+    ]
+  },
+  {
+    title: '(p ∨ q) ∧ ¬p ≡ ¬p ∧ q',
+    steps: [
+      { expr: '(p ∨ q) ∧ ¬p', law: 'Starting expression' },
+      { expr: '¬p ∧ (p ∨ q)', law: 'Commutative Law: A ∧ B ≡ B ∧ A' },
+      { expr: '(¬p ∧ p) ∨ (¬p ∧ q)', law: 'Distributive Law: A ∧ (B ∨ C) ≡ (A ∧ B) ∨ (A ∧ C)' },
+      { expr: 'F ∨ (¬p ∧ q)', law: 'Negation Law: ¬p ∧ p ≡ F' },
+      { expr: '¬p ∧ q', law: 'Identity Law: F ∨ A ≡ A ✓' },
+    ]
+  },
+  {
+    title: 'p ∨ (p ∧ q) ≡ p  (Absorption)',
+    steps: [
+      { expr: 'p ∨ (p ∧ q)', law: 'Starting expression' },
+      { expr: '(p ∧ T) ∨ (p ∧ q)', law: 'Identity Law: p ≡ p ∧ T' },
+      { expr: 'p ∧ (T ∨ q)', law: 'Distributive Law: A ∧ B ∨ A ∧ C ≡ A ∧ (B ∨ C)' },
+      { expr: 'p ∧ T', law: 'Domination Law: T ∨ q ≡ T' },
+      { expr: 'p', law: 'Identity Law: p ∧ T ≡ p ✓' },
+    ]
+  },
+  {
+    title: '(¬p ∧ (p ∨ q)) → q is a Tautology',
+    steps: [
+      { expr: '(¬p ∧ (p ∨ q)) → q', law: 'Starting — need to show this ≡ T' },
+      { expr: '¬(¬p ∧ (p ∨ q)) ∨ q', law: 'p → q ≡ ¬p ∨ q' },
+      { expr: '(¬(¬p) ∨ ¬(p ∨ q)) ∨ q', law: "De Morgan's: ¬(A ∧ B) ≡ ¬A ∨ ¬B" },
+      { expr: '(p ∨ ¬(p ∨ q)) ∨ q', law: 'Double Negation: ¬(¬p) ≡ p' },
+      { expr: '(p ∨ (¬p ∧ ¬q)) ∨ q', law: "De Morgan's: ¬(p ∨ q) ≡ ¬p ∧ ¬q" },
+      { expr: '((p ∨ ¬p) ∧ (p ∨ ¬q)) ∨ q', law: 'Distributive Law' },
+      { expr: '(T ∧ (p ∨ ¬q)) ∨ q', law: 'Negation Law: p ∨ ¬p ≡ T' },
+      { expr: '(p ∨ ¬q) ∨ q', law: 'Identity Law: T ∧ A ≡ A' },
+      { expr: 'p ∨ (¬q ∨ q)', law: 'Associative Law' },
+      { expr: 'p ∨ T', law: 'Negation Law: ¬q ∨ q ≡ T' },
+      { expr: 'T ✓', law: 'Domination Law: p ∨ T ≡ T  — TAUTOLOGY!' },
+    ]
   }
+];
+
+let currentProof = 0;
+let currentStep = 0;
+let visibleSteps = 0;
+
+function loadProof(idx, tabEl) {
+  document.querySelectorAll('.proof-tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+  currentProof = idx;
+  currentStep = 0;
+  visibleSteps = 1;
+  renderProof();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POLAR
-// ─────────────────────────────────────────────────────────────────────────────
-let polarDrag = false, polarPt = {x:1.5,y:1.0};
-
-function initPolar() {
-  const cv = document.getElementById('cv-polar');
-  if (!cv || cv._init) return; cv._init = true;
-  const ctx = cv.getContext('2d');
-  cv.addEventListener('mousedown', e=>{ polarDrag=true; polarMove(cv,e); });
-  cv.addEventListener('mousemove', e=>{ if(polarDrag) polarMove(cv,e); });
-  cv.addEventListener('mouseup', ()=>polarDrag=false);
-  cv.addEventListener('touchstart', e=>{ polarDrag=true; polarMoveTouch(cv,e); e.preventDefault(); },{passive:false});
-  cv.addEventListener('touchmove', e=>{ polarMoveTouch(cv,e); e.preventDefault(); },{passive:false});
-  cv.addEventListener('touchend', ()=>polarDrag=false);
-  drawPolar(ctx, cv.width, cv.height);
-}
-
-function polarMove(cv, e) {
-  const r = cv.getBoundingClientRect();
-  const scaleX = cv.width / r.width, scaleY = cv.height / r.height;
-  const cx=cv.width/2, cy=cv.height/2, sc=80;
-  polarPt.x = ((e.clientX-r.left)*scaleX - cx)/sc;
-  polarPt.y = -((e.clientY-r.top)*scaleY - cy)/sc;
-  drawPolar(cv.getContext('2d'), cv.width, cv.height);
-  updatePolarStats();
-}
-
-function polarMoveTouch(cv, e) {
-  const t = e.touches[0];
-  const r = cv.getBoundingClientRect();
-  const scaleX = cv.width / r.width, scaleY = cv.height / r.height;
-  const cx=cv.width/2, cy=cv.height/2, sc=80;
-  polarPt.x = ((t.clientX-r.left)*scaleX - cx)/sc;
-  polarPt.y = -((t.clientY-r.top)*scaleY - cy)/sc;
-  drawPolar(cv.getContext('2d'), cv.width, cv.height);
-  updatePolarStats();
-}
-
-function drawPolar(ctx, W, H) {
-  const cx=W/2, cy=H/2, sc=80;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#030510'; ctx.fillRect(0,0,W,H);
-  // grid
-  ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=0.5;
-  for(let i=-4;i<=4;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
-  }
-  // unit circle
-  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1;
-  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
-  // axes
-  ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='11px JetBrains Mono';
-  ctx.fillText('Re',W-22,cy-6);ctx.fillText('Im',cx+5,14);
-
-  const x=polarPt.x, y=polarPt.y;
-  const r=Math.sqrt(x*x+y*y), theta=Math.atan2(y,x);
-  const px=cx+x*sc, py=cy-y*sc;
-
-  // r vector
-  ctx.strokeStyle='rgba(212,160,60,.5)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
-  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke();ctx.setLineDash([]);
-
-  // x,y projections
-  ctx.strokeStyle='rgba(136,204,255,.35)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
-  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(cx,py);ctx.stroke();ctx.setLineDash([]);
-
-  // angle arc
-  if(r>0.05){
-    ctx.strokeStyle='rgba(212,160,60,.6)';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.arc(cx,cy,Math.min(30,r*sc*0.4),0,-theta,theta<0);ctx.stroke();
-    const ta=theta/2, rad=Math.min(30,r*sc*0.4)+10;
-    ctx.fillStyle='#d4a03c';ctx.font='11px JetBrains Mono';
-    ctx.fillText('θ',cx+rad*Math.cos(-ta)-4,cy+rad*Math.sin(-ta)+4);
-  }
-
-  // point
-  ctx.shadowColor='rgba(212,160,60,.6)';ctx.shadowBlur=12;
-  ctx.fillStyle='#d4a03c';ctx.beginPath();ctx.arc(px,py,6,0,2*Math.PI);ctx.fill();
-  ctx.shadowBlur=0;
-  ctx.fillStyle='#e8dccc';ctx.font='13px JetBrains Mono';
-  const tx=px+10, ty=py-10;
-  ctx.fillText(`z`,tx,ty);
-
-  // label r on vector
-  if(r>0.1){
-    const mx=cx+(px-cx)*0.5, my=cy+(py-cy)*0.5;
-    ctx.fillStyle='#6ee7b7';ctx.font='11px JetBrains Mono';
-    ctx.fillText('r',mx+8,my-4);
-  }
-  updatePolarStats();
-}
-
-function updatePolarStats(){
-  const x=polarPt.x,y=polarPt.y;
-  const r=Math.sqrt(x*x+y*y),th=Math.atan2(y,x);
-  const sgn=y>=0?'+':'-';
-  document.getElementById('p-rect').textContent=`${x.toFixed(3)} ${sgn} ${Math.abs(y).toFixed(3)}i`;
-  document.getElementById('p-mod').textContent=r.toFixed(4);
-  document.getElementById('p-arg').textContent=th.toFixed(4)+' rad';
-  document.getElementById('p-argd').textContent=(th*180/Math.PI).toFixed(2)+'°';
-  const piFrac=(th/Math.PI).toFixed(3);
-  document.getElementById('p-polar').textContent=`${r.toFixed(3)} · e^(${piFrac}πi)`;
-  const costh=Math.cos(th),sinth=Math.sin(th);
-  document.getElementById('p-euler').textContent=`${costh.toFixed(3)} + ${sinth.toFixed(3)}i`;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MULTIPLY
-// ─────────────────────────────────────────────────────────────────────────────
-let mulPts={z1:{x:1.2,y:0.5},z2:{x:0.6,y:1.0}}, mulActive=null;
-
-function initMul(){
-  const cv=document.getElementById('cv-mul');
-  if(!cv||cv._init)return;cv._init=true;
-  const ctx=cv.getContext('2d');
-  function getPos(e){
-    const r=cv.getBoundingClientRect(),scaleX=cv.width/r.width,scaleY=cv.height/r.height;
-    const cx=cv.width/2,cy=cv.height/2,sc=70;
-    return{x:((e.clientX-r.left)*scaleX-cx)/sc,y:-((e.clientY-r.top)*scaleY-cy)/sc};
-  }
-  function dist(a,b){return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);}
-  cv.addEventListener('mousedown',e=>{
-    const p=getPos(e);
-    if(dist(p,mulPts.z1)<0.3) mulActive='z1';
-    else if(dist(p,mulPts.z2)<0.3) mulActive='z2';
+function renderProof() {
+  const proof = proofs[currentProof];
+  const container = document.getElementById('proof-steps');
+  container.innerHTML = '';
+  proof.steps.forEach((step, i) => {
+    const div = document.createElement('div');
+    div.className = 'proof-step' + (i < visibleSteps ? ' visible' : '');
+    div.innerHTML = `<div class="step-num">Step ${i + 1}</div><div class="step-expr">${step.expr}</div><div class="step-law">${step.law}</div>`;
+    container.appendChild(div);
   });
-  cv.addEventListener('mousemove',e=>{if(mulActive){const p=getPos(e);mulPts[mulActive]=p;drawMul(ctx,cv.width,cv.height);}});
-  cv.addEventListener('mouseup',()=>mulActive=null);
-  cv.addEventListener('touchstart',e=>{
-    const p=getPos(e.touches[0]);
-    if(dist(p,mulPts.z1)<0.3) mulActive='z1';
-    else if(dist(p,mulPts.z2)<0.3) mulActive='z2';
-    e.preventDefault();
-  },{passive:false});
-  cv.addEventListener('touchmove',e=>{if(mulActive){const p=getPos(e.touches[0]);mulPts[mulActive]=p;drawMul(ctx,cv.width,cv.height);}e.preventDefault();},{passive:false});
-  cv.addEventListener('touchend',()=>mulActive=null);
-  drawMul(ctx,cv.width,cv.height);
+  document.getElementById('step-counter').textContent = `Step ${visibleSteps}/${proof.steps.length}`;
 }
 
-function drawMul(ctx,W,H){
-  const cx=W/2,cy=H/2,sc=70;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
-  // grid
-  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
-  for(let i=-4;i<=4;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
-  ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-
-  const {z1,z2}=mulPts;
-  const r1=Math.sqrt(z1.x**2+z1.y**2),t1=Math.atan2(z1.y,z1.x);
-  const r2=Math.sqrt(z2.x**2+z2.y**2),t2=Math.atan2(z2.y,z2.x);
-  const r3=r1*r2,t3=t1+t2;
-  const z3={x:r3*Math.cos(t3),y:r3*Math.sin(t3)};
-
-  function drawVec(z,col,label){
-    const px=cx+z.x*sc,py=cy-z.y*sc;
-    ctx.strokeStyle=col+'99';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke();
-    // arrowhead
-    const ang=Math.atan2(-(py-cy),px-cx);
-    ctx.fillStyle=col;
-    ctx.beginPath();
-    ctx.moveTo(px,py);
-    ctx.lineTo(px-8*Math.cos(ang-0.3),py+8*Math.sin(ang-0.3));
-    ctx.lineTo(px-8*Math.cos(ang+0.3),py+8*Math.sin(ang+0.3));
-    ctx.closePath();ctx.fill();
-    ctx.shadowColor=col+'80';ctx.shadowBlur=10;
-    ctx.fillStyle=col;ctx.beginPath();ctx.arc(px,py,5,0,2*Math.PI);ctx.fill();
-    ctx.shadowBlur=0;
-    ctx.fillStyle='#e8dccc';ctx.font='12px JetBrains Mono';
-    ctx.fillText(label,px+8,py-8);
-  }
-  drawVec(z1,'#88ccff','z₁');
-  drawVec(z2,'#c084fc','z₂');
-  drawVec(z3,'#d4a03c','z₁z₂');
-
-  // angle arcs
-  function drawArc(r,col,ang){
-    ctx.strokeStyle=col+'80';ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.arc(cx,cy,r*sc*0.35+8,0,-ang,ang<0);ctx.stroke();
-  }
-  if(r1>0.1) drawArc(r1,'#88ccff',t1);
-  if(r2>0.1) drawArc(r2,'#c084fc',t2);
-  if(r3>0.1) drawArc(r3,'#d4a03c',t3);
-
-  // stats
-  const sgn1=z1.y>=0?'+':'-',sgn2=z2.y>=0?'+':'-',sgn3=z3.y>=0?'+':'-';
-  document.getElementById('m-z1').textContent=`${z1.x.toFixed(2)}${sgn1}${Math.abs(z1.y).toFixed(2)}i  |r₁=${r1.toFixed(3)}`;
-  document.getElementById('m-z2').textContent=`${z2.x.toFixed(2)}${sgn2}${Math.abs(z2.y).toFixed(2)}i  |r₂=${r2.toFixed(3)}`;
-  document.getElementById('m-mod').textContent=r3.toFixed(4);
-  document.getElementById('m-arg').textContent=`${t3.toFixed(4)} rad = ${(t3*180/Math.PI).toFixed(1)}°`;
-  document.getElementById('m-prod').textContent=`${z3.x.toFixed(3)} ${sgn3} ${Math.abs(z3.y).toFixed(3)}i`;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ROOTS
-// ─────────────────────────────────────────────────────────────────────────────
-function updateRoots(){
-  const n=+document.getElementById('rn').value;
-  const R=+document.getElementById('rR').value/100;
-  const T=+document.getElementById('rT').value*Math.PI/180;
-  document.getElementById('rn-lbl').textContent=n;
-  document.getElementById('rR-lbl').textContent=R.toFixed(2);
-  document.getElementById('rT-lbl').textContent=(T*180/Math.PI).toFixed(0)+'°';
-  document.getElementById('roots-radius').textContent=`R^(1/${n}) = ${Math.pow(R,1/n).toFixed(4)}`;
-  const cv=document.getElementById('cv-roots');
-  if(!cv)return;
-  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
-  const cx=W/2,cy=H/2,sc=100;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
-  for(let i=-3;i<=3;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
-  ctx.strokeStyle='rgba(255,255,255,.22)';
-  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-
-  const rn=Math.pow(R,1/n);
-  // target w
-  const wx=cx+R*Math.cos(T)*sc,wy=cy-R*Math.sin(T)*sc;
-  ctx.fillStyle='rgba(255,120,70,.15)';ctx.strokeStyle='rgba(255,120,70,.4)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.arc(cx,cy,rn*sc,0,2*Math.PI);ctx.stroke();
-  ctx.fillStyle='#ff8068';ctx.beginPath();ctx.arc(wx,wy,7,0,2*Math.PI);ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='11px JetBrains Mono';ctx.fillText('w',wx+9,wy-9);
-
-  // roots
-  const hue=['#d4a03c','#88ccff','#6ee7b7','#c084fc','#ff8068','#f97316','#a78bfa','#34d399','#60a5fa','#e879f9','#fb923c','#4ade80'];
-  for(let k=0;k<n;k++){
-    const phi=(T+2*Math.PI*k)/n;
-    const rx=cx+rn*Math.cos(phi)*sc,ry=cy-rn*Math.sin(phi)*sc;
-    const col=hue[k%hue.length];
-    ctx.strokeStyle=col+'55';ctx.lineWidth=1;ctx.setLineDash([4,3]);
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(rx,ry);ctx.stroke();ctx.setLineDash([]);
-    ctx.shadowColor=col+'80';ctx.shadowBlur=10;
-    ctx.fillStyle=col;ctx.beginPath();ctx.arc(rx,ry,6,0,2*Math.PI);ctx.fill();
-    ctx.shadowBlur=0;
-    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='10px JetBrains Mono';
-    ctx.fillText(`z${k}`,rx+7,ry-7);
+function nextStep() {
+  const proof = proofs[currentProof];
+  if (visibleSteps < proof.steps.length) {
+    visibleSteps++;
+    renderProof();
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CR CHECKER
-// ─────────────────────────────────────────────────────────────────────────────
-const crFunctions = {
-  z2:   {ux:(x,y)=>2*x,    uy:(x,y)=>-2*y,   vx:(x,y)=>2*y,   vy:(x,y)=>2*x,   deriv:(x,y)=>`f′(z) = 2x+2iy = 2z`},
-  conj: {ux:(x,y)=>1,      uy:(x,y)=>0,      vx:(x,y)=>0,     vy:(x,y)=>-1,    deriv:(x,y)=>`CR fails: not differentiable`},
-  mod2: {ux:(x,y)=>2*x,    uy:(x,y)=>2*y,    vx:(x,y)=>0,     vy:(x,y)=>0,     deriv:(x,y)=>{if(Math.abs(x)<.02&&Math.abs(y)<.02)return'f′(0) = 0 (only at z=0)';return'CR fails: not differentiable';}},
-  ez:   {ux:(x,y)=>Math.exp(x)*Math.cos(y),uy:(x,y)=>-Math.exp(x)*Math.sin(y),vx:(x,y)=>Math.exp(x)*Math.sin(y),vy:(x,y)=>Math.exp(x)*Math.cos(y),deriv:(x,y)=>`f′(z) = eˣcos y + ieˣsin y = eᶻ`},
-  z3:   {ux:(x,y)=>3*x*x-3*y*y,uy:(x,y)=>-6*x*y,vx:(x,y)=>6*x*y,vy:(x,y)=>3*x*x-3*y*y,deriv:(x,y)=>`f′(z) = (3x²−3y²)+6xyi = 3z²`},
-  abs:  {ux:(x,y)=>x/Math.sqrt(x*x+y*y+1e-12),uy:(x,y)=>y/Math.sqrt(x*x+y*y+1e-12),vx:(x,y)=>0,vy:(x,y)=>0,deriv:(x,y)=>`CR fails everywhere`},
-  sinz: {ux:(x,y)=>Math.cos(x)*Math.cosh(y),uy:(x,y)=>-Math.sin(x)*Math.sinh(y),vx:(x,y)=>Math.sin(x)*Math.sinh(y),vy:(x,y)=>Math.cos(x)*Math.cosh(y),deriv:(x,y)=>`f′(z) = cos z`},
-};
-
-function updateCR(){
-  const fn=document.getElementById('cr-fn').value;
-  const x=+document.getElementById('cr-x').value/100;
-  const y=+document.getElementById('cr-y').value/100;
-  document.getElementById('cr-x-lbl').textContent=x.toFixed(2);
-  document.getElementById('cr-y-lbl').textContent=y.toFixed(2);
-  const f=crFunctions[fn];
-  const ux=f.ux(x,y),uy=f.uy(x,y),vx=f.vx(x,y),vy=f.vy(x,y);
-  document.getElementById('cr-ux').textContent=ux.toFixed(4);
-  document.getElementById('cr-vy').textContent=vy.toFixed(4);
-  document.getElementById('cr-vx').textContent=vx.toFixed(4);
-  document.getElementById('cr-muy').textContent=(-uy).toFixed(4);
-  const eps=1e-8;
-  const cr1=Math.abs(ux-vy)<0.001;
-  const cr2=Math.abs(vx+uy)<0.001;
-  const b1=document.getElementById('cr-b1');
-  const b2=document.getElementById('cr-b2');
-  b1.className=cr1?'badge-g':'badge-r';
-  b1.textContent=cr1?'✓ Yes':'✗ No';
-  b2.className=cr2?'badge-g':'badge-r';
-  b2.textContent=cr2?'✓ Yes':'✗ No';
-  const st=document.getElementById('cr-status');
-  const dr=document.getElementById('cr-deriv');
-  if(cr1&&cr2){
-    st.style.background='rgba(110,231,183,.08)';
-    st.style.borderLeft='3px solid rgba(110,231,183,.5)';
-    st.style.borderRadius='0 8px 8px 0';
-    st.style.padding='10px 14px';
-    st.textContent='✓ CR equations satisfied at this point';
-    dr.style.display='block';
-    dr.textContent=typeof f.deriv==='function'?f.deriv(x,y):f.deriv;
-  } else {
-    st.style.background='rgba(255,110,60,.07)';
-    st.style.borderLeft='3px solid rgba(255,110,60,.4)';
-    st.style.borderRadius='0 8px 8px 0';
-    st.style.padding='10px 14px';
-    st.textContent='✗ CR equations fail at this point — not differentiable here';
-    dr.style.display='none';
+function prevStep() {
+  if (visibleSteps > 1) {
+    visibleSteps--;
+    renderProof();
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HARMONIC
-// ─────────────────────────────────────────────────────────────────────────────
-function redrawHarm(){
-  const cv=document.getElementById('cv-harm');
-  if(!cv)return;
-  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
-  const fn=document.getElementById('harm-fn').value;
-  const showU=document.getElementById('show-u').checked;
-  const showV=document.getElementById('show-v').checked;
+function resetProof() { visibleSteps = 1; renderProof(); }
+function showAllSteps() { visibleSteps = proofs[currentProof].steps.length; renderProof(); }
 
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
+// Initialize proof
+loadProof(0, document.querySelector('.proof-tab'));
 
-  const cx=W/2,cy=H/2,sc=70;
-  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
-  for(let i=-4;i<=4;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-
-  const N=W, M=H;
-  // marching squares approach for level curves
-  const step=0.005;
-  function getUV(x,y){
-    if(fn==='z2') return{u:x*x-y*y,v:2*x*y};
-    if(fn==='ez'){const ex=Math.exp(x);return{u:ex*Math.cos(y),v:ex*Math.sin(y)};}
-    if(fn==='z3') return{u:x*x*x-3*x*y*y,v:3*x*x*y-y*y*y};
-    if(fn==='logr'){const r=Math.sqrt(x*x+y*y);if(r<1e-10)return{u:0,v:0};return{u:Math.log(r),v:Math.atan2(y,x)};}
-    return{u:0,v:0};
-  }
-
-  // Draw level curves using canvas path tracing on a grid
-  const GW=200,GH=200;
-  const vals_u=new Float32Array(GW*GH);
-  const vals_v=new Float32Array(GW*GH);
-  for(let j=0;j<GH;j++)for(let i=0;i<GW;i++){
-    const x=(i/GW-0.5)*8,y=(j/GH-0.5)*-8;
-    const {u,v}=getUV(x,y);
-    vals_u[j*GW+i]=u;
-    vals_v[j*GW+i]=v;
-  }
-  function drawLevel(vals,color,levels){
-    ctx.strokeStyle=color;ctx.lineWidth=1;
-    for(const lv of levels){
-      for(let j=0;j<GH-1;j++)for(let i=0;i<GW-1;i++){
-        const a=vals[j*GW+i]-lv,b=vals[j*GW+i+1]-lv;
-        const c=vals[(j+1)*GW+i+1]-lv,d=vals[(j+1)*GW+i]-lv;
-        const ix=i=>cx+(i/GW-0.5)*8*sc;
-        const iy=j=>cy-(j/GH-0.5)*-8*sc;
-        function lerp(s,e,vs,ve){const t=vs/(vs-ve);return s+t*(e-s);}
-        const pts=[];
-        if(a*b<0) pts.push([lerp(i,i+1,a,b),j]);
-        if(b*c<0) pts.push([i+1,lerp(j,j+1,b,c)]);
-        if(c*d<0) pts.push([lerp(i+1,i,c,d),j+1]);
-        if(d*a<0) pts.push([i,lerp(j+1,j,d,a)]);
-        if(pts.length===2){
-          ctx.beginPath();
-          ctx.moveTo(ix(pts[0][0]),iy(pts[0][1]));
-          ctx.lineTo(ix(pts[1][0]),iy(pts[1][1]));
-          ctx.stroke();
-        }
-      }
-    }
-  }
-  const uLevels=[-8,-4,-2,-1,-.5,-.25,0,.25,.5,1,2,4,8];
-  const vLevels=fn==='logr'?[-Math.PI,-2*Math.PI/3,-Math.PI/3,0,Math.PI/3,2*Math.PI/3]:[-8,-4,-2,-1,-.5,0,.5,1,2,4,8];
-  if(showU) drawLevel(vals_u,'rgba(136,204,255,.6)',uLevels);
-  if(showV) drawLevel(vals_v,'rgba(110,231,183,.55)',vLevels);
-
-  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='11px JetBrains Mono';
-  ctx.fillText('Re',W-22,cy-6);ctx.fillText('Im',cx+5,12);
+// ============================================================
+// TRANSLATOR — REVEAL LOGIC
+// ============================================================
+function revealTrans(row) {
+  row.classList.remove('hidden-logic');
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LOG BRANCH
-// ─────────────────────────────────────────────────────────────────────────────
-function redrawLog(){
-  const cv=document.getElementById('cv-log');
-  if(!cv)return;
-  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
-  const cut=document.getElementById('log-cut').value;
-
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
-  const cx=W/2,cy=H/2,sc=70;
-
-  // Draw argument heatmap
-  const imgd=ctx.createImageData(W,H);
-  for(let py2=0;py2<H;py2++)for(let px2=0;px2<W;px2++){
-    const x=(px2-cx)/sc,y=-(py2-cy)/sc;
-    const r=Math.sqrt(x*x+y*y);
-    if(r<0.05){const i=(py2*W+px2)*4;imgd.data[i]=imgd.data[i+1]=imgd.data[i+2]=30;imgd.data[i+3]=255;continue;}
-    let arg=Math.atan2(y,x);
-    // adjust based on cut
-    if(cut==='pos'){if(arg<0) arg+=2*Math.PI;}
-    else if(cut==='top'){arg=arg-Math.PI/2;if(arg<-Math.PI)arg+=2*Math.PI;}
-    // hue from arg
-    const t=(arg+Math.PI)/(2*Math.PI); // 0..1
-    // color wheel: map t to hue
-    const h360=t*360;
-    const lum=0.3+0.15*(1-Math.min(r,3)/3);
-    const [rr,gg,bb]=hsl(h360,0.7,lum);
-    const i=(py2*W+px2)*4;
-    imgd.data[i]=rr;imgd.data[i+1]=gg;imgd.data[i+2]=bb;imgd.data[i+3]=200;
-  }
-  ctx.putImageData(imgd,0,0);
-
-  // grid lines
-  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=0.5;
-  for(let i=-4;i<=4;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-
-  // unit circle
-  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
-
-  // branch cut
-  ctx.strokeStyle='#ff4444';ctx.lineWidth=2.5;ctx.setLineDash([6,3]);
-  ctx.beginPath();
-  if(cut==='neg'){ctx.moveTo(cx,cy);ctx.lineTo(0,cy);}
-  else if(cut==='pos'){ctx.moveTo(cx,cy);ctx.lineTo(W,cy);}
-  else if(cut==='top'){ctx.moveTo(cx,cy);ctx.lineTo(cx,0);}
-  ctx.stroke();ctx.setLineDash([]);
-
-  // origin dot
-  ctx.fillStyle='#ff4444';ctx.beginPath();ctx.arc(cx,cy,5,0,2*Math.PI);ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='11px JetBrains Mono';
-  ctx.fillText('0',cx+8,cy-6);
-
-  // hover readout
-  cv._cut=cut;cv._cx=cx;cv._cy=cy;cv._sc=sc;
-}
-
-function hsl(h,s,l){
-  h/=360;
-  const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;
-  function hue(t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
-  return[Math.round(hue(h+1/3)*255),Math.round(hue(h)*255),Math.round(hue(h-1/3)*255)];
-}
-
-// Log click readout
-document.addEventListener('DOMContentLoaded',()=>{
-  const cv=document.getElementById('cv-log');
-  if(cv){
-    cv.addEventListener('click',e=>{
-      const r=cv.getBoundingClientRect();
-      const scaleX=cv.width/r.width,scaleY=cv.height/r.height;
-      const x=((e.clientX-r.left)*scaleX-(cv._cx||200))/(cv._sc||70);
-      const y=-((e.clientY-r.top)*scaleY-(cv._cy||180))/(cv._sc||70);
-      const mod=Math.sqrt(x*x+y*y);
-      if(mod<0.05){document.getElementById('log-readout').textContent='z=0: Log undefined';return;}
-      const arg=Math.atan2(y,x);
-      const logR=Math.log(mod);
-      const sgn=arg>=0?'+':'-';
-      document.getElementById('log-readout').textContent=
-        `z=${x.toFixed(2)}+${y.toFixed(2)}i → Log(z)=${logR.toFixed(3)}${sgn}${Math.abs(arg).toFixed(3)}i`;
-    });
-  }
-  // Initialize first section
-  initPolar();
-  setTimeout(()=>{
-    const cv=document.getElementById('cv-polar');
-    if(cv){drawPolar(cv.getContext('2d'),cv.width,cv.height);}
-  },100);
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// CONTOUR INTEGRAL DEMO
-// ─────────────────────────────────────────────────────────────────────────────
-let contAngle=0,contTimer=null,contN=-1;
-
-function updateContourDemo(){
-  contN=+document.getElementById('cont-n').value;
-  document.getElementById('cont-n-lbl').textContent='n = '+contN;
-  const res=contN===-1?'2πi  ≈ 6.283i':'0';
-  document.getElementById('cont-result').textContent=res;
-  document.getElementById('cont-result').style.color=contN===-1?'#d4a03c':'#6ee7b7';
-  drawContour(contAngle);
-}
-
-function drawContour(angle){
-  const cv=document.getElementById('cv-cont');
-  if(!cv)return;
-  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
-  const cx=W/2,cy=H/2,sc=100;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
-  for(let i=-3;i<=3;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-
-  // draw unit circle contour
-  ctx.strokeStyle='rgba(212,160,60,.4)';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.arc(cx,cy,sc,0,2*Math.PI);ctx.stroke();
-
-  // draw progress arc
-  ctx.strokeStyle='#d4a03c';ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.arc(cx,cy,sc,-Math.PI/2,-Math.PI/2+angle,false);ctx.stroke();
-
-  // moving point
-  const px=cx+sc*Math.cos(-Math.PI/2+angle),py=cy+sc*Math.sin(-Math.PI/2+angle);
-  ctx.shadowColor='#d4a03c80';ctx.shadowBlur=15;
-  ctx.fillStyle='#d4a03c';ctx.beginPath();ctx.arc(px,py,7,0,2*Math.PI);ctx.fill();
-  ctx.shadowBlur=0;
-
-  // f(z) = z^n at current point
-  const z_re=Math.cos(-Math.PI/2+angle),z_im=Math.sin(-Math.PI/2+angle);
-  const r=1;
-  const fth=contN*(-Math.PI/2+angle);
-  const f_re=Math.cos(fth),f_im=Math.sin(fth);
-  // w'(t) = ie^it
-  const wp_re=-z_im,wp_im=z_re;
-  const integrand_re=f_re*wp_re-f_im*wp_im;
-  const integrand_im=f_re*wp_im+f_im*wp_re;
-
-  // origin label
-  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='11px JetBrains Mono';
-  ctx.fillText('0',cx+5,cy-5);
-  ctx.fillText('1',cx+sc+4,cy+12);
-  ctx.fillText('-1',cx-sc-18,cy+12);
-  ctx.fillText('i',cx+6,cy-sc-4);
-  ctx.fillText('-i',cx+6,cy+sc+12);
-
-  // start arrow
-  ctx.fillStyle='#888';ctx.font='11px JetBrains Mono';
-  ctx.fillText('start',cx+6,cy-sc+14);
-}
-
-function startContourAnim(){
-  if(contTimer){clearInterval(contTimer);contTimer=null;document.getElementById('cont-btn').textContent='▶ Animate';contAngle=0;drawContour(0);return;}
-  contAngle=0;
-  document.getElementById('cont-btn').textContent='⏹ Stop';
-  contTimer=setInterval(()=>{
-    contAngle+=0.04;
-    drawContour(contAngle);
-    if(contAngle>=2*Math.PI){clearInterval(contTimer);contTimer=null;document.getElementById('cont-btn').textContent='▶ Animate';}
-  },30);
-}
-
-function resetContourAnim(){
-  if(contTimer){clearInterval(contTimer);contTimer=null;}
-  contAngle=0;
-  document.getElementById('cont-btn').textContent='▶ Animate';
-  drawContour(0);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// CAUCHY-GOURSAT
-// ─────────────────────────────────────────────────────────────────────────────
-let cgSing=false, cgSingPos={x:0,y:0};
-
-function initCG(){
-  const cv=document.getElementById('cv-cg');
-  if(!cv)return;
-  const ctx=cv.getContext('2d');
-  cv.addEventListener('click',e=>{
-    const r=cv.getBoundingClientRect();
-    const scaleX=cv.width/r.width,scaleY=cv.height/r.height;
-    const cx=cv.width/2,cy=cv.height/2,sc=90;
-    cgSingPos.x=((e.clientX-r.left)*scaleX-cx)/sc;
-    cgSingPos.y=-((e.clientY-r.top)*scaleY-cy)/sc;
-    drawCG(ctx,cv.width,cv.height);
-  });
-  drawCG(ctx,cv.width,cv.height);
-}
-
-function toggleSingularity(){
-  cgSing=!cgSing;
-  document.getElementById('sing-btn').textContent=cgSing?'Remove Singularity':'Add Singularity';
-  const cv=document.getElementById('cv-cg');
-  if(cv)drawCG(cv.getContext('2d'),cv.width,cv.height);
-}
-
-function resetCG(){
-  cgSing=false;cgSingPos={x:0,y:0};
-  document.getElementById('sing-btn').textContent='Add Singularity';
-  const cv=document.getElementById('cv-cg');
-  if(cv)drawCG(cv.getContext('2d'),cv.width,cv.height);
-}
-
-function drawCG(ctx,W,H){
-  const cx=W/2,cy=H/2,sc=90;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#030510';ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;
-  for(let i=-3;i<=3;i++){
-    ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
-
-  // region inside contour (simply connected)
-  const R=sc*1.5;
-  ctx.fillStyle='rgba(100,180,255,.05)';
-  ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);ctx.fill();
-
-  // contour
-  ctx.strokeStyle='#88ccff';ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.arc(cx,cy,R,0,2*Math.PI);ctx.stroke();
-  // arrow on contour
-  ctx.fillStyle='#88ccff';
-  ctx.save();ctx.translate(cx+R,cy);ctx.rotate(-Math.PI/2);
-  ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(6,4);ctx.lineTo(-6,4);ctx.closePath();ctx.fill();
-  ctx.restore();
-  ctx.fillStyle='#88ccff';ctx.font='12px JetBrains Mono';
-  ctx.fillText('C',cx+R+8,cy+4);
-
-  // f(z) label
-  ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='12px JetBrains Mono';
-  if(!cgSing){
-    ctx.fillText('f analytic inside C',cx-70,cy+20);
-  }
-
-  // singularity
-  if(cgSing){
-    const sx=cx+cgSingPos.x*sc,sy=cy-cgSingPos.y*sc;
-    const inside=Math.sqrt(cgSingPos.x*cgSingPos.x+cgSingPos.y*cgSingPos.y)<1.5;
-    ctx.strokeStyle=inside?'#ff4444':'#888';ctx.lineWidth=inside?2:1;
-    ctx.beginPath();ctx.arc(sx,sy,5,0,2*Math.PI);ctx.stroke();
-    ctx.strokeStyle=inside?'#ff4444':'#888';
-    ctx.beginPath();ctx.moveTo(sx-8,sy-8);ctx.lineTo(sx+8,sy+8);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(sx+8,sy-8);ctx.lineTo(sx-8,sy+8);ctx.stroke();
-
-    const res=document.getElementById('cg-result');
-    const exp=document.getElementById('cg-explain');
-    if(inside){
-      res.textContent='2πi · Res(f, z₀)';res.style.color='#d4a03c';
-      exp.textContent='Singularity inside C! Integral may be nonzero (Cauchy integral formula needed)';
-    } else {
-      res.textContent='0 (Cauchy-Goursat)';res.style.color='#6ee7b7';
-      exp.textContent='Singularity outside C — f analytic inside and on C → integral = 0';
-    }
-    ctx.fillStyle=inside?'#ff8068':'#888';ctx.font='11px JetBrains Mono';
-    ctx.fillText(inside?'z₀ INSIDE':'z₀ outside',sx+8,sy-8);
-  } else {
-    document.getElementById('cg-result').textContent='0 (Cauchy-Goursat)';
-    document.getElementById('cg-result').style.color='#6ee7b7';
-    document.getElementById('cg-explain').textContent='f is analytic inside and on C';
-  }
-
-  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='11px JetBrains Mono';
-  ctx.fillText('Re',W-22,cy-6);ctx.fillText('Im',cx+5,14);
-  if(cgSing) ctx.fillText('Click to move singularity',10,H-10);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// INIT ALL ON LOAD
-// ─────────────────────────────────────────────────────────────────────────────
-window.addEventListener('load', ()=>{
-  initPolar();
-  setTimeout(()=>{
-    updateRoots();
-    updateCR();
-    redrawHarm();
-    redrawLog();
-    updateContourDemo();
-    initCG();
-    initMul();
-  }, 200);
-});
 </script>
 </body>
 </html>
