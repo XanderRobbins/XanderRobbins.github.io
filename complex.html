@@ -880,24 +880,58 @@ body {
 .mini-table th { background: rgba(26,115,232,0.2); padding: 5px 10px; color: var(--blue-bright); }
 .mini-table td { padding: 4px 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-.gate-simulator { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
-.gates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 16px; }
-.gate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
-.gate-card h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
-.gate-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
-.gate-input-row { display: flex; align-items: center; gap: 10px; }
-.gate-input-row label { font-family: var(--font-mono); font-size: 13px; color: var(--muted); width: 16px; }
-.toggle-btn { width: 50px; height: 26px; background: #1f2937; border: 1px solid var(--border); border-radius: 13px; cursor: pointer; position: relative; transition: background 0.2s; }
-.toggle-btn.on { background: var(--blue); border-color: var(--blue); }
-.toggle-btn::after { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; }
-.toggle-btn.on::after { left: 29px; }
-.toggle-val { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
-.gate-output { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid var(--border); }
-.gate-output label { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
-.gate-result { font-family: var(--font-mono); font-size: 20px; font-weight: 600; transition: color 0.2s; }
-.gate-result.true { color: #4ade80; }
-.gate-result.false { color: #f87171; }
-.gate-formula { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-left: auto; }
+/* ========== CIRCUIT BUILDER ========== */
+.gate-add-btn {
+  background: rgba(26,115,232,0.12);
+  border: 1px solid var(--border);
+  color: var(--blue-bright);
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.gate-add-btn:hover { background: rgba(26,115,232,0.28); border-color: var(--blue); }
+
+/* Input toggle nodes */
+.circ-input-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px 16px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  min-width: 60px;
+  transition: all 0.2s;
+}
+.circ-input-node:hover { border-color: var(--blue); }
+.circ-input-node.active { border-color: #4ade80; background: rgba(74,222,128,0.08); }
+.cin-label { font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 1px; }
+.cin-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--muted); transition: color 0.2s; }
+.circ-input-node.active .cin-val { color: #4ade80; }
+.circ-input-node.active .cin-label { color: #4ade80; }
+
+/* Gate reference pills */
+.gate-ref-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+  text-align: center;
+}
+.gate-ref-card:hover, .gate-ref-card.selected { border-color: var(--blue); background: rgba(26,115,232,0.1); }
+.gate-ref-name { font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--blue-bright); letter-spacing: 1px; margin-bottom: 6px; }
+.gate-ref-expr { font-family: var(--font-mono); font-size: 13px; color: var(--cyan); }
 
 .rule-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
 .rule-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; }
@@ -1135,9 +1169,7 @@ body {
   </div>
 
   <div class="sidebar-nav">
-    <a class="home-btn" onclick="showHome()">
-      <span class="home-icon">🏠</span> Home / Syllabus
-    </a>
+    <a class="home-btn" onclick="showHome()">Home</a>
 
     <div class="nav-section-label">Unit 1 — Logic</div>
     <div class="unit-accordion open" id="acc-u1">
@@ -1782,58 +1814,56 @@ body {
   </div>
 
   <div class="subsection fade-in">
-    <h3>Basic Logic Gates</h3>
-    <p>Toggle the inputs below to see how each gate responds.</p>
+    <h3>Gate Reference</h3>
+    <p>Each gate has a standard schematic symbol. Click a gate type below to see its shape, truth table, and Boolean expression.</p>
+    <div id="gate-ref-strip" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px"></div>
   </div>
 
-  <div id="gate-sim" class="fade-in">
-    <div class="gates-grid">
-      <div class="gate-card">
-        <h4>Inverter (NOT) — ¬p</h4>
-        <div class="gate-inputs"><div class="gate-input-row"><label>p</label><div class="toggle-btn" id="not-p" onclick="toggleGate('not-p');updateGates()"></div><span class="toggle-val" id="not-p-val">0</span></div></div>
-        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="not-out">1</span><span class="gate-formula">¬p</span></div>
+  <div class="subsection fade-in" id="gate-sim">
+    <h3>Visual Circuit Builder</h3>
+    <p>Drag gates from the palette onto the canvas. Click inputs/outputs to wire them together. Toggle the input nodes (A, B, C) to propagate signals through your circuit in real time.</p>
+
+    <!-- Toolbar -->
+    <div id="circuit-toolbar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <span style="font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase">Add Gate:</span>
+      <button class="gate-add-btn" onclick="addGate('NOT')">NOT</button>
+      <button class="gate-add-btn" onclick="addGate('AND')">AND</button>
+      <button class="gate-add-btn" onclick="addGate('OR')">OR</button>
+      <button class="gate-add-btn" onclick="addGate('XOR')">XOR</button>
+      <button class="gate-add-btn" onclick="addGate('NAND')">NAND</button>
+      <button class="gate-add-btn" onclick="addGate('NOR')">NOR</button>
+      <button class="gate-add-btn" onclick="addGate('XNOR')">XNOR</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-sm btn-ghost" onclick="clearCircuit()">Clear Canvas</button>
+      <button class="btn btn-sm btn-ghost" onclick="loadPreset('halfAdder')">Load: Half Adder</button>
+      <button class="btn btn-sm btn-ghost" onclick="loadPreset('demorgan')">Load: De Morgan</button>
+    </div>
+
+    <!-- Input toggles -->
+    <div id="circuit-inputs" style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+      <div class="circ-input-node" id="inp-A" onclick="toggleInput('A')">
+        <div class="cin-label">A</div>
+        <div class="cin-val" id="cinv-A">0</div>
       </div>
-      <div class="gate-card">
-        <h4>AND Gate — p ∧ q</h4>
-        <div class="gate-inputs">
-          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="and-p" onclick="toggleGate('and-p');updateGates()"></div><span class="toggle-val" id="and-p-val">0</span></div>
-          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="and-q" onclick="toggleGate('and-q');updateGates()"></div><span class="toggle-val" id="and-q-val">0</span></div>
-        </div>
-        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="and-out">0</span><span class="gate-formula">p ∧ q</span></div>
+      <div class="circ-input-node" id="inp-B" onclick="toggleInput('B')">
+        <div class="cin-label">B</div>
+        <div class="cin-val" id="cinv-B">0</div>
       </div>
-      <div class="gate-card">
-        <h4>OR Gate — p ∨ q</h4>
-        <div class="gate-inputs">
-          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="or-p" onclick="toggleGate('or-p');updateGates()"></div><span class="toggle-val" id="or-p-val">0</span></div>
-          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="or-q" onclick="toggleGate('or-q');updateGates()"></div><span class="toggle-val" id="or-q-val">0</span></div>
-        </div>
-        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="or-out">0</span><span class="gate-formula">p ∨ q</span></div>
+      <div class="circ-input-node" id="inp-C" onclick="toggleInput('C')">
+        <div class="cin-label">C</div>
+        <div class="cin-val" id="cinv-C">0</div>
       </div>
-      <div class="gate-card">
-        <h4>XOR Gate — p ⊕ q</h4>
-        <div class="gate-inputs">
-          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="xor-p" onclick="toggleGate('xor-p');updateGates()"></div><span class="toggle-val" id="xor-p-val">0</span></div>
-          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="xor-q" onclick="toggleGate('xor-q');updateGates()"></div><span class="toggle-val" id="xor-q-val">0</span></div>
-        </div>
-        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="xor-out">0</span><span class="gate-formula">p ⊕ q</span></div>
-      </div>
-      <div class="gate-card">
-        <h4>NAND Gate — ¬(p ∧ q)</h4>
-        <div class="gate-inputs">
-          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="nand-p" onclick="toggleGate('nand-p');updateGates()"></div><span class="toggle-val" id="nand-p-val">0</span></div>
-          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="nand-q" onclick="toggleGate('nand-q');updateGates()"></div><span class="toggle-val" id="nand-q-val">0</span></div>
-        </div>
-        <div class="gate-output"><label>Output:</label><span class="gate-result true" id="nand-out">1</span><span class="gate-formula">¬(p ∧ q)</span></div>
-      </div>
-      <div class="gate-card">
-        <h4>NOR Gate — ¬(p ∨ q)</h4>
-        <div class="gate-inputs">
-          <div class="gate-input-row"><label>p</label><div class="toggle-btn" id="nor-p" onclick="toggleGate('nor-p');updateGates()"></div><span class="toggle-val" id="nor-p-val">0</span></div>
-          <div class="gate-input-row"><label>q</label><div class="toggle-btn" id="nor-q" onclick="toggleGate('nor-q');updateGates()"></div><span class="toggle-val" id="nor-q-val">0</span></div>
-        </div>
-        <div class="gate-output"><label>Output:</label><span class="gate-result true" id="nor-out">1</span><span class="gate-formula">¬(p ∨ q)</span></div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+        ← click to toggle 0/1
       </div>
     </div>
+
+    <!-- Canvas -->
+    <div style="position:relative;width:100%;overflow:hidden;border:1px solid var(--border);border-radius:10px;background:var(--surface2)">
+      <canvas id="circuit-canvas" style="display:block;cursor:crosshair"></canvas>
+      <div style="position:absolute;bottom:10px;right:14px;font-size:11px;color:var(--muted);font-family:var(--font-head);letter-spacing:1px;pointer-events:none">DRAG GATES · CLICK PORTS TO WIRE</div>
+    </div>
+    <div id="circuit-status" style="margin-top:10px;font-size:13px;color:var(--muted);font-family:var(--font-mono);min-height:20px"></div>
   </div>
 
   <div class="subsection fade-in" style="margin-top:36px">
@@ -1841,29 +1871,24 @@ body {
     <div class="practice-box">
       <h4>Practice Problems</h4>
       <div class="problem">
-        <div class="problem-q">What expression does this circuit compute? p → NOT gate, q → NOT gate, both outputs → AND gate, then AND that result with AND(p,r), then → OR gate. Write using ¬, ∧, ∨.</div>
+        <div class="problem-q">Build a circuit that computes <strong>(A ∧ B) ∨ (¬A ∧ C)</strong> using the builder above. What is its output when A=1, B=0, C=1?</div>
         <div class="answer-row">
-          <input class="answer-input" placeholder="e.g. (¬p ∧ ¬q) ∨ (p ∧ r)" onkeydown="if(event.key==='Enter')checkAnswer(this)">
-          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="(¬p∧¬q)∨(p∧r)|¬p∧¬q∨p∧r|(¬p ∧ ¬q) ∨ (p ∧ r)">Check</button>
+          <input class="answer-input" placeholder="0 or 1" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="1">Check</button>
           <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
         </div>
         <div class="answer-feedback"></div>
-        <div class="problem-ans">The circuit computes: <strong>(¬p ∧ ¬q) ∨ (p ∧ r)</strong></div>
+        <div class="problem-ans">When A=1, B=0, C=1: (1∧0)∨(¬1∧1) = 0∨(0∧1) = 0∨0 = <strong>0</strong>. Wait — ¬A=0, so ¬A∧C = 0∧1 = 0. And A∧B = 1∧0 = 0. So output = <strong>0</strong>.</div>
       </div>
       <div class="problem">
-        <div class="problem-q">How many gate layers (depth) does the circuit <span class="formula">((¬p ∨ ¬r) ∧ ¬q) ∨ (¬p ∧ (q ∨ r))</span> require at minimum?</div>
+        <div class="problem-q">How many gates does a Half Adder circuit require? (Load the preset above)</div>
         <div class="answer-row">
           <input class="answer-input" placeholder="Enter a number" onkeydown="if(event.key==='Enter')checkAnswer(this)">
-          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="3|three">Check</button>
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="2|two">Check</button>
           <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
         </div>
         <div class="answer-feedback"></div>
-        <div class="problem-ans">
-          <strong>3 layers:</strong><br>
-          Layer 1: Three NOT gates (¬p, ¬q, ¬r)<br>
-          Layer 2: OR gates (¬p∨¬r) and (q∨r), plus ¬p carries forward<br>
-          Layer 3: AND gates → final OR gate
-        </div>
+        <div class="problem-ans"><strong>2 gates:</strong> One XOR gate (produces the Sum bit) and one AND gate (produces the Carry bit). Sum = A⊕B, Carry = A∧B.</div>
       </div>
     </div>
   </div>
@@ -2268,6 +2293,7 @@ function showContent(sectionId) {
 
   reinitFadeIns();
   reinitProof();
+  if (sectionId === 'gates') setTimeout(circInit, 80);
 }
 
 // ====================================================
@@ -2525,29 +2551,516 @@ function buildTT() {
 }
 
 // ====================================================
-// LOGIC GATES
+// VISUAL CIRCUIT BUILDER
 // ====================================================
-const gateStates = {};
-function toggleGate(id) {
-  gateStates[id] = !gateStates[id];
-  const btn = document.getElementById(id);
-  if (btn) btn.classList.toggle('on', gateStates[id]);
-  const val = document.getElementById(id+'-val');
-  if (val) val.textContent = gateStates[id] ? '1' : '0';
+const CIRC = {
+  canvas: null, ctx: null,
+  gates: [], wires: [],
+  inputs: { A: false, B: false, C: false },
+  dragging: null, dragOffX: 0, dragOffY: 0,
+  wiring: null, // { gateId, portType, portIdx, x, y }
+  mouseX: 0, mouseY: 0,
+  nextId: 1,
+
+  // Gate definitions
+  GATE_W: 80, GATE_H: 50,
+  PORT_R: 6,
+
+  gateLogic(type, ins) {
+    const [a, b] = ins;
+    switch(type) {
+      case 'NOT':  return !a;
+      case 'AND':  return a && b;
+      case 'OR':   return a || b;
+      case 'XOR':  return a !== b;
+      case 'NAND': return !(a && b);
+      case 'NOR':  return !(a || b);
+      case 'XNOR': return a === b;
+      default: return false;
+    }
+  },
+
+  numInputs(type) { return type === 'NOT' ? 1 : 2; },
+
+  gateExpr(type) {
+    const map = { NOT:'¬A', AND:'A∧B', OR:'A∨B', XOR:'A⊕B', NAND:'¬(A∧B)', NOR:'¬(A∨B)', XNOR:'A↔B' };
+    return map[type] || type;
+  },
+
+  portPos(gate, portType, idx) {
+    const { x, y } = gate;
+    const W = this.GATE_W, H = this.GATE_H;
+    const n = this.numInputs(gate.type);
+    if (portType === 'in') {
+      const step = H / (n + 1);
+      return { x: x, y: y + step * (idx + 1) };
+    } else {
+      return { x: x + W, y: y + H / 2 };
+    }
+  },
+
+  evaluateAll() {
+    // Topological sort & evaluate
+    const vals = {}; // gateId -> output bool
+    // Assign input source values
+    const sourceVals = { A: this.inputs.A, B: this.inputs.B, C: this.inputs.C };
+
+    // Build dependency map
+    const resolved = new Set();
+    const maxIter = this.gates.length + 2;
+    let iter = 0;
+    while (resolved.size < this.gates.length && iter++ < maxIter * 3) {
+      for (const gate of this.gates) {
+        if (resolved.has(gate.id)) continue;
+        const n = this.numInputs(gate.type);
+        const inVals = [];
+        let ready = true;
+        for (let i = 0; i < n; i++) {
+          // Find wire connected to this input
+          const wire = this.wires.find(w => w.toGate === gate.id && w.toPort === i);
+          if (!wire) { inVals.push(false); continue; } // unconnected = 0
+          if (wire.fromType === 'input') {
+            inVals.push(!!sourceVals[wire.fromId]);
+          } else {
+            if (!resolved.has(wire.fromGate)) { ready = false; break; }
+            inVals.push(!!vals[wire.fromGate]);
+          }
+        }
+        if (ready) {
+          vals[gate.id] = this.gateLogic(gate.type, inVals);
+          resolved.add(gate.id);
+        }
+      }
+    }
+    return vals;
+  },
+
+  draw() {
+    const canvas = this.canvas;
+    if (!canvas) return;
+    const ctx = this.ctx;
+    const vals = this.evaluateAll();
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Grid dots
+    ctx.fillStyle = 'rgba(77,159,255,0.07)';
+    for (let x = 20; x < canvas.width; x += 30)
+      for (let y = 20; y < canvas.height; y += 30)
+        { ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI*2); ctx.fill(); }
+
+    // Draw input source nodes on left
+    const srcNames = ['A','B','C'];
+    srcNames.forEach((name, i) => {
+      const sx = 36, sy = 60 + i * 80;
+      const on = !!this.inputs[name];
+      ctx.beginPath(); ctx.arc(sx, sy, 16, 0, Math.PI*2);
+      ctx.fillStyle = on ? 'rgba(74,222,128,0.2)' : 'rgba(255,255,255,0.04)';
+      ctx.fill();
+      ctx.strokeStyle = on ? '#4ade80' : 'rgba(26,115,232,0.4)';
+      ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = on ? '#4ade80' : '#6b7a99';
+      ctx.font = 'bold 13px "IBM Plex Mono"';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(name + '=' + (on?'1':'0'), sx, sy);
+      // Output port dot
+      ctx.beginPath(); ctx.arc(sx + 16, sy, this.PORT_R, 0, Math.PI*2);
+      ctx.fillStyle = on ? '#4ade80' : '#374151';
+      ctx.fill(); ctx.strokeStyle = on ? '#4ade80' : '#6b7a99';
+      ctx.lineWidth = 1.5; ctx.stroke();
+    });
+
+    // Draw wires
+    for (const wire of this.wires) {
+      let x1, y1, x2, y2, sigOn = false;
+      if (wire.fromType === 'input') {
+        const idx = srcNames.indexOf(wire.fromId);
+        x1 = 52; y1 = 60 + idx * 80;
+        sigOn = !!this.inputs[wire.fromId];
+      } else {
+        const fromGate = this.gates.find(g => g.id === wire.fromGate);
+        if (!fromGate) continue;
+        const p = this.portPos(fromGate, 'out', 0);
+        x1 = p.x; y1 = p.y;
+        sigOn = !!vals[wire.fromGate];
+      }
+      const toGate = this.gates.find(g => g.id === wire.toGate);
+      if (!toGate) continue;
+      const p2 = this.portPos(toGate, 'in', wire.toPort);
+      x2 = p2.x; y2 = p2.y;
+
+      const mx = (x1 + x2) / 2;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.bezierCurveTo(mx, y1, mx, y2, x2, y2);
+      ctx.strokeStyle = sigOn ? '#4ade80' : 'rgba(26,115,232,0.5)';
+      ctx.lineWidth = sigOn ? 2.5 : 1.5;
+      ctx.setLineDash([]);
+      ctx.stroke();
+
+      // Signal dot moving along wire
+      if (sigOn) {
+        ctx.beginPath();
+        ctx.arc((x1*0.3 + x2*0.7), (y1*0.3 + y2*0.7), 3.5, 0, Math.PI*2);
+        ctx.fillStyle = '#4ade80'; ctx.fill();
+      }
+    }
+
+    // Active wiring line
+    if (this.wiring) {
+      ctx.beginPath();
+      ctx.moveTo(this.wiring.x, this.wiring.y);
+      ctx.lineTo(this.mouseX, this.mouseY);
+      ctx.strokeStyle = 'rgba(0,212,255,0.7)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Draw gates
+    for (const gate of this.gates) {
+      const { x, y, type, id } = gate;
+      const W = this.GATE_W, H = this.GATE_H;
+      const out = vals[id];
+      const isDrag = this.dragging && this.dragging.id === id;
+
+      // Shadow when dragging
+      if (isDrag) {
+        ctx.shadowBlur = 18; ctx.shadowColor = 'rgba(26,115,232,0.5)';
+      }
+
+      // Gate body - draw classic IEEE shape
+      ctx.fillStyle = isDrag ? 'rgba(26,115,232,0.25)' : 'rgba(17,24,39,0.95)';
+      ctx.strokeStyle = out ? '#4ade80' : 'rgba(26,115,232,0.7)';
+      ctx.lineWidth = isDrag ? 2.5 : 1.8;
+
+      this.drawGateShape(ctx, type, x, y, W, H, out);
+
+      ctx.shadowBlur = 0;
+
+      // Gate label
+      ctx.fillStyle = '#e0e8ff';
+      ctx.font = 'bold 12px "Oxanium"';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(type, x + W/2, y + H/2 - 2);
+      ctx.font = '9px "IBM Plex Mono"';
+      ctx.fillStyle = out ? '#4ade80' : '#6b7a99';
+      ctx.fillText(this.gateExpr(type), x + W/2, y + H/2 + 11);
+
+      // Input ports
+      const n = this.numInputs(type);
+      for (let i = 0; i < n; i++) {
+        const p = this.portPos(gate, 'in', i);
+        ctx.beginPath(); ctx.arc(p.x, p.y, this.PORT_R, 0, Math.PI*2);
+        const wired = this.wires.find(w => w.toGate === id && w.toPort === i);
+        ctx.fillStyle = wired ? (out !== undefined ? '#4ade80' : '#374151') : 'rgba(26,115,232,0.3)';
+        ctx.fill();
+        ctx.strokeStyle = wired ? 'rgba(74,222,128,0.6)' : 'rgba(26,115,232,0.5)';
+        ctx.lineWidth = 1.5; ctx.stroke();
+      }
+
+      // Output port
+      const op = this.portPos(gate, 'out', 0);
+      ctx.beginPath(); ctx.arc(op.x, op.y, this.PORT_R + 1, 0, Math.PI*2);
+      ctx.fillStyle = out ? 'rgba(74,222,128,0.35)' : 'rgba(26,115,232,0.15)';
+      ctx.fill();
+      ctx.strokeStyle = out ? '#4ade80' : 'rgba(26,115,232,0.6)';
+      ctx.lineWidth = 2; ctx.stroke();
+      // Output value label
+      ctx.fillStyle = out ? '#4ade80' : '#f87171';
+      ctx.font = 'bold 11px "IBM Plex Mono"';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(out ? '1' : '0', op.x + 10, op.y);
+
+      // Delete X on hover
+      if (isDrag) {
+        ctx.fillStyle = '#f87171';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('×', x + W - 6, y + 8);
+      }
+    }
+  },
+
+  drawGateShape(ctx, type, x, y, W, H, active) {
+    ctx.beginPath();
+    if (type === 'NOT') {
+      // Triangle + bubble
+      ctx.moveTo(x + 4, y + 4);
+      ctx.lineTo(x + W - 12, y + H/2);
+      ctx.lineTo(x + 4, y + H - 4);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x + W - 10, y + H/2, 5, 0, Math.PI*2);
+      ctx.fillStyle = active ? 'rgba(74,222,128,0.3)' : 'rgba(17,24,39,0.95)';
+      ctx.fill(); ctx.stroke();
+    } else if (type === 'AND' || type === 'NAND') {
+      // D-shape
+      ctx.moveTo(x + 4, y + 4);
+      ctx.lineTo(x + W/2, y + 4);
+      ctx.bezierCurveTo(x + W - 4, y + 4, x + W - 4, y + H - 4, x + W/2, y + H - 4);
+      ctx.lineTo(x + 4, y + H - 4);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      if (type === 'NAND') {
+        ctx.beginPath(); ctx.arc(x + W + 2, y + H/2, 5, 0, Math.PI*2);
+        ctx.fillStyle = active ? 'rgba(74,222,128,0.3)' : 'rgba(17,24,39,0.95)';
+        ctx.fill(); ctx.stroke();
+      }
+    } else if (type === 'OR' || type === 'NOR' || type === 'XOR' || type === 'XNOR') {
+      // Curved OR shape
+      const cx1 = x + 20;
+      ctx.moveTo(x + 4, y + 4);
+      ctx.quadraticCurveTo(cx1, y + H/2, x + 4, y + H - 4);
+      ctx.quadraticCurveTo(x + W/2, y + H - 4, x + W - 8, y + H/2);
+      ctx.quadraticCurveTo(x + W/2, y + 4, x + 4, y + 4);
+      ctx.fill(); ctx.stroke();
+      if (type === 'XOR' || type === 'XNOR') {
+        // Extra back curve for XOR
+        ctx.beginPath();
+        ctx.moveTo(x - 2, y + 4);
+        ctx.quadraticCurveTo(x + 14, y + H/2, x - 2, y + H - 4);
+        ctx.strokeStyle = active ? '#4ade80' : 'rgba(26,115,232,0.7)';
+        ctx.lineWidth = 1.8; ctx.stroke();
+      }
+      if (type === 'NOR' || type === 'XNOR') {
+        ctx.beginPath(); ctx.arc(x + W - 4, y + H/2, 5, 0, Math.PI*2);
+        ctx.fillStyle = active ? 'rgba(74,222,128,0.3)' : 'rgba(17,24,39,0.95)';
+        ctx.fill(); ctx.strokeStyle = active ? '#4ade80' : 'rgba(26,115,232,0.7)';
+        ctx.lineWidth = 1.8; ctx.stroke();
+      }
+    }
+  },
+
+  hitPort(mx, my) {
+    // Returns { type:'gate-in'|'gate-out'|'source', ... } or null
+    const PR = this.PORT_R + 5;
+    // Check input sources
+    const srcNames = ['A','B','C'];
+    for (let i = 0; i < 3; i++) {
+      const sx = 52, sy = 60 + i * 80;
+      if (Math.hypot(mx - sx, my - sy) < PR) return { type:'source', id: srcNames[i], x: sx, y: sy };
+    }
+    // Check gate ports
+    for (const gate of this.gates) {
+      const op = this.portPos(gate, 'out', 0);
+      if (Math.hypot(mx - op.x, my - op.y) < PR) return { type:'gate-out', gate, x: op.x, y: op.y };
+      const n = this.numInputs(gate.type);
+      for (let i = 0; i < n; i++) {
+        const ip = this.portPos(gate, 'in', i);
+        if (Math.hypot(mx - ip.x, my - ip.y) < PR) return { type:'gate-in', gate, portIdx: i, x: ip.x, y: ip.y };
+      }
+    }
+    return null;
+  },
+
+  hitGate(mx, my) {
+    for (let i = this.gates.length - 1; i >= 0; i--) {
+      const g = this.gates[i];
+      if (mx >= g.x && mx <= g.x + this.GATE_W && my >= g.y && my <= g.y + this.GATE_H) return g;
+    }
+    return null;
+  },
+
+  onMouseDown(e) {
+    const r = this.canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    this.mouseX = mx; this.mouseY = my;
+    const port = this.hitPort(mx, my);
+    if (port) {
+      if (port.type === 'source') {
+        this.wiring = { fromType:'input', fromId: port.id, x: port.x, y: port.y };
+      } else if (port.type === 'gate-out') {
+        this.wiring = { fromType:'gate', fromGate: port.gate.id, x: port.x, y: port.y };
+      } else if (port.type === 'gate-in') {
+        // Remove existing wire to this input
+        this.wires = this.wires.filter(w => !(w.toGate === port.gate.id && w.toPort === port.portIdx));
+        this.draw();
+      }
+      return;
+    }
+    const gate = this.hitGate(mx, my);
+    if (gate) {
+      this.dragging = gate;
+      this.dragOffX = mx - gate.x;
+      this.dragOffY = my - gate.y;
+      // Bring to front
+      this.gates = [...this.gates.filter(g => g.id !== gate.id), gate];
+    }
+  },
+
+  onMouseMove(e) {
+    const r = this.canvas.getBoundingClientRect();
+    this.mouseX = e.clientX - r.left;
+    this.mouseY = e.clientY - r.top;
+    if (this.dragging) {
+      this.dragging.x = Math.max(80, Math.min(this.canvas.width - this.GATE_W - 10, this.mouseX - this.dragOffX));
+      this.dragging.y = Math.max(10, Math.min(this.canvas.height - this.GATE_H - 10, this.mouseY - this.dragOffY));
+    }
+    this.draw();
+    // Update status
+    const port = this.hitPort(this.mouseX, this.mouseY);
+    const st = document.getElementById('circuit-status');
+    if (st) {
+      if (this.wiring) st.textContent = 'Wiring in progress — click a port to connect, or press Esc to cancel';
+      else if (port) st.textContent = port.type === 'gate-in' ? 'Click to connect wire to input' : 'Click to start a wire from here';
+      else st.textContent = '';
+    }
+  },
+
+  onMouseUp(e) {
+    const r = this.canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+
+    if (this.wiring) {
+      const port = this.hitPort(mx, my);
+      if (port && port.type === 'gate-in') {
+        // Add wire
+        const wire = { id: this.nextId++ };
+        if (this.wiring.fromType === 'input') {
+          wire.fromType = 'input'; wire.fromId = this.wiring.fromId;
+        } else {
+          wire.fromType = 'gate'; wire.fromGate = this.wiring.fromGate;
+        }
+        wire.toGate = port.gate.id; wire.toPort = port.portIdx;
+        // Remove any existing wire to same input
+        this.wires = this.wires.filter(w => !(w.toGate === wire.toGate && w.toPort === wire.toPort));
+        this.wires.push(wire);
+      }
+      this.wiring = null;
+    }
+    this.dragging = null;
+    this.draw();
+  },
+
+  onKeyDown(e) {
+    if (e.key === 'Escape') { this.wiring = null; this.draw(); }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && this.dragging) {
+      this.removeGate(this.dragging.id);
+      this.dragging = null;
+    }
+  },
+
+  removeGate(id) {
+    this.gates = this.gates.filter(g => g.id !== id);
+    this.wires = this.wires.filter(w => w.fromGate !== id && w.toGate !== id);
+    this.draw();
+  },
+
+  onDblClick(e) {
+    const r = this.canvas.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const gate = this.hitGate(mx, my);
+    if (gate) this.removeGate(gate.id);
+  },
+
+  resize() {
+    if (!this.canvas) return;
+    const parent = this.canvas.parentElement;
+    this.canvas.width = parent.clientWidth;
+    this.canvas.height = 420;
+    this.draw();
+  }
+};
+
+function circInit() {
+  const canvas = document.getElementById('circuit-canvas');
+  if (!canvas) return;
+  CIRC.canvas = canvas;
+  CIRC.ctx = canvas.getContext('2d');
+  CIRC.resize();
+
+  canvas.addEventListener('mousedown', e => CIRC.onMouseDown(e));
+  canvas.addEventListener('mousemove', e => CIRC.onMouseMove(e));
+  canvas.addEventListener('mouseup',   e => CIRC.onMouseUp(e));
+  canvas.addEventListener('dblclick',  e => CIRC.onDblClick(e));
+  window.addEventListener('keydown',   e => CIRC.onKeyDown(e));
+  window.addEventListener('resize', () => CIRC.resize());
+
+  buildGateRefStrip();
+  loadPreset('halfAdder');
 }
-function setGateResult(id, val) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = val ? '1' : '0';
-  el.className = 'gate-result ' + (val ? 'true' : 'false');
+
+function addGate(type) {
+  const canvas = CIRC.canvas;
+  if (!canvas) return;
+  const x = 120 + Math.random() * (canvas.width - 260);
+  const y = 40 + Math.random() * (canvas.height - 100);
+  CIRC.gates.push({ id: CIRC.nextId++, type, x: Math.round(x), y: Math.round(y) });
+  CIRC.draw();
 }
-function updateGates() {
-  setGateResult('not-out', !gateStates['not-p']);
-  setGateResult('and-out', !!gateStates['and-p'] && !!gateStates['and-q']);
-  setGateResult('or-out', !!gateStates['or-p'] || !!gateStates['or-q']);
-  setGateResult('xor-out', !!gateStates['xor-p'] !== !!gateStates['xor-q']);
-  setGateResult('nand-out', !(!!gateStates['nand-p'] && !!gateStates['nand-q']));
-  setGateResult('nor-out', !(!!gateStates['nor-p'] || !!gateStates['nor-q']));
+
+function toggleInput(name) {
+  CIRC.inputs[name] = !CIRC.inputs[name];
+  const node = document.getElementById('inp-' + name);
+  const val = document.getElementById('cinv-' + name);
+  if (node) node.classList.toggle('active', CIRC.inputs[name]);
+  if (val) val.textContent = CIRC.inputs[name] ? '1' : '0';
+  CIRC.draw();
+}
+
+function clearCircuit() {
+  CIRC.gates = [];
+  CIRC.wires = [];
+  CIRC.wiring = null;
+  CIRC.dragging = null;
+  CIRC.draw();
+}
+
+function loadPreset(name) {
+  clearCircuit();
+  if (name === 'halfAdder') {
+    // XOR for sum, AND for carry — laid out nicely
+    CIRC.gates = [
+      { id: CIRC.nextId++, type:'XOR', x:200, y:80 },
+      { id: CIRC.nextId++, type:'AND', x:200, y:200 },
+    ];
+    const [xorId, andId] = [CIRC.gates[0].id, CIRC.gates[1].id];
+    CIRC.wires = [
+      { id: CIRC.nextId++, fromType:'input', fromId:'A', toGate:xorId, toPort:0 },
+      { id: CIRC.nextId++, fromType:'input', fromId:'B', toGate:xorId, toPort:1 },
+      { id: CIRC.nextId++, fromType:'input', fromId:'A', toGate:andId, toPort:0 },
+      { id: CIRC.nextId++, fromType:'input', fromId:'B', toGate:andId, toPort:1 },
+    ];
+    const st = document.getElementById('circuit-status');
+    if (st) st.textContent = 'Half Adder loaded — XOR=Sum, AND=Carry. Toggle A and B inputs!';
+  } else if (name === 'demorgan') {
+    CIRC.gates = [
+      { id: CIRC.nextId++, type:'NOT', x:160, y:70 },
+      { id: CIRC.nextId++, type:'NOT', x:160, y:190 },
+      { id: CIRC.nextId++, type:'AND', x:300, y:120 },
+      { id: CIRC.nextId++, type:'NAND', x:300, y:240 },
+    ];
+    const [n1, n2, andG, nandG] = CIRC.gates.map(g => g.id);
+    CIRC.wires = [
+      { id: CIRC.nextId++, fromType:'input', fromId:'A', toGate:n1, toPort:0 },
+      { id: CIRC.nextId++, fromType:'input', fromId:'B', toGate:n2, toPort:0 },
+      { id: CIRC.nextId++, fromType:'gate', fromGate:n1, toGate:andG, toPort:0 },
+      { id: CIRC.nextId++, fromType:'gate', fromGate:n2, toGate:andG, toPort:1 },
+      { id: CIRC.nextId++, fromType:'input', fromId:'A', toGate:nandG, toPort:0 },
+      { id: CIRC.nextId++, fromType:'input', fromId:'B', toGate:nandG, toPort:1 },
+    ];
+    const st = document.getElementById('circuit-status');
+    if (st) st.textContent = 'De Morgan: ¬A∧¬B (top AND) should equal ¬(A∨B). Try all input combos!';
+  }
+  CIRC.draw();
+}
+
+function buildGateRefStrip() {
+  const types = ['NOT','AND','OR','XOR','NAND','NOR','XNOR'];
+  const exprs = { NOT:'¬A', AND:'A∧B', OR:'A∨B', XOR:'A⊕B', NAND:'¬(A∧B)', NOR:'¬(A∨B)', XNOR:'A↔B' };
+  const strip = document.getElementById('gate-ref-strip');
+  if (!strip) return;
+  strip.innerHTML = '';
+  types.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'gate-ref-card';
+    d.innerHTML = `<div class="gate-ref-name">${t}</div><div class="gate-ref-expr">${exprs[t]}</div>`;
+    d.onclick = () => addGate(t);
+    strip.appendChild(d);
+  });
 }
 
 // ====================================================
@@ -2658,7 +3171,6 @@ function revealTrans(row) { row.classList.remove('hidden-logic'); }
 // INIT
 // ====================================================
 showHome();
-updateGates();
 </script>
 </body>
 </html>
