@@ -67,10 +67,12 @@ body {
 }
 #duck-counter:hover #duck-bubble { opacity: 1; transform: translateY(0); }
 #duck-emoji {
-  font-size: 38px;
   line-height: 1;
-  filter: drop-shadow(0 2px 8px rgba(26,115,232,0.5));
+  filter: drop-shadow(0 3px 10px rgba(255,214,0,0.45)) drop-shadow(0 0 6px rgba(26,115,232,0.4));
   transition: transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #duck-counter:active #duck-emoji { transform: scale(1.25) rotate(-10deg); }
 #duck-score {
@@ -257,66 +259,59 @@ body {
 /* ========== HOME PAGE ========== */
 #home-page {
   min-height: 100vh;
-  background: #000;
+  background: var(--bg);
   position: relative;
   overflow: hidden;
 }
 
-/* Hero */
-.home-hero {
+/* Dark hero — original style */
+.home-hero-dark {
+  background: linear-gradient(135deg, #050810 0%, #0b1a35 50%, #050810 100%);
+  padding: 90px 70px;
   position: relative;
-  padding: 0;
-  min-height: 460px;
-  display: flex;
-  align-items: stretch;
   overflow: hidden;
-}
-
-/* Left half — deep blue/black */
-.home-hero-left {
-  flex: 1.1;
-  background: linear-gradient(135deg, #000000 0%, #020b1e 50%, #04132e 100%);
-  padding: 60px 50px 60px 60px;
+  border-bottom: 1px solid var(--border);
+  min-height: 420px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
+  align-items: center;
 }
-.home-hero-left::after {
-  content: '';
+.hero-venn {
   position: absolute;
-  right: -1px; top: 0; bottom: 0;
-  width: 60px;
-  background: linear-gradient(to right, transparent, #ffffff08);
+  right: 60px; top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.18;
   pointer-events: none;
 }
-
-/* Right half — white */
-.home-hero-right {
-  flex: 0.9;
-  background: #ffffff;
-  padding: 50px 50px 50px 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-}
-.home-hero-right::before {
-  content: '';
+.hero-dark-grid {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(26,115,232,0.06), rgba(0,212,255,0.03));
+  opacity: 0.05;
+  background-image:
+    linear-gradient(rgba(77,159,255,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77,159,255,1) 1px, transparent 1px);
+  background-size: 44px 44px;
   pointer-events: none;
+}
+.hero-dark-orb {
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(26,115,232,0.18) 0%, transparent 70%);
+  top: -100px; right: -80px;
+  pointer-events: none;
+}
+.home-hero-dark-content {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
 }
 
 .home-tag {
   font-family: var(--font-head);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 3px;
   color: var(--blue-bright);
   text-transform: uppercase;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -326,35 +321,53 @@ body {
   display: inline-block;
   width: 24px; height: 2px;
   background: var(--blue-bright);
+  border-radius: 2px;
 }
 
-.home-title {
+.home-title-dark {
   font-family: var(--font-head);
-  font-size: 58px;
+  font-size: 64px;
   font-weight: 800;
   line-height: 1.0;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
   color: #ffffff;
-  text-shadow: 0 0 60px rgba(26,115,232,0.4);
+  text-shadow: 0 0 80px rgba(26,115,232,0.35);
 }
-.home-title span {
-  background: linear-gradient(135deg, #4d9fff, #00d4ff);
+.home-title-dark span {
+  background: linear-gradient(135deg, #4d9fff 0%, #00d4ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.home-subtitle {
-  font-size: 15px;
-  color: rgba(255,255,255,0.55);
+.home-subtitle-dark {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
   line-height: 1.75;
-  max-width: 420px;
+  max-width: 520px;
   margin-bottom: 28px;
+}
+
+.module-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill {
+  background: rgba(26,115,232,0.15);
+  border: 1px solid var(--border);
+  color: var(--blue-bright);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-family: var(--font-head);
+  letter-spacing: 0.5px;
 }
 
 .home-stats {
   display: flex;
-  gap: 28px;
+  gap: 32px;
   flex-wrap: wrap;
 }
 .home-stat {
@@ -364,93 +377,17 @@ body {
 }
 .home-stat-num {
   font-family: var(--font-head);
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
   color: var(--blue-bright);
   line-height: 1;
 }
 .home-stat-label {
   font-size: 11px;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 1px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   font-family: var(--font-head);
-}
-
-/* Right side — info on white */
-.home-info-title {
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--blue);
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.home-info-title::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, rgba(26,115,232,0.4), transparent);
-}
-
-.home-info-item {
-  display: flex;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  align-items: flex-start;
-}
-.home-info-item:last-child { border-bottom: none; }
-.home-info-key {
-  font-family: var(--font-head);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #1a73e8;
-  min-width: 80px;
-  padding-top: 1px;
-}
-.home-info-val {
-  font-size: 13.5px;
-  color: #1a2540;
-  line-height: 1.5;
-}
-
-/* Diagonal separator line */
-.hero-divider {
-  position: absolute;
-  top: 0; bottom: 0;
-  left: calc(55% - 30px);
-  width: 60px;
-  background: linear-gradient(to right, transparent 0%, rgba(26,115,232,0.3) 40%, rgba(0,212,255,0.3) 60%, transparent 100%);
-  transform: skewX(-3deg);
-  z-index: 3;
-  pointer-events: none;
-}
-
-/* Grid overlay on dark side */
-.hero-grid {
-  position: absolute;
-  inset: 0;
-  opacity: 0.06;
-  background-image:
-    linear-gradient(rgba(77,159,255,1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(77,159,255,1) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-/* Glow orb */
-.hero-orb {
-  position: absolute;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(26,115,232,0.25) 0%, transparent 70%);
-  bottom: -100px; right: -50px;
-  pointer-events: none;
 }
 
 /* ========== UNIT GRID ========== */
@@ -995,13 +932,73 @@ body {
 
 .practice-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
 .practice-box h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
-.problem { padding: 14px 0; border-bottom: 1px solid rgba(26,115,232,0.1); }
+.problem { padding: 16px 0; border-bottom: 1px solid rgba(26,115,232,0.1); }
 .problem:last-child { border-bottom: none; }
-.problem-q { font-size: 14px; color: var(--text); margin-bottom: 10px; line-height: 1.6; }
+.problem-q { font-size: 14px; color: var(--text); margin-bottom: 12px; line-height: 1.6; }
+
+/* Answer input row */
+.answer-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.answer-input {
+  flex: 1;
+  min-width: 160px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.answer-input:focus { border-color: var(--blue); }
+.answer-input.correct { border-color: #4ade80; background: rgba(74,222,128,0.07); color: #4ade80; }
+.answer-input.wrong { border-color: #f87171; background: rgba(248,113,113,0.07); animation: shake 0.35s ease; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  60% { transform: translateX(6px); }
+  80% { transform: translateX(-3px); }
+}
+.check-btn {
+  background: rgba(26,115,232,0.15);
+  border: 1px solid var(--border);
+  color: var(--blue-bright);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.check-btn:hover { background: rgba(26,115,232,0.28); border-color: var(--blue); }
+.check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.reveal-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 7px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); white-space: nowrap; }
+.reveal-btn:hover { border-color: var(--blue); color: var(--blue-bright); }
+
+/* Feedback */
+.answer-feedback {
+  font-size: 13px;
+  margin-top: 2px;
+  min-height: 18px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.answer-feedback.correct { color: #4ade80; }
+.answer-feedback.wrong { color: #f87171; }
+
 .problem-ans { display: none; margin-top: 10px; background: rgba(26,115,232,0.08); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 13.5px; color: #a8c4f0; line-height: 1.7; }
 .problem-ans.shown { display: block; }
-.reveal-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 5px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
-.reveal-btn:hover { border-color: var(--blue); color: var(--blue-bright); }
 
 .proof-stepper { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
 .proof-stepper h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
@@ -1090,8 +1087,8 @@ body {
 @media (max-width: 900px) {
   #sidebar { width: 220px; }
   #main { margin-left: 220px; }
-  .home-hero { flex-direction: column; }
-  .home-hero-right { min-height: 260px; }
+  .home-hero-dark { padding: 60px 30px; }
+  .home-title-dark { font-size: 44px; }
   .module-section { padding: 40px 30px; }
   .unit-section, .syllabus-section { padding: 40px 30px; }
   .quant-compare { grid-template-columns: 1fr; }
@@ -1109,7 +1106,24 @@ body {
 <!-- ============ DUCK COUNTER ============ -->
 <div id="duck-counter" onclick="duckClicked()" title="Quack! You're doing great!">
   <div id="duck-bubble">CORRECT ANSWERS</div>
-  <div id="duck-emoji">🦆</div>
+  <div id="duck-emoji">
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body -->
+      <ellipse cx="26" cy="34" rx="18" ry="13" fill="#FFD600" stroke="#E6B800" stroke-width="1.5"/>
+      <!-- Head -->
+      <circle cx="36" cy="20" r="10" fill="#FFD600" stroke="#E6B800" stroke-width="1.5"/>
+      <!-- Eye -->
+      <circle cx="39" cy="18" r="2" fill="#1a1a2e"/>
+      <circle cx="39.7" cy="17.3" r="0.6" fill="white"/>
+      <!-- Beak -->
+      <path d="M44 20.5 L50 19 L44 22 Z" fill="#FF8C00" stroke="#E06000" stroke-width="0.8" stroke-linejoin="round"/>
+      <!-- Wing accent -->
+      <ellipse cx="22" cy="33" rx="8" ry="5" fill="#FFC200" stroke="#E6B800" stroke-width="1" transform="rotate(-10 22 33)"/>
+      <!-- Water ripple -->
+      <ellipse cx="26" cy="45" rx="16" ry="3.5" fill="none" stroke="#4d9fff" stroke-width="1.5" opacity="0.5"/>
+      <ellipse cx="26" cy="45" rx="10" ry="2" fill="none" stroke="#4d9fff" stroke-width="1" opacity="0.3"/>
+    </svg>
+  </div>
   <div id="duck-score">0</div>
 </div>
 
@@ -1221,61 +1235,33 @@ body {
   <!-- ====== HOME PAGE ====== -->
   <div id="home-page">
 
-    <!-- Hero Split -->
-    <div class="home-hero">
-      <!-- Dark left -->
-      <div class="home-hero-left">
-        <div class="hero-grid"></div>
-        <div class="hero-orb"></div>
-        <div class="home-tag">COT 3100 · University of South Florida</div>
-        <div class="home-title">Discrete<br><span>Structures</span></div>
-        <div class="home-subtitle">Master the mathematical foundations of computer science — from propositional logic and set theory to proofs, number theory, and combinatorics.</div>
-        <div class="home-stats">
-          <div class="home-stat">
-            <div class="home-stat-num">8</div>
-            <div class="home-stat-label">Units</div>
-          </div>
-          <div class="home-stat">
-            <div class="home-stat-num">40+</div>
-            <div class="home-stat-label">Modules</div>
-          </div>
-          <div class="home-stat">
-            <div class="home-stat-num">3</div>
-            <div class="home-stat-label">Live Tools</div>
-          </div>
-          <div class="home-stat">
-            <div class="home-stat-num">∞</div>
-            <div class="home-stat-label">Practice Qs</div>
-          </div>
+    <!-- Hero — original dark style -->
+    <div class="home-hero-dark">
+      <svg class="hero-venn" width="320" height="320" viewBox="0 0 280 280" aria-hidden="true">
+        <circle cx="110" cy="110" r="90" fill="#1a73e8" fill-opacity="0.22" stroke="#1a73e8" stroke-width="1.5"/>
+        <circle cx="170" cy="110" r="90" fill="#1a73e8" fill-opacity="0.22" stroke="#1a73e8" stroke-width="1.5"/>
+        <circle cx="140" cy="170" r="90" fill="#1a73e8" fill-opacity="0.22" stroke="#1a73e8" stroke-width="1.5"/>
+      </svg>
+      <div class="hero-dark-grid"></div>
+      <div class="hero-dark-orb"></div>
+      <div class="home-hero-dark-content">
+        <div class="home-tag">COT 3100 · Week 1 · Logic Foundations</div>
+        <h2 class="home-title-dark">Discrete<br><span>Structures</span></h2>
+        <p class="home-subtitle-dark">Master propositional logic, predicates, quantifiers, and rules of inference — the building blocks of mathematical reasoning and computer science.</p>
+        <div class="module-pills">
+          <span class="pill">Propositional Logic</span>
+          <span class="pill">Truth Tables</span>
+          <span class="pill">Quantifiers</span>
+          <span class="pill">Nested Quantifiers</span>
+          <span class="pill">Rules of Inference</span>
+        </div>
+        <div class="home-stats" style="margin-top:32px">
+          <div class="home-stat"><div class="home-stat-num">8</div><div class="home-stat-label">Units</div></div>
+          <div class="home-stat"><div class="home-stat-num">40+</div><div class="home-stat-label">Modules</div></div>
+          <div class="home-stat"><div class="home-stat-num">3</div><div class="home-stat-label">Live Tools</div></div>
+          <div class="home-stat"><div class="home-stat-num">∞</div><div class="home-stat-label">Practice Qs</div></div>
         </div>
       </div>
-
-      <!-- White right -->
-      <div class="home-hero-right">
-        <div class="home-info-title">Course Info</div>
-        <div class="home-info-item">
-          <div class="home-info-key">Course</div>
-          <div class="home-info-val">COT 3100 — Discrete Structures</div>
-        </div>
-        <div class="home-info-item">
-          <div class="home-info-key">Credits</div>
-          <div class="home-info-val">3 Credit Hours</div>
-        </div>
-        <div class="home-info-item">
-          <div class="home-info-key">Textbook</div>
-          <div class="home-info-val">Rosen, Discrete Mathematics &amp; Its Applications, 8th Ed.</div>
-        </div>
-        <div class="home-info-item">
-          <div class="home-info-key">Topics</div>
-          <div class="home-info-val">Logic, Sets, Functions, Sequences, Number Theory, Induction, Combinatorics</div>
-        </div>
-        <div class="home-info-item">
-          <div class="home-info-key">Now</div>
-          <div class="home-info-val" style="color:#1a73e8;font-weight:600">Unit 1 — Logic Foundations</div>
-        </div>
-      </div>
-
-      <div class="hero-divider"></div>
     </div>
 
     <!-- Unit Grid -->
@@ -1855,20 +1841,28 @@ body {
     <div class="practice-box">
       <h4>Practice Problems</h4>
       <div class="problem">
-        <div class="problem-q">What is the output of a circuit where p → NOT gate, q → NOT gate, both → AND gate, then AND(result, AND(p,r)) → OR gate?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Answer</button>
+        <div class="problem-q">What expression does this circuit compute? p → NOT gate, q → NOT gate, both outputs → AND gate, then AND that result with AND(p,r), then → OR gate. Write using ¬, ∧, ∨.</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="e.g. (¬p ∧ ¬q) ∨ (p ∧ r)" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="(¬p∧¬q)∨(p∧r)|¬p∧¬q∨p∧r|(¬p ∧ ¬q) ∨ (p ∧ r)">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">The circuit computes: <strong>(¬p ∧ ¬q) ∨ (p ∧ r)</strong></div>
       </div>
       <div class="problem">
-        <div class="problem-q">Design a circuit for: <span class="formula">((¬p ∨ ¬r) ∧ ¬q) ∨ (¬p ∧ (q ∨ r))</span></div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Steps</button>
+        <div class="problem-q">How many gate layers (depth) does the circuit <span class="formula">((¬p ∨ ¬r) ∧ ¬q) ∨ (¬p ∧ (q ∨ r))</span> require at minimum?</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="Enter a number" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="3|three">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">
-          1. Compute ¬p, ¬q, ¬r using three NOT gates<br>
-          2. Compute ¬p ∨ ¬r with an OR gate<br>
-          3. Compute (¬p ∨ ¬r) ∧ ¬q with an AND gate<br>
-          4. Compute q ∨ r with an OR gate<br>
-          5. Compute ¬p ∧ (q ∨ r) with an AND gate<br>
-          6. Combine steps 3 and 5 with a final OR gate
+          <strong>3 layers:</strong><br>
+          Layer 1: Three NOT gates (¬p, ¬q, ¬r)<br>
+          Layer 2: OR gates (¬p∨¬r) and (q∨r), plus ¬p carries forward<br>
+          Layer 3: AND gates → final OR gate
         </div>
       </div>
     </div>
@@ -1919,23 +1913,43 @@ body {
     <div class="practice-box" style="margin-top:20px">
       <h4>Quantifier Practice</h4>
       <div class="problem">
-        <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∀x P(x)</span> true?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∀x P(x)</span> true or false? If false, give a counterexample value of x.</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder='Type "false, x=0" or similar' onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="false|false, x=0|false x=0|false; x=0">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans"><strong style="color:#f87171">False</strong> — P(0) = "0² > 0" = "0 > 0" = False. x = 0 is a counterexample!</div>
       </div>
       <div class="problem">
-        <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∃x P(x)</span> true?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∃x P(x)</span> true or false?</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="true or false" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="true">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans"><strong style="color:#4ade80">True</strong> — P(1) = "1 > 0" = True.</div>
       </div>
       <div class="problem">
-        <div class="problem-q">Negate: "There is an honest politician."</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
+        <div class="problem-q">Negate: "There is an honest politician." Write the negation in English (start with "No" or "Every").</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="No politician is..." onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="no politician is honest|every politician is dishonest|no politician is honest.|all politicians are dishonest">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">Original: ∃x H(x)<br>Negation: ¬∃x H(x) ≡ <strong>∀x ¬H(x)</strong><br>"No politician is honest."</div>
       </div>
       <div class="problem">
-        <div class="problem-q">Negate: "All Americans eat cheeseburgers."</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
+        <div class="problem-q">Negate "All Americans eat cheeseburgers" using quantifier notation. What symbol starts your answer?</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="∃x ¬C(x) or similar" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="∃x ¬c(x)|∃x¬c(x)|∃x ¬C(x)|∃x¬C(x)|there exists x such that not c(x)">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">Original: ∀x C(x)<br>Negation: ¬∀x C(x) ≡ <strong>∃x ¬C(x)</strong><br>"There is some American who does not eat cheeseburgers."</div>
       </div>
     </div>
@@ -2004,18 +2018,33 @@ body {
     <div class="practice-box" style="margin-top:20px">
       <h4>Practice Problems</h4>
       <div class="problem">
-        <div class="problem-q">Let Q(x,y) = "x + y = 5" over ℝ. Is <span class="formula">∀x ∃y Q(x,y)</span> true?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-q">Let Q(x,y) = "x + y = 5" over ℝ. Is <span class="formula">∀x ∃y Q(x,y)</span> true or false?</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="true or false" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="true">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans"><strong style="color:#4ade80">True</strong> — For any x, choose y = 5 − x. Each x gets its own y.</div>
       </div>
       <div class="problem">
-        <div class="problem-q">Is <span class="formula">∃y ∀x Q(x,y)</span> true (Q(x,y) = "x + y = 5")?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-q">Is <span class="formula">∃y ∀x Q(x,y)</span> true (Q(x,y) = "x + y = 5")? Type true or false.</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="true or false" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="false">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans"><strong style="color:#f87171">False</strong> — No single y makes x + y = 5 for ALL x simultaneously.</div>
       </div>
       <div class="problem">
-        <div class="problem-q">Let P(x,y) = "x·y = 0" over ℝ. Evaluate ∀x∀y, ∀x∃y, ∃x∀y, ∃x∃y.</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate All</button>
+        <div class="problem-q">Let P(x,y) = "x·y = 0" over ℝ. Is <span class="formula">∃x ∀y P(x,y)</span> true? (Hint: try x = 0)</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="true or false" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="true">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">
           <strong>∀x∀y:</strong> <span style="color:#f87171">False</span> — 2·3 ≠ 0<br>
           <strong>∀x∃y:</strong> <span style="color:#4ade80">True</span> — choose y = 0<br>
@@ -2148,41 +2177,45 @@ body {
     <div class="practice-box">
       <h4>Step-Through Proof Problems</h4>
       <div class="problem">
-        <div class="problem-q">From p ∧ (p → q), show that q follows.</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
+        <div class="problem-q">From p ∧ (p → q), what rule do you apply to get q? (Name the rule of inference used in the final step)</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="e.g. Modus Ponens" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="modus ponens|mp|modusponens">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">
           Step 1: p ∧ (p → q) &nbsp;&nbsp; [Premise]<br>
           Step 2: p &nbsp;&nbsp; [Simplification]<br>
           Step 3: p → q &nbsp;&nbsp; [Simplification]<br>
-          Step 4: ∴ q &nbsp;&nbsp; [Modus Ponens, 2, 3] ✓
+          Step 4: ∴ q &nbsp;&nbsp; [<strong>Modus Ponens</strong>, 2, 3] ✓
         </div>
       </div>
       <div class="problem">
-        <div class="problem-q">Show "Oliver has 4 legs" from "Every dog has 4 legs" and "Oliver is a dog." D(x)="x is a dog", L(x)="x has 4 legs".</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
+        <div class="problem-q">To go from "∀x (D(x) → L(x))" and "c = Oliver" to "D(Oliver) → L(Oliver)", which rule is used?</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="Name the rule" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="universal instantiation|ui|universal instantiation (ui)">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">
           Step 1: ∀x (D(x) → L(x)) &nbsp;&nbsp; [Premise]<br>
           Step 2: D(Oliver) &nbsp;&nbsp; [Premise]<br>
-          Step 3: D(Oliver) → L(Oliver) &nbsp;&nbsp; [Universal Instantiation, c = Oliver]<br>
+          Step 3: D(Oliver) → L(Oliver) &nbsp;&nbsp; [<strong>Universal Instantiation</strong>, c = Oliver]<br>
           Step 4: ∴ L(Oliver) &nbsp;&nbsp; [Modus Ponens, 2, 3] ✓
         </div>
       </div>
       <div class="problem">
-        <div class="problem-q">Premises: (p ∧ t) → (r ∨ s), q → (u ∧ t), u → p, ¬s, q. Show: r.</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Full Proof</button>
+        <div class="problem-q">In the proof: Premises (p ∧ t)→(r ∨ s), q→(u ∧ t), u→p, ¬s, q. What is the final conclusion?</div>
+        <div class="answer-row">
+          <input class="answer-input" placeholder="One letter" onkeydown="if(event.key==='Enter')checkAnswer(this)">
+          <button class="check-btn" onclick="checkAnswer(this.previousElementSibling)" data-answers="r">Check</button>
+          <button class="reveal-btn" onclick="revealAns(this)">Show Answer</button>
+        </div>
+        <div class="answer-feedback"></div>
         <div class="problem-ans">
-          1: q [Premise]<br>
-          2: q → (u ∧ t) [Premise]<br>
-          3: u ∧ t [MP 1,2]<br>
-          4: u [Simp 3]<br>
-          5: t [Simp 3]<br>
-          6: u → p [Premise]<br>
-          7: p [MP 4,6]<br>
-          8: p ∧ t [Conj 7,5]<br>
-          9: (p ∧ t) → (r ∨ s) [Premise]<br>
-          10: r ∨ s [MP 8,9]<br>
-          11: ¬s [Premise]<br>
-          12: ∴ r [Disjunctive Syllogism 10,11] ✓
+          1: q [Premise] → 2: u ∧ t [MP] → 3: u, t [Simp] → 4: p [MP] → 5: p ∧ t [Conj] → 6: r ∨ s [MP] → 7: ∴ <strong>r</strong> [Disj. Syllogism with ¬s] ✓
         </div>
       </div>
     </div>
@@ -2256,16 +2289,17 @@ function incrementDuck() {
   void duck.offsetWidth;
   duck.classList.add('duck-pop');
 
-  // Floating emoji
+  // Floating text
   const floater = document.createElement('div');
   floater.className = 'duck-float';
-  floater.textContent = '+1 🦆';
-  floater.style.right = '32px';
-  floater.style.bottom = '90px';
-  floater.style.color = '#4d9fff';
+  floater.textContent = '+1 QUACK!';
+  floater.style.right = '28px';
+  floater.style.bottom = '100px';
+  floater.style.color = '#FFD600';
   floater.style.fontFamily = 'var(--font-head)';
-  floater.style.fontWeight = '700';
-  floater.style.fontSize = '16px';
+  floater.style.fontWeight = '800';
+  floater.style.fontSize = '14px';
+  floater.style.textShadow = '0 0 8px rgba(255,214,0,0.6)';
   document.body.appendChild(floater);
   setTimeout(() => floater.remove(), 1200);
 }
@@ -2275,34 +2309,73 @@ function duckClicked() {
   duck.classList.remove('duck-pop');
   void duck.offsetWidth;
   duck.classList.add('duck-pop');
-  const quacks = ['Quack!', '🦆', 'Keep going!', 'Smart duck!'];
+  const quacks = ['Quack!', 'QUACK!', 'Keep going!', 'Rubber duck!', 'Squeaky!'];
   const floater = document.createElement('div');
   floater.className = 'duck-float';
   floater.textContent = quacks[Math.floor(Math.random() * quacks.length)];
-  floater.style.right = '32px';
-  floater.style.bottom = '90px';
-  floater.style.color = '#4d9fff';
+  floater.style.right = '28px';
+  floater.style.bottom = '100px';
+  floater.style.color = '#FFD600';
   floater.style.fontFamily = 'var(--font-head)';
-  floater.style.fontWeight = '700';
+  floater.style.fontWeight = '800';
   floater.style.fontSize = '14px';
+  floater.style.textShadow = '0 0 8px rgba(255,214,0,0.5)';
   document.body.appendChild(floater);
   setTimeout(() => floater.remove(), 1200);
 }
 
 // ====================================================
-// PRACTICE ANSWERS — DUCK INTEGRATION
+// PRACTICE ANSWERS — CHECK + DUCK SYSTEM
 // ====================================================
-function toggleAns(btn) {
-  const ans = btn.nextElementSibling;
-  const wasHidden = !ans.classList.contains('shown');
-  ans.classList.toggle('shown');
-  if (wasHidden) {
-    btn.textContent = 'Hide Answer';
-    // Award duck when revealing answer (reward curiosity!)
+function normalise(s) {
+  return s.toLowerCase().replace(/\s+/g,'').replace(/[.,!?]/g,'');
+}
+
+function checkAnswer(input) {
+  const btn = input.nextElementSibling; // check-btn
+  const rawAnswers = btn.getAttribute('data-answers') || '';
+  const accepted = rawAnswers.split('|').map(a => normalise(a));
+  const userVal = normalise(input.value);
+  const feedback = btn.parentElement.nextElementSibling; // .answer-feedback
+  const ansBlock = feedback.nextElementSibling; // .problem-ans
+
+  if (!userVal) {
+    feedback.textContent = 'Type your answer first!';
+    feedback.className = 'answer-feedback wrong';
+    return;
+  }
+
+  if (accepted.some(a => userVal === a || userVal.includes(a) || a.includes(userVal))) {
+    input.className = 'answer-input correct';
+    feedback.textContent = '✓ Correct! +1 duck!';
+    feedback.className = 'answer-feedback correct';
+    btn.disabled = true;
+    btn.textContent = '✓ Got it!';
+    if (ansBlock) ansBlock.classList.add('shown');
     incrementDuck();
   } else {
-    btn.textContent = 'Reveal Answer';
+    input.className = 'answer-input wrong';
+    feedback.textContent = '✗ Not quite — try again or show the answer.';
+    feedback.className = 'answer-feedback wrong';
+    // Reset wrong class after shake
+    setTimeout(() => {
+      if (input.className === 'answer-input wrong') input.className = 'answer-input';
+    }, 400);
   }
+}
+
+function revealAns(btn) {
+  // btn is the reveal-btn; structure: answer-row > [input, check-btn, reveal-btn], then feedback, then problem-ans
+  const answerRow = btn.parentElement;
+  const feedback = answerRow.nextElementSibling;
+  const ansBlock = feedback.nextElementSibling;
+  if (ansBlock) {
+    ansBlock.classList.add('shown');
+    feedback.textContent = '';
+    feedback.className = 'answer-feedback';
+  }
+  btn.textContent = 'Answer shown';
+  btn.disabled = true;
 }
 
 // ====================================================
