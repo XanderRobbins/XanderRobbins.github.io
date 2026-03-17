@@ -1115,9 +1115,58 @@ body {
 }
 .back-btn:hover { background: rgba(26,115,232,0.22); border-color: var(--blue); }
 
+/* ========== MOBILE HAMBURGER BUTTON ========== */
+#menu-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 300;
+  width: 42px;
+  height: 42px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  transition: background 0.2s, border-color 0.2s;
+}
+#menu-toggle:hover { background: rgba(26,115,232,0.15); border-color: var(--blue); }
+#menu-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.25s, opacity 0.25s, width 0.25s;
+  transform-origin: center;
+}
+/* X state when open */
+body.sidebar-open #menu-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+body.sidebar-open #menu-toggle span:nth-child(2) { opacity: 0; width: 0; }
+body.sidebar-open #menu-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Sidebar overlay for mobile */
+#sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+body.sidebar-open #sidebar-overlay { opacity: 1; }
+
 @media (max-width: 1100px) {
   .unit-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
 @media (max-width: 900px) {
   #sidebar { width: 220px; }
   #main { margin-left: 220px; }
@@ -1130,12 +1179,66 @@ body {
   .syllabus-grid { grid-template-columns: 1fr; }
   .back-bar { padding: 14px 30px; }
 }
+
 @media (max-width: 680px) {
   .unit-grid { grid-template-columns: 1fr; }
+}
+
+/* Full mobile: sidebar slides off-screen, hamburger shown */
+@media (max-width: 640px) {
+  #menu-toggle { display: flex; }
+  #sidebar-overlay { display: block; pointer-events: none; }
+  body.sidebar-open #sidebar-overlay { pointer-events: all; }
+
+  #sidebar {
+    width: 270px;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 200;
+    box-shadow: none;
+  }
+  body.sidebar-open #sidebar {
+    transform: translateX(0);
+    box-shadow: 4px 0 30px rgba(0,0,0,0.5);
+  }
+
+  #main {
+    margin-left: 0 !important;
+  }
+
+  /* Pad main content top so hamburger doesn't overlap hero */
+  #home-page { padding-top: 60px; }
+  #content-page .back-bar { padding-left: 66px; }
+
+  .home-hero-dark { padding: 30px 20px 40px; min-height: auto; }
+  .home-title-dark { font-size: 36px; }
+  .home-subtitle-dark { font-size: 14px; }
+  .home-stats { gap: 20px; }
+  .home-stat-num { font-size: 22px; }
+  .module-section { padding: 30px 20px; }
+  .unit-section, .syllabus-section { padding: 30px 20px; }
+  .syllabus-grid { grid-template-columns: 1fr; }
+  .unit-grid { grid-template-columns: 1fr; }
+  .cic-results { grid-template-columns: 1fr; }
+  .quant-compare { grid-template-columns: 1fr; }
+  .back-bar { padding: 12px 20px 12px 66px; }
+  .section-header h2 { font-size: 24px; }
+  .hero-venn { display: none; }
+  .unit-section-header h2 { font-size: 20px; }
+  #duck-counter { bottom: 16px; right: 16px; }
+  #duck-emoji svg { width: 42px; height: 42px; }
 }
 </style>
 </head>
 <body>
+
+<!-- ============ MOBILE HAMBURGER ============ -->
+<button id="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <!-- ============ DUCK COUNTER ============ -->
 <div id="duck-counter" onclick="duckClicked()" title="Quack! You're doing great!">
@@ -3166,6 +3269,23 @@ function showAllSteps() { visibleSteps = proofs[currentProof].steps.length; rend
 // TRANSLATOR
 // ====================================================
 function revealTrans(row) { row.classList.remove('hidden-logic'); }
+
+// ====================================================
+// MOBILE SIDEBAR TOGGLE
+// ====================================================
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-open');
+}
+function closeSidebar() {
+  document.body.classList.remove('sidebar-open');
+}
+
+// Close sidebar when a nav item is clicked on mobile
+document.querySelectorAll('.nav-item, .home-btn').forEach(el => {
+  el.addEventListener('click', () => {
+    if (window.innerWidth <= 640) closeSidebar();
+  });
+});
 
 // ====================================================
 // INIT
