@@ -25,7 +25,6 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -37,9 +36,79 @@ body {
   overflow-x: hidden;
 }
 
-/* ---- SIDEBAR ---- */
+/* ========== DUCK COUNTER ========== */
+#duck-counter {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+#duck-bubble {
+  background: #fff;
+  color: #0a1628;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 2px solid var(--blue);
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+#duck-counter:hover #duck-bubble { opacity: 1; transform: translateY(0); }
+#duck-emoji {
+  font-size: 38px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(26,115,232,0.5));
+  transition: transform 0.15s;
+}
+#duck-counter:active #duck-emoji { transform: scale(1.25) rotate(-10deg); }
+#duck-score {
+  background: var(--blue);
+  color: #fff;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 2px 10px;
+  min-width: 32px;
+  text-align: center;
+  box-shadow: 0 0 12px var(--blue-glow);
+}
+.duck-pop {
+  animation: duckPop 0.5s ease;
+}
+@keyframes duckPop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4) rotate(-15deg); }
+  60% { transform: scale(0.9) rotate(8deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.duck-float {
+  position: fixed;
+  font-size: 22px;
+  pointer-events: none;
+  z-index: 10000;
+  animation: floatUp 1.2s ease forwards;
+}
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.5); }
+}
+
+/* ========== SIDEBAR ========== */
 #sidebar {
-  width: 260px;
+  width: 270px;
   min-height: 100vh;
   background: var(--surface);
   border-right: 1px solid var(--border);
@@ -49,12 +118,16 @@ body {
   z-index: 100;
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 .sidebar-logo {
   padding: 24px 20px 20px;
   border-bottom: 1px solid var(--border);
+  cursor: pointer;
 }
+.sidebar-logo:hover .logo-title { color: var(--blue-bright); }
 .sidebar-logo .badge {
   font-family: var(--font-head);
   font-size: 11px;
@@ -65,15 +138,42 @@ body {
   display: block;
   margin-bottom: 4px;
 }
-.sidebar-logo h1 {
+.logo-title {
   font-family: var(--font-head);
   font-size: 20px;
   font-weight: 800;
   color: var(--text);
   line-height: 1.2;
+  transition: color 0.2s;
 }
 
-.sidebar-nav { padding: 12px 0; flex: 1; }
+/* Home button */
+.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  margin: 12px 14px 4px;
+  background: linear-gradient(135deg, rgba(26,115,232,0.2), rgba(0,212,255,0.1));
+  border: 1px solid rgba(26,115,232,0.4);
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.home-btn:hover {
+  background: linear-gradient(135deg, rgba(26,115,232,0.35), rgba(0,212,255,0.15));
+  border-color: var(--blue-bright);
+  box-shadow: 0 0 16px rgba(26,115,232,0.3);
+}
+.home-btn .home-icon { font-size: 16px; }
+
+.sidebar-nav { padding: 6px 0 20px; flex: 1; }
 
 .nav-section-label {
   font-size: 10px;
@@ -84,12 +184,45 @@ body {
   padding: 12px 20px 6px;
 }
 
+/* Unit accordion in sidebar */
+.unit-accordion {
+  margin: 2px 10px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(26,115,232,0.15);
+  margin-bottom: 4px;
+}
+.unit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(26,115,232,0.08);
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  user-select: none;
+}
+.unit-header:hover { background: rgba(26,115,232,0.15); color: var(--text); }
+.unit-header.active-unit { color: var(--blue-bright); background: rgba(26,115,232,0.12); }
+.unit-chevron { font-size: 10px; transition: transform 0.2s; }
+.unit-accordion.open .unit-chevron { transform: rotate(90deg); }
+.unit-body {
+  display: none;
+  background: rgba(0,0,0,0.2);
+}
+.unit-accordion.open .unit-body { display: block; }
+
 .nav-item {
   display: block;
-  padding: 9px 20px;
+  padding: 8px 20px 8px 28px;
   color: var(--muted);
   text-decoration: none;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 400;
   border-left: 3px solid transparent;
   transition: all 0.2s;
@@ -100,85 +233,498 @@ body {
   border-left-color: var(--blue);
   background: rgba(26,115,232,0.08);
 }
-.nav-item span { font-size: 11px; margin-right: 6px; }
+.nav-item span { font-size: 11px; margin-right: 6px; opacity: 0.7; }
 
-/* ---- MAIN ---- */
+.nav-tools-section { padding: 0 0 12px; }
+.nav-tool-item {
+  display: block;
+  padding: 7px 20px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.nav-tool-item:hover { color: var(--cyan); }
+
+/* ========== MAIN ========== */
 #main {
-  margin-left: 260px;
+  margin-left: 270px;
   flex: 1;
   padding: 0;
 }
 
-/* ---- HERO ---- */
-.hero {
-  background: linear-gradient(135deg, #050810 0%, #0b1a35 50%, #050810 100%);
-  padding: 80px 60px;
+/* ========== HOME PAGE ========== */
+#home-page {
+  min-height: 100vh;
+  background: #000;
   position: relative;
   overflow: hidden;
-  border-bottom: 1px solid var(--border);
-  min-height: 380px;
-  display: flex;
-  align-items: center;
 }
-.hero::before {
+
+/* Hero */
+.home-hero {
+  position: relative;
+  padding: 0;
+  min-height: 460px;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+/* Left half — deep blue/black */
+.home-hero-left {
+  flex: 1.1;
+  background: linear-gradient(135deg, #000000 0%, #020b1e 50%, #04132e 100%);
+  padding: 60px 50px 60px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+.home-hero-left::after {
   content: '';
   position: absolute;
-  top: -100px; right: -100px;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(26,115,232,0.15) 0%, transparent 70%);
+  right: -1px; top: 0; bottom: 0;
+  width: 60px;
+  background: linear-gradient(to right, transparent, #ffffff08);
   pointer-events: none;
 }
-.hero-venn {
-  position: absolute;
-  right: 60px; top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.15;
+
+/* Right half — white */
+.home-hero-right {
+  flex: 0.9;
+  background: #ffffff;
+  padding: 50px 50px 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
 }
-.hero-content { position: relative; z-index: 1; }
-.hero-tag {
+.home-hero-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(26,115,232,0.06), rgba(0,212,255,0.03));
+  pointer-events: none;
+}
+
+.home-tag {
   font-family: var(--font-head);
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 3px;
   color: var(--blue-bright);
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.hero h2 {
+.home-tag::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 2px;
+  background: var(--blue-bright);
+}
+
+.home-title {
   font-family: var(--font-head);
-  font-size: 52px;
+  font-size: 58px;
   font-weight: 800;
-  line-height: 1.05;
-  margin-bottom: 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #a8c4f0 100%);
+  line-height: 1.0;
+  margin-bottom: 18px;
+  color: #ffffff;
+  text-shadow: 0 0 60px rgba(26,115,232,0.4);
+}
+.home-title span {
+  background: linear-gradient(135deg, #4d9fff, #00d4ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.hero p {
-  font-size: 16px;
-  color: var(--muted);
-  max-width: 520px;
-  line-height: 1.7;
-}
-.module-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 28px;
-}
-.pill {
-  background: rgba(26,115,232,0.15);
-  border: 1px solid var(--border);
-  color: var(--blue-bright);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-family: var(--font-head);
-  letter-spacing: 0.5px;
+
+.home-subtitle {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.75;
+  max-width: 420px;
+  margin-bottom: 28px;
 }
 
-/* ---- SECTIONS ---- */
+.home-stats {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.home-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-stat-num {
+  font-family: var(--font-head);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--blue-bright);
+  line-height: 1;
+}
+.home-stat-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: var(--font-head);
+}
+
+/* Right side — info on white */
+.home-info-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.home-info-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(26,115,232,0.4), transparent);
+}
+
+.home-info-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  align-items: flex-start;
+}
+.home-info-item:last-child { border-bottom: none; }
+.home-info-key {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #1a73e8;
+  min-width: 80px;
+  padding-top: 1px;
+}
+.home-info-val {
+  font-size: 13.5px;
+  color: #1a2540;
+  line-height: 1.5;
+}
+
+/* Diagonal separator line */
+.hero-divider {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: calc(55% - 30px);
+  width: 60px;
+  background: linear-gradient(to right, transparent 0%, rgba(26,115,232,0.3) 40%, rgba(0,212,255,0.3) 60%, transparent 100%);
+  transform: skewX(-3deg);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Grid overlay on dark side */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image:
+    linear-gradient(rgba(77,159,255,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77,159,255,1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+/* Glow orb */
+.hero-orb {
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(26,115,232,0.25) 0%, transparent 70%);
+  bottom: -100px; right: -50px;
+  pointer-events: none;
+}
+
+/* ========== UNIT GRID ========== */
+.unit-section {
+  padding: 56px 60px;
+  background: #050810;
+  border-bottom: 1px solid var(--border);
+}
+
+.unit-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.unit-section-header h2 {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+}
+.unit-section-header p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.unit-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.unit-btn {
+  position: relative;
+  border-radius: 12px;
+  padding: 20px 18px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.25s;
+  overflow: hidden;
+}
+.unit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.25s;
+  border-radius: inherit;
+}
+.unit-btn:hover { transform: translateY(-3px); }
+.unit-btn:hover::before { opacity: 1; }
+
+/* Active unit */
+.unit-btn.unit-active {
+  background: linear-gradient(135deg, #0a1e3e, #061428);
+  border-color: rgba(26,115,232,0.5);
+}
+.unit-btn.unit-active::before {
+  background: linear-gradient(135deg, rgba(26,115,232,0.15), rgba(0,212,255,0.08));
+}
+.unit-btn.unit-active:hover {
+  border-color: var(--blue-bright);
+  box-shadow: 0 8px 30px rgba(26,115,232,0.3);
+}
+
+/* Locked unit */
+.unit-btn.unit-locked {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.07);
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.unit-btn.unit-locked:hover { transform: none; }
+
+.unit-btn-num {
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.unit-active .unit-btn-num { color: var(--blue-bright); }
+.unit-locked .unit-btn-num { color: var(--muted); }
+
+.unit-btn-title {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.unit-active .unit-btn-title { color: #fff; }
+.unit-locked .unit-btn-title { color: var(--muted); }
+
+.unit-btn-topics {
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.unit-active .unit-btn-topics { color: rgba(255,255,255,0.4); }
+.unit-locked .unit-btn-topics { color: rgba(255,255,255,0.2); }
+
+.unit-btn-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+.unit-btn-badge {
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.unit-active .unit-btn-badge {
+  background: rgba(26,115,232,0.2);
+  border: 1px solid rgba(26,115,232,0.4);
+  color: var(--blue-bright);
+}
+.unit-locked .unit-btn-badge {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--muted);
+}
+.unit-arrow {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.unit-active:hover .unit-arrow { transform: translateX(4px); }
+.unit-active .unit-arrow { color: var(--blue-bright); }
+.unit-locked .unit-arrow { color: rgba(255,255,255,0.15); }
+
+/* Lock icon overlay */
+.unit-lock-icon {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-size: 14px;
+  opacity: 0.3;
+}
+
+/* ========== SYLLABUS ========== */
+.syllabus-section {
+  padding: 56px 60px;
+  background: linear-gradient(180deg, #050810 0%, #070d1e 100%);
+  border-bottom: 1px solid var(--border);
+}
+
+.syllabus-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.syllabus-header h2 {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+.syllabus-badge {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.syllabus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.syllabus-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.syllabus-card:hover { border-color: rgba(26,115,232,0.3); }
+
+.syllabus-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: rgba(26,115,232,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.syllabus-card-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue-bright);
+  letter-spacing: 0.5px;
+}
+.syllabus-card-pct {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.syllabus-card-body {
+  padding: 14px 20px;
+}
+.syllabus-card-body p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.65;
+}
+
+/* Wide card */
+.syllabus-card.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Progress bar */
+.grade-bar-wrap {
+  margin-top: 10px;
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.grade-bar {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--blue), var(--cyan));
+}
+
+/* Schedule table */
+.sched-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.sched-table th {
+  text-align: left;
+  padding: 8px 0;
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.sched-table td {
+  padding: 9px 0;
+  color: rgba(255,255,255,0.55);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 13px;
+}
+.sched-table td:first-child {
+  font-family: var(--font-mono);
+  color: var(--blue-bright);
+  font-size: 12px;
+  width: 90px;
+}
+.sched-table td:last-child { font-size: 12px; color: var(--muted); }
+.sched-table tr.current-unit td { color: var(--text); }
+.sched-table tr.current-unit td:first-child { color: var(--cyan); }
+
+/* ========== CONTENT SECTIONS ========== */
+#content-page { display: none; }
+
 .module-section {
   padding: 60px;
   border-bottom: 1px solid var(--border);
@@ -221,7 +767,6 @@ body {
 }
 .subsection p { font-size: 15px; line-height: 1.75; color: #b8c5e0; margin-bottom: 12px; }
 
-/* CARDS */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -273,7 +818,6 @@ body {
   text-align: center;
 }
 
-/* TRUTH TABLE */
 .truth-table {
   width: 100%;
   border-collapse: collapse;
@@ -300,7 +844,6 @@ body {
 .tt-false { color: #f87171; font-weight: 600; }
 .tt-highlight { color: var(--cyan); }
 
-/* INTERACTIVE TRUTH TABLE BUILDER */
 .tt-builder {
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -373,7 +916,6 @@ body {
 .help-text { font-size: 12px; color: var(--muted); margin-top: 6px; font-style: italic; }
 .error-msg { color: #f87171; font-size: 13px; margin-top: 8px; }
 
-/* OPERATOR CARDS */
 .op-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -392,20 +934,8 @@ body {
   border-color: var(--blue);
   background: rgba(26,115,232,0.08);
 }
-.op-card .op-symbol {
-  font-family: var(--font-mono);
-  font-size: 28px;
-  color: var(--cyan);
-  margin-bottom: 8px;
-  display: block;
-}
-.op-card .op-name {
-  font-family: var(--font-head);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 6px;
-}
+.op-card .op-symbol { font-family: var(--font-mono); font-size: 28px; color: var(--cyan); margin-bottom: 8px; display: block; }
+.op-card .op-name { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 .op-card .op-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
 .op-detail { display: none; margin-top: 14px; }
 .op-card.expanded .op-detail { display: block; }
@@ -413,295 +943,73 @@ body {
 .mini-table th { background: rgba(26,115,232,0.2); padding: 5px 10px; color: var(--blue-bright); }
 .mini-table td { padding: 4px 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-/* LOGIC GATES */
-.gate-simulator {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 20px;
-}
+.gate-simulator { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
 .gates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 16px; }
-.gate-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-}
-.gate-card h4 {
-  font-family: var(--font-head);
-  font-size: 14px;
-  color: var(--blue-bright);
-  margin-bottom: 16px;
-}
+.gate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+.gate-card h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
 .gate-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
-.gate-input-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.gate-input-row { display: flex; align-items: center; gap: 10px; }
 .gate-input-row label { font-family: var(--font-mono); font-size: 13px; color: var(--muted); width: 16px; }
-.toggle-btn {
-  width: 50px; height: 26px;
-  background: #1f2937;
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  cursor: pointer;
-  position: relative;
-  transition: background 0.2s;
-}
+.toggle-btn { width: 50px; height: 26px; background: #1f2937; border: 1px solid var(--border); border-radius: 13px; cursor: pointer; position: relative; transition: background 0.2s; }
 .toggle-btn.on { background: var(--blue); border-color: var(--blue); }
-.toggle-btn::after {
-  content: '';
-  position: absolute;
-  width: 18px; height: 18px;
-  background: #fff;
-  border-radius: 50%;
-  top: 3px; left: 3px;
-  transition: left 0.2s;
-}
+.toggle-btn::after { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; }
 .toggle-btn.on::after { left: 29px; }
 .toggle-val { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
-.gate-output {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: rgba(0,0,0,0.3);
-  border-radius: 6px;
-  border: 1px solid var(--border);
-}
+.gate-output { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid var(--border); }
 .gate-output label { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
-.gate-result {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 600;
-  transition: color 0.2s;
-}
+.gate-result { font-family: var(--font-mono); font-size: 20px; font-weight: 600; transition: color 0.2s; }
 .gate-result.true { color: #4ade80; }
 .gate-result.false { color: #f87171; }
 .gate-formula { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-left: auto; }
 
-/* RULES OF INFERENCE */
-.rule-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-.rule-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-}
-.rule-card:hover {
-  border-color: var(--blue);
-  box-shadow: 0 0 20px var(--blue-glow);
-}
-.rule-card h4 {
-  font-family: var(--font-head);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--cyan);
-  margin-bottom: 16px;
-  letter-spacing: 0.5px;
-}
+.rule-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
+.rule-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; }
+.rule-card:hover { border-color: var(--blue); box-shadow: 0 0 20px var(--blue-glow); }
+.rule-card h4 { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--cyan); margin-bottom: 16px; letter-spacing: 0.5px; }
 .rule-premises { margin-bottom: 8px; }
-.rule-premises div {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  color: var(--text);
-  padding: 2px 0;
-}
-.rule-line {
-  width: 100%;
-  height: 1px;
-  background: var(--blue-bright);
-  margin: 10px 0;
-}
-.rule-conclusion {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  color: #4ade80;
-}
+.rule-premises div { font-family: var(--font-mono); font-size: 15px; color: var(--text); padding: 2px 0; }
+.rule-line { width: 100%; height: 1px; background: var(--blue-bright); margin: 10px 0; }
+.rule-conclusion { font-family: var(--font-mono); font-size: 15px; color: #4ade80; }
 .rule-conclusion::before { content: '∴ '; color: var(--blue-bright); }
-.rule-example {
-  display: none;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.7;
-}
+.rule-example { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); line-height: 1.7; }
 .rule-card.open .rule-example { display: block; }
-.rule-hint {
-  position: absolute;
-  top: 10px; right: 14px;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
+.rule-hint { position: absolute; top: 10px; right: 14px; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
 
-/* EQUIVALENCIES TABLE */
-.eq-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  margin-top: 16px;
-}
-.eq-table th {
-  background: var(--blue-dark);
-  color: var(--text);
-  padding: 10px 16px;
-  text-align: left;
-  font-family: var(--font-head);
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-.eq-table td {
-  padding: 10px 16px;
-  border-bottom: 1px solid rgba(26,115,232,0.1);
-  font-family: var(--font-mono);
-  font-size: 13px;
-}
+.eq-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 16px; }
+.eq-table th { background: var(--blue-dark); color: var(--text); padding: 10px 16px; text-align: left; font-family: var(--font-head); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.eq-table td { padding: 10px 16px; border-bottom: 1px solid rgba(26,115,232,0.1); font-family: var(--font-mono); font-size: 13px; }
 .eq-table tr:hover td { background: rgba(26,115,232,0.06); }
 .eq-name { color: var(--blue-bright); font-family: var(--font-body) !important; font-size: 13px !important; }
 .eq-formula { color: var(--cyan); }
 
-/* QUANTIFIER VISUAL */
-.quant-compare {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 20px;
-}
-.quant-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px;
-  text-align: center;
-}
-.quant-box .quant-sym {
-  font-family: var(--font-mono);
-  font-size: 56px;
-  display: block;
-  margin-bottom: 8px;
-}
+.quant-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+.quant-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; }
+.quant-box .quant-sym { font-family: var(--font-mono); font-size: 56px; display: block; margin-bottom: 8px; }
 .quant-box.universal .quant-sym { color: var(--blue-bright); }
 .quant-box.existential .quant-sym { color: var(--cyan); }
-.quant-box h4 {
-  font-family: var(--font-head);
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
+.quant-box h4 { font-family: var(--font-head); font-size: 14px; font-weight: 600; margin-bottom: 12px; }
 .quant-box p { font-size: 13px; color: var(--muted); line-height: 1.6; }
-.quant-box .when-true, .quant-box .when-false {
-  margin-top: 12px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  text-align: left;
-}
+.quant-box .when-true, .quant-box .when-false { margin-top: 12px; padding: 8px 12px; border-radius: 6px; font-size: 12px; text-align: left; }
 .when-true { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); color: #4ade80; }
 .when-false { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); color: #f87171; margin-top: 6px; }
 
-/* PRACTICE PROBLEMS */
-.practice-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 20px;
-}
-.practice-box h4 {
-  font-family: var(--font-head);
-  font-size: 14px;
-  color: var(--blue-bright);
-  margin-bottom: 16px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.problem {
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(26,115,232,0.1);
-}
+.practice-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
+.practice-box h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+.problem { padding: 14px 0; border-bottom: 1px solid rgba(26,115,232,0.1); }
 .problem:last-child { border-bottom: none; }
 .problem-q { font-size: 14px; color: var(--text); margin-bottom: 10px; line-height: 1.6; }
-.problem-ans {
-  display: none;
-  margin-top: 10px;
-  background: rgba(26,115,232,0.08);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 13.5px;
-  color: #a8c4f0;
-  line-height: 1.7;
-}
+.problem-ans { display: none; margin-top: 10px; background: rgba(26,115,232,0.08); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 13.5px; color: #a8c4f0; line-height: 1.7; }
 .problem-ans.shown { display: block; }
-.reveal-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: var(--font-body);
-}
+.reveal-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 5px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); }
 .reveal-btn:hover { border-color: var(--blue); color: var(--blue-bright); }
 
-/* PROOF STEPPER */
-.proof-stepper {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 20px;
-}
-.proof-stepper h4 {
-  font-family: var(--font-head);
-  font-size: 14px;
-  color: var(--blue-bright);
-  margin-bottom: 16px;
-}
-.proof-selector {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-.proof-tab {
-  padding: 6px 14px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  color: var(--muted);
-  transition: all 0.2s;
-  background: transparent;
-  font-family: var(--font-body);
-}
+.proof-stepper { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
+.proof-stepper h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
+.proof-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.proof-tab { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; cursor: pointer; color: var(--muted); transition: all 0.2s; background: transparent; font-family: var(--font-body); }
 .proof-tab.active { border-color: var(--blue); color: var(--blue-bright); background: rgba(26,115,232,0.1); }
 .proof-steps { min-height: 120px; }
-.proof-step {
-  display: none;
-  padding: 12px 16px;
-  border-left: 3px solid var(--blue);
-  margin-bottom: 8px;
-  background: rgba(26,115,232,0.05);
-  border-radius: 0 6px 6px 0;
-  animation: slideIn 0.3s ease;
-}
+.proof-step { display: none; padding: 12px 16px; border-left: 3px solid var(--blue); margin-bottom: 8px; background: rgba(26,115,232,0.05); border-radius: 0 6px 6px 0; animation: slideIn 0.3s ease; }
 .proof-step.visible { display: block; }
 @keyframes slideIn { from { opacity:0; transform: translateX(-10px); } to { opacity:1; transform: translateX(0); } }
 .step-num { font-size: 10px; color: var(--muted); margin-bottom: 4px; font-family: var(--font-head); letter-spacing: 1px; text-transform: uppercase; }
@@ -710,28 +1018,10 @@ body {
 .proof-controls { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
 .proof-counter { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
 
-/* TRANSLATOR */
-.translator {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 20px;
-}
+.translator { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
 .translator h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
 .trans-examples { display: flex; flex-direction: column; gap: 12px; }
-.trans-row {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 12px;
-  align-items: center;
-  padding: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
+.trans-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
 .trans-row:hover { border-color: var(--blue); }
 .trans-english { font-size: 13px; color: var(--text); line-height: 1.5; }
 .trans-arrow { color: var(--blue-bright); font-size: 18px; text-align: center; }
@@ -739,58 +1029,21 @@ body {
 .trans-row.hidden-logic .trans-logic { color: var(--surface); background: var(--surface); border-radius: 4px; cursor: pointer; user-select: none; }
 .trans-row.hidden-logic .trans-logic::after { content: ' Click to reveal'; color: var(--muted); font-family: var(--font-body); font-size: 11px; }
 
-/* DEMORGAN VISUAL */
-.demorgan-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px;
-  margin: 16px 0;
-}
-.demorgan-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(26,115,232,0.1);
-}
+.demorgan-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 16px 0; }
+.demorgan-row { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(26,115,232,0.1); }
 .demorgan-row:last-child { border-bottom: none; }
 .dm-orig { font-family: var(--font-mono); font-size: 16px; color: #f87171; min-width: 160px; }
 .dm-arrow { color: var(--muted); font-size: 20px; }
 .dm-equiv { font-family: var(--font-mono); font-size: 16px; color: #4ade80; min-width: 160px; }
 .dm-note { font-size: 12px; color: var(--muted); line-height: 1.5; flex: 1; }
 
-/* VENN SVG */
-svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3; opacity: 0.7; }
-
-/* CONVERSE/INVERSE/CONTRA */
-.cic-builder {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 20px;
-}
+.cic-builder { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 20px; }
 .cic-builder h4 { font-family: var(--font-head); font-size: 14px; color: var(--blue-bright); margin-bottom: 16px; }
 .cic-input { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-.cic-input input {
-  flex: 1; min-width: 200px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-}
+.cic-input input { flex: 1; min-width: 200px; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 6px; font-size: 14px; outline: none; }
 .cic-input input:focus { border-color: var(--blue); }
 .cic-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.cic-result {
-  padding: 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-}
+.cic-result { padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
 .cic-result .cic-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; font-family: var(--font-head); }
 .cic-result.original .cic-label { color: var(--blue-bright); }
 .cic-result.converse .cic-label { color: var(--cyan); }
@@ -798,93 +1051,505 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
 .cic-result.contrapositive .cic-label { color: #4ade80; }
 .cic-result .cic-val { font-size: 13.5px; color: var(--text); line-height: 1.5; }
 
-/* SCROLL ANIMATIONS */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s, transform 0.5s;
-}
+.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
 .fade-in.visible { opacity: 1; transform: none; }
 
-/* RESPONSIVE */
+.info-box { background: rgba(26,115,232,0.08); border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 14px 0; font-size: 14px; line-height: 1.7; color: #a8c4f0; }
+.warn-box { background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.2); border-left: 3px solid #fbbf24; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 14px 0; font-size: 14px; line-height: 1.7; color: #fde68a; }
+
+/* Back to home button at top of content */
+.back-bar {
+  padding: 14px 60px;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.back-btn {
+  background: rgba(26,115,232,0.12);
+  border: 1px solid var(--border);
+  color: var(--blue-bright);
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.back-btn:hover { background: rgba(26,115,232,0.22); border-color: var(--blue); }
+
+@media (max-width: 1100px) {
+  .unit-grid { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 900px) {
   #sidebar { width: 220px; }
   #main { margin-left: 220px; }
+  .home-hero { flex-direction: column; }
+  .home-hero-right { min-height: 260px; }
   .module-section { padding: 40px 30px; }
+  .unit-section, .syllabus-section { padding: 40px 30px; }
   .quant-compare { grid-template-columns: 1fr; }
   .cic-results { grid-template-columns: 1fr; }
+  .syllabus-grid { grid-template-columns: 1fr; }
+  .back-bar { padding: 14px 30px; }
 }
-
-.info-box {
-  background: rgba(26,115,232,0.08);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--blue);
-  border-radius: 0 8px 8px 0;
-  padding: 14px 18px;
-  margin: 14px 0;
-  font-size: 14px;
-  line-height: 1.7;
-  color: #a8c4f0;
-}
-.warn-box {
-  background: rgba(251,191,36,0.06);
-  border: 1px solid rgba(251,191,36,0.2);
-  border-left: 3px solid #fbbf24;
-  border-radius: 0 8px 8px 0;
-  padding: 14px 18px;
-  margin: 14px 0;
-  font-size: 14px;
-  line-height: 1.7;
-  color: #fde68a;
+@media (max-width: 680px) {
+  .unit-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
+<!-- ============ DUCK COUNTER ============ -->
+<div id="duck-counter" onclick="duckClicked()" title="Quack! You're doing great!">
+  <div id="duck-bubble">CORRECT ANSWERS</div>
+  <div id="duck-emoji">🦆</div>
+  <div id="duck-score">0</div>
+</div>
+
+<!-- ============ SIDEBAR ============ -->
 <nav id="sidebar">
-  <div class="sidebar-logo">
+  <div class="sidebar-logo" onclick="showHome()">
     <span class="badge">COT 3100</span>
-    <h1>Discrete<br>Structures</h1>
+    <div class="logo-title">Discrete<br>Structures</div>
   </div>
+
   <div class="sidebar-nav">
-    <div class="nav-section-label">Modules</div>
-    <a class="nav-item" href="#prop"><span>01</span> Propositional Logic</a>
-    <a class="nav-item" href="#equiv"><span>02</span> Propositional Equivalencies</a>
-    <a class="nav-item" href="#gates"><span>03</span> Logic Gates</a>
-    <a class="nav-item" href="#pred"><span>04</span> Predicates & Quantifiers</a>
-    <a class="nav-item" href="#nested"><span>05</span> Nested Quantifiers</a>
-    <a class="nav-item" href="#rules"><span>06</span> Rules of Inference</a>
-    <div class="nav-section-label">Tools</div>
-    <a class="nav-item" href="#tt-builder">↪ Truth Table Builder</a>
-    <a class="nav-item" href="#gate-sim">↪ Gate Simulator</a>
-    <a class="nav-item" href="#proof-step">↪ Proof Stepper</a>
+    <a class="home-btn" onclick="showHome()">
+      <span class="home-icon">🏠</span> Home / Syllabus
+    </a>
+
+    <div class="nav-section-label">Unit 1 — Logic</div>
+    <div class="unit-accordion open" id="acc-u1">
+      <div class="unit-header active-unit" onclick="toggleAccordion('acc-u1')">
+        <span>Unit 1 Modules</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" onclick="showContent('prop')"><span>01</span> Propositional Logic</a>
+        <a class="nav-item" onclick="showContent('equiv')"><span>02</span> Propositional Equivalencies</a>
+        <a class="nav-item" onclick="showContent('gates')"><span>03</span> Logic Gates</a>
+        <a class="nav-item" onclick="showContent('pred')"><span>04</span> Predicates &amp; Quantifiers</a>
+        <a class="nav-item" onclick="showContent('nested')"><span>05</span> Nested Quantifiers</a>
+        <a class="nav-item" onclick="showContent('rules')"><span>06</span> Rules of Inference</a>
+      </div>
+    </div>
+
+    <div class="nav-section-label" style="margin-top:8px">Units 2–8</div>
+    <div class="unit-accordion" id="acc-u2">
+      <div class="unit-header" onclick="toggleAccordion('acc-u2')">
+        <span>Unit 2 — Proofs</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" style="opacity:0.4;cursor:not-allowed">Coming soon</a>
+      </div>
+    </div>
+    <div class="unit-accordion" id="acc-u3">
+      <div class="unit-header" onclick="toggleAccordion('acc-u3')">
+        <span>Unit 3 — Sets</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" style="opacity:0.4;cursor:not-allowed">Coming soon</a>
+      </div>
+    </div>
+    <div class="unit-accordion" id="acc-u4">
+      <div class="unit-header" onclick="toggleAccordion('acc-u4')">
+        <span>Unit 4 — Functions</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" style="opacity:0.4;cursor:not-allowed">Coming soon</a>
+      </div>
+    </div>
+    <div class="unit-accordion" id="acc-u5">
+      <div class="unit-header" onclick="toggleAccordion('acc-u5')">
+        <span>Unit 5 — Sequences &amp; Sums</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" style="opacity:0.4;cursor:not-allowed">Coming soon</a>
+      </div>
+    </div>
+    <div class="unit-accordion" id="acc-u6">
+      <div class="unit-header" onclick="toggleAccordion('acc-u6')">
+        <span>Unit 6 — Number Theory</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" style="opacity:0.4;cursor:not-allowed">Coming soon</a>
+      </div>
+    </div>
+    <div class="unit-accordion" id="acc-u7">
+      <div class="unit-header" onclick="toggleAccordion('acc-u7')">
+        <span>Unit 7 — Induction</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" style="opacity:0.4;cursor:not-allowed">Coming soon</a>
+      </div>
+    </div>
+    <div class="unit-accordion" id="acc-u8">
+      <div class="unit-header" onclick="toggleAccordion('acc-u8')">
+        <span>Unit 8 — Combinatorics</span>
+        <span class="unit-chevron">›</span>
+      </div>
+      <div class="unit-body">
+        <a class="nav-item" style="opacity:0.4;cursor:not-allowed">Coming soon</a>
+      </div>
+    </div>
+
+    <div class="nav-section-label" style="margin-top:12px">Tools</div>
+    <div class="nav-tools-section">
+      <a class="nav-tool-item" onclick="showContent('prop');setTimeout(()=>document.getElementById('tt-builder').scrollIntoView({behavior:'smooth'}),200)">↪ Truth Table Builder</a>
+      <a class="nav-tool-item" onclick="showContent('gates');setTimeout(()=>document.getElementById('gate-sim').scrollIntoView({behavior:'smooth'}),200)">↪ Gate Simulator</a>
+      <a class="nav-tool-item" onclick="showContent('equiv');setTimeout(()=>document.getElementById('proof-step').scrollIntoView({behavior:'smooth'}),200)">↪ Proof Stepper</a>
+    </div>
   </div>
 </nav>
 
-<!-- MAIN -->
+<!-- ============ MAIN ============ -->
 <div id="main">
 
-<!-- HERO -->
-<div class="hero">
-  <svg class="hero-venn" width="280" height="280" viewBox="0 0 280 280">
-    <circle cx="110" cy="110" r="90" fill="#1a73e8" fill-opacity="0.25" stroke="#1a73e8" stroke-width="2"/>
-    <circle cx="170" cy="110" r="90" fill="#1a73e8" fill-opacity="0.25" stroke="#1a73e8" stroke-width="2"/>
-    <circle cx="140" cy="170" r="90" fill="#1a73e8" fill-opacity="0.25" stroke="#1a73e8" stroke-width="2"/>
-  </svg>
-  <div class="hero-content">
-    <div class="hero-tag">Week 1 · Logic Foundations</div>
-    <h2>Discrete<br>Structures</h2>
-    <p>Master propositional logic, predicates, quantifiers, and rules of inference — the building blocks of mathematical reasoning and computer science.</p>
-    <div class="module-pills">
-      <span class="pill">Propositional Logic</span>
-      <span class="pill">Truth Tables</span>
-      <span class="pill">Quantifiers</span>
-      <span class="pill">Nested Quantifiers</span>
-      <span class="pill">Rules of Inference</span>
+  <!-- ====== HOME PAGE ====== -->
+  <div id="home-page">
+
+    <!-- Hero Split -->
+    <div class="home-hero">
+      <!-- Dark left -->
+      <div class="home-hero-left">
+        <div class="hero-grid"></div>
+        <div class="hero-orb"></div>
+        <div class="home-tag">COT 3100 · University of South Florida</div>
+        <div class="home-title">Discrete<br><span>Structures</span></div>
+        <div class="home-subtitle">Master the mathematical foundations of computer science — from propositional logic and set theory to proofs, number theory, and combinatorics.</div>
+        <div class="home-stats">
+          <div class="home-stat">
+            <div class="home-stat-num">8</div>
+            <div class="home-stat-label">Units</div>
+          </div>
+          <div class="home-stat">
+            <div class="home-stat-num">40+</div>
+            <div class="home-stat-label">Modules</div>
+          </div>
+          <div class="home-stat">
+            <div class="home-stat-num">3</div>
+            <div class="home-stat-label">Live Tools</div>
+          </div>
+          <div class="home-stat">
+            <div class="home-stat-num">∞</div>
+            <div class="home-stat-label">Practice Qs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- White right -->
+      <div class="home-hero-right">
+        <div class="home-info-title">Course Info</div>
+        <div class="home-info-item">
+          <div class="home-info-key">Course</div>
+          <div class="home-info-val">COT 3100 — Discrete Structures</div>
+        </div>
+        <div class="home-info-item">
+          <div class="home-info-key">Credits</div>
+          <div class="home-info-val">3 Credit Hours</div>
+        </div>
+        <div class="home-info-item">
+          <div class="home-info-key">Textbook</div>
+          <div class="home-info-val">Rosen, Discrete Mathematics &amp; Its Applications, 8th Ed.</div>
+        </div>
+        <div class="home-info-item">
+          <div class="home-info-key">Topics</div>
+          <div class="home-info-val">Logic, Sets, Functions, Sequences, Number Theory, Induction, Combinatorics</div>
+        </div>
+        <div class="home-info-item">
+          <div class="home-info-key">Now</div>
+          <div class="home-info-val" style="color:#1a73e8;font-weight:600">Unit 1 — Logic Foundations</div>
+        </div>
+      </div>
+
+      <div class="hero-divider"></div>
     </div>
-  </div>
-</div>
+
+    <!-- Unit Grid -->
+    <div class="unit-section">
+      <div class="unit-section-header">
+        <h2>All Units</h2>
+        <p>Click a unit to jump into the content</p>
+      </div>
+
+      <div class="unit-grid">
+        <!-- Unit 1 — Active -->
+        <div class="unit-btn unit-active" onclick="showContent('prop')">
+          <div class="unit-btn-num">Unit 01</div>
+          <div class="unit-btn-title">Logic &amp; Proofs</div>
+          <div class="unit-btn-topics">Propositional Logic · Truth Tables · Equivalencies · Quantifiers · Inference</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">AVAILABLE</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+
+        <!-- Units 2–8 — Locked -->
+        <div class="unit-btn unit-locked">
+          <span class="unit-lock-icon">🔒</span>
+          <div class="unit-btn-num">Unit 02</div>
+          <div class="unit-btn-title">Basic Structures: Sets, Functions</div>
+          <div class="unit-btn-topics">Set Operations · Cardinality · Functions · Sequences</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">COMING SOON</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="unit-btn unit-locked">
+          <span class="unit-lock-icon">🔒</span>
+          <div class="unit-btn-num">Unit 03</div>
+          <div class="unit-btn-title">Algorithms &amp; Complexity</div>
+          <div class="unit-btn-topics">Big-O Notation · Search &amp; Sort · Time Complexity</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">COMING SOON</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="unit-btn unit-locked">
+          <span class="unit-lock-icon">🔒</span>
+          <div class="unit-btn-num">Unit 04</div>
+          <div class="unit-btn-title">Number Theory</div>
+          <div class="unit-btn-topics">Divisibility · Modular Arithmetic · Primes · GCD · RSA</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">COMING SOON</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="unit-btn unit-locked">
+          <span class="unit-lock-icon">🔒</span>
+          <div class="unit-btn-num">Unit 05</div>
+          <div class="unit-btn-title">Induction &amp; Recursion</div>
+          <div class="unit-btn-topics">Mathematical Induction · Strong Induction · Recursive Definitions</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">COMING SOON</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="unit-btn unit-locked">
+          <span class="unit-lock-icon">🔒</span>
+          <div class="unit-btn-num">Unit 06</div>
+          <div class="unit-btn-title">Counting &amp; Combinatorics</div>
+          <div class="unit-btn-topics">Permutations · Combinations · Binomial Theorem · Pigeonhole</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">COMING SOON</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="unit-btn unit-locked">
+          <span class="unit-lock-icon">🔒</span>
+          <div class="unit-btn-num">Unit 07</div>
+          <div class="unit-btn-title">Discrete Probability</div>
+          <div class="unit-btn-topics">Sample Spaces · Conditional Probability · Bayes' Theorem · Expected Value</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">COMING SOON</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="unit-btn unit-locked">
+          <span class="unit-lock-icon">🔒</span>
+          <div class="unit-btn-num">Unit 08</div>
+          <div class="unit-btn-title">Graphs &amp; Trees</div>
+          <div class="unit-btn-topics">Graph Models · Euler &amp; Hamilton Paths · Spanning Trees · Coloring</div>
+          <div class="unit-btn-footer">
+            <span class="unit-btn-badge">COMING SOON</span>
+            <span class="unit-arrow">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Syllabus -->
+    <div class="syllabus-section">
+      <div class="syllabus-header">
+        <h2>Syllabus Overview</h2>
+        <span class="syllabus-badge">SPRING 2025</span>
+      </div>
+
+      <div class="syllabus-grid">
+        <!-- Grading -->
+        <div class="syllabus-card">
+          <div class="syllabus-card-header">
+            <div class="syllabus-card-title">📊 Grade Breakdown</div>
+          </div>
+          <div class="syllabus-card-body">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:13px;color:rgba(255,255,255,0.6)">Homework Assignments</span>
+                  <span style="font-family:var(--font-mono);font-size:13px;color:#4d9fff">20%</span>
+                </div>
+                <div class="grade-bar-wrap"><div class="grade-bar" style="width:20%"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:13px;color:rgba(255,255,255,0.6)">Quizzes (Weekly)</span>
+                  <span style="font-family:var(--font-mono);font-size:13px;color:#4d9fff">20%</span>
+                </div>
+                <div class="grade-bar-wrap"><div class="grade-bar" style="width:20%"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:13px;color:rgba(255,255,255,0.6)">Midterm Exam</span>
+                  <span style="font-family:var(--font-mono);font-size:13px;color:#4d9fff">25%</span>
+                </div>
+                <div class="grade-bar-wrap"><div class="grade-bar" style="width:25%"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:13px;color:rgba(255,255,255,0.6)">Final Exam</span>
+                  <span style="font-family:var(--font-mono);font-size:13px;color:#4d9fff">35%</span>
+                </div>
+                <div class="grade-bar-wrap"><div class="grade-bar" style="width:35%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Policies -->
+        <div class="syllabus-card">
+          <div class="syllabus-card-header">
+            <div class="syllabus-card-title">📋 Course Policies</div>
+          </div>
+          <div class="syllabus-card-body">
+            <p>Late homework is accepted with a <strong style="color:rgba(255,255,255,0.8)">10% penalty per day</strong> up to 3 days. After 3 days, no credit is given.</p>
+            <p style="margin-top:8px">Attendance is not mandatory but <strong style="color:rgba(255,255,255,0.8)">strongly recommended</strong>. Exam material closely follows lecture content.</p>
+            <p style="margin-top:8px">Collaboration on homework is allowed; copying is <strong style="color:#f87171">not</strong>. All submitted work must be your own.</p>
+          </div>
+        </div>
+
+        <!-- Schedule — full width -->
+        <div class="syllabus-card full-width">
+          <div class="syllabus-card-header">
+            <div class="syllabus-card-title">📅 Course Schedule</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.3)">Rosen, 8th Ed.</div>
+          </div>
+          <div class="syllabus-card-body">
+            <table class="sched-table">
+              <thead>
+                <tr>
+                  <th>Weeks</th>
+                  <th>Unit</th>
+                  <th>Topics</th>
+                  <th>Sections</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="current-unit">
+                  <td>1–2</td>
+                  <td>Unit 1 — Logic &amp; Proofs</td>
+                  <td>Propositional logic, predicates, quantifiers, nested quantifiers, rules of inference, proof methods</td>
+                  <td>§1.1 – 1.7</td>
+                </tr>
+                <tr>
+                  <td>3–4</td>
+                  <td>Unit 2 — Sets &amp; Functions</td>
+                  <td>Sets, set operations, functions, sequences, summations, cardinality</td>
+                  <td>§2.1 – 2.5</td>
+                </tr>
+                <tr>
+                  <td>5–6</td>
+                  <td>Unit 3 — Algorithms</td>
+                  <td>Algorithms, complexity, Big-O, searching, sorting</td>
+                  <td>§3.1 – 3.3</td>
+                </tr>
+                <tr>
+                  <td>7–8</td>
+                  <td>Unit 4 — Number Theory</td>
+                  <td>Divisibility, modular arithmetic, primes, GCD, cryptography</td>
+                  <td>§4.1 – 4.6</td>
+                </tr>
+                <tr>
+                  <td style="color:#fbbf24">Week 9</td>
+                  <td style="color:#fbbf24">MIDTERM EXAM</td>
+                  <td style="color:rgba(251,191,36,0.7)">Units 1–4</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>10–11</td>
+                  <td>Unit 5 — Induction</td>
+                  <td>Mathematical induction, strong induction, recursion</td>
+                  <td>§5.1 – 5.4</td>
+                </tr>
+                <tr>
+                  <td>12–13</td>
+                  <td>Unit 6 — Counting</td>
+                  <td>Counting principles, permutations, combinations, binomial theorem, pigeonhole</td>
+                  <td>§6.1 – 6.6</td>
+                </tr>
+                <tr>
+                  <td>14</td>
+                  <td>Unit 7 — Probability</td>
+                  <td>Probability, conditional probability, Bayes, expected value</td>
+                  <td>§7.1 – 7.4</td>
+                </tr>
+                <tr>
+                  <td>15</td>
+                  <td>Unit 8 — Graphs &amp; Trees</td>
+                  <td>Graph models, paths, cycles, Euler/Hamilton, trees, spanning trees</td>
+                  <td>§10.1 – 11.4</td>
+                </tr>
+                <tr>
+                  <td style="color:#fbbf24">Finals</td>
+                  <td style="color:#fbbf24">FINAL EXAM</td>
+                  <td style="color:rgba(251,191,36,0.7)">Comprehensive — All Units</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="syllabus-card full-width">
+          <div class="syllabus-card-header">
+            <div class="syllabus-card-title">💡 Tips for Success</div>
+          </div>
+          <div class="syllabus-card-body" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+            <div>
+              <div style="color:var(--blue-bright);font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:6px">PRACTICE PROBLEMS</div>
+              <p>Do every odd-numbered problem in Rosen. Discrete math is learned by doing, not just reading.</p>
+            </div>
+            <div>
+              <div style="color:var(--cyan);font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:6px">PROOF WRITING</div>
+              <p>Write out full proofs by hand. Identifying which rule of inference to apply is a skill built through repetition.</p>
+            </div>
+            <div>
+              <div style="color:#4ade80;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:6px">USE THIS SITE</div>
+              <p>The duck counter tracks correct answers. Each 🦆 quack = real progress. Use the interactive tools, not just notes!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end #home-page -->
+
+  <!-- ====== CONTENT PAGE ====== -->
+  <div id="content-page">
+
+    <div class="back-bar">
+      <button class="back-btn" onclick="showHome()">← Back to Home</button>
+      <span style="font-size:13px;color:var(--muted)" id="content-breadcrumb">Unit 1 › Propositional Logic</span>
+    </div>
 
 <!-- ==================== MODULE 1: PROPOSITIONAL LOGIC ==================== -->
 <section class="module-section" id="prop">
@@ -895,12 +1560,12 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
 
   <div class="subsection fade-in">
     <h3>What is a Proposition?</h3>
-    <p>A <strong>proposition</strong> is a declarative sentence that is either <span style="color:#4ade80">true</span> or <span style="color:#f87171">false</span>, but not both. Whether the statement is obviously true or false does not determine whether it is a proposition — we only need to know that a true or false value <em>can</em> be established.</p>
+    <p>A <strong>proposition</strong> is a declarative sentence that is either <span style="color:#4ade80">true</span> or <span style="color:#f87171">false</span>, but not both.</p>
     <div class="info-box">Interrogative and imperative sentences like "Did you try binary search?" or "Always comment your code" are <strong>NOT</strong> propositions — they can't be true or false.</div>
     <div class="card-grid">
       <div class="card"><div class="card-title">✅ Proposition</div><p>"Washington D.C. is the capital of the USA." — Has a definite truth value (True).</p></div>
       <div class="card"><div class="card-title">✅ Proposition</div><p>"33 is a prime number." — Has a definite truth value (False: 33 = 3×11).</p></div>
-      <div class="card"><div class="card-title">✅ Proposition</div><p>"Every even integer &gt; 2 is the sum of two primes." — Has a truth value (Goldbach's Conjecture, unknown but valid proposition).</p></div>
+      <div class="card"><div class="card-title">✅ Proposition</div><p>"Every even integer &gt; 2 is the sum of two primes." — Goldbach's Conjecture, unknown but valid proposition.</p></div>
       <div class="card"><div class="card-title">❌ Not a Proposition</div><p>"What time is it?" — Interrogative, cannot be true or false.</p></div>
       <div class="card"><div class="card-title">❌ Not a Proposition</div><p>"x + 1 = 3" — Contains a free variable; truth depends on x.</p></div>
     </div>
@@ -931,7 +1596,7 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
       <div class="op-card" onclick="toggleOp(this)">
         <span class="op-symbol">∨</span>
         <div class="op-name">Disjunction (OR)</div>
-        <div class="op-desc">True when at least one of p or q is true (inclusive or).</div>
+        <div class="op-desc">True when at least one of p or q is true.</div>
         <div class="op-detail">
           <table class="mini-table"><tr><th>p</th><th>q</th><th>p∨q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-false">F</td></tr></table>
           <p style="margin-top:10px;font-size:12px;color:var(--muted)">Code: <span style="color:var(--cyan)">p || q</span></p>
@@ -949,7 +1614,7 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
       <div class="op-card" onclick="toggleOp(this)">
         <span class="op-symbol">→</span>
         <div class="op-name">Conditional (IF-THEN)</div>
-        <div class="op-desc">False only when p is true and q is false. "If p then q."</div>
+        <div class="op-desc">False only when p is true and q is false.</div>
         <div class="op-detail">
           <table class="mini-table"><tr><th>p</th><th>q</th><th>p→q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-true">T</td></tr></table>
           <p style="margin-top:10px;font-size:12px;color:var(--muted)">Precedence: 5 (low)</p>
@@ -958,7 +1623,7 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
       <div class="op-card" onclick="toggleOp(this)">
         <span class="op-symbol">↔</span>
         <div class="op-name">Biconditional (IFF)</div>
-        <div class="op-desc">True when p and q have the SAME truth value. "p if and only if q."</div>
+        <div class="op-desc">True when p and q have the SAME truth value.</div>
         <div class="op-detail">
           <table class="mini-table"><tr><th>p</th><th>q</th><th>p↔q</th></tr><tr><td class="tt-true">T</td><td class="tt-true">T</td><td class="tt-true">T</td></tr><tr><td class="tt-true">T</td><td class="tt-false">F</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-true">T</td><td class="tt-false">F</td></tr><tr><td class="tt-false">F</td><td class="tt-false">F</td><td class="tt-true">T</td></tr></table>
           <p style="margin-top:10px;font-size:12px;color:var(--muted)">Precedence: 6 (lowest)</p>
@@ -983,7 +1648,7 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
 
   <div class="subsection fade-in">
     <h3>Conditional Statements — Multiple Forms</h3>
-    <p>The conditional statement <span class="formula">p → q</span> ("if p then q") can be expressed many ways in English. All of the following mean the same thing:</p>
+    <p>The conditional statement <span class="formula">p → q</span> can be expressed many ways in English:</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:16px;">
       <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"if p, then q"</div>
       <div style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;color:#a8c4f0">"p implies q"</div>
@@ -1015,10 +1680,9 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
     </div>
   </div>
 
-  <!-- TRUTH TABLE BUILDER -->
   <div class="subsection fade-in" id="tt-builder">
     <h3>Interactive Truth Table Builder</h3>
-    <p>Enter a logical expression using variables p, q, r and operators. Click the symbol buttons to insert operators.</p>
+    <p>Enter a logical expression using variables p, q, r and operators.</p>
     <div class="tt-builder">
       <h4>⚡ Truth Table Generator</h4>
       <div class="sym-btns">
@@ -1035,17 +1699,15 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
         <button class="btn" onclick="buildTT()">Generate</button>
         <button class="btn btn-ghost" onclick="document.getElementById('tt-expr').value='';document.getElementById('tt-output').innerHTML=''">Clear</button>
       </div>
-      <div class="help-text">Use p, q, r for variables. Supports ¬ ∧ ∨ ⊕ → ↔ and parentheses.</div>
-      <div class="help-text">Quick examples: 
-        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p → q')">p → q</span> · 
-        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('(p ∧ q) → r')">( p ∧ q ) → r</span> · 
-        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p ↔ ¬p')">p ↔ ¬p</span> · 
+      <div class="help-text">Use p, q, r for variables. Quick examples:
+        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p → q')">p → q</span> ·
+        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('(p ∧ q) → r')">(p ∧ q) → r</span> ·
+        <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p ↔ ¬p')">p ↔ ¬p</span> ·
         <span style="color:var(--blue-bright);cursor:pointer" onclick="loadExample('p ∨ ¬p')">p ∨ ¬p</span>
       </div>
       <div id="tt-output" style="margin-top:20px;overflow-x:auto"></div>
     </div>
   </div>
-
 </section>
 
 <!-- ==================== MODULE 2: EQUIVALENCIES ==================== -->
@@ -1060,26 +1722,25 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
     <div class="card-grid">
       <div class="card" style="border-color:rgba(74,222,128,0.3)">
         <div class="card-title" style="color:#4ade80">✅ Tautology</div>
-        <p>A compound proposition that is <strong>always true</strong> regardless of truth assignments.</p>
+        <p>Always true regardless of truth assignments.</p>
         <div class="big-formula" style="margin-top:12px;font-size:16px">p ∨ ¬p ≡ T</div>
       </div>
       <div class="card" style="border-color:rgba(248,113,113,0.3)">
         <div class="card-title" style="color:#f87171">❌ Contradiction</div>
-        <p>A compound proposition that is <strong>always false</strong>. Also called an unsatisfiable proposition.</p>
+        <p>Always false. Also called unsatisfiable.</p>
         <div class="big-formula" style="margin-top:12px;font-size:16px">p ∧ ¬p ≡ F</div>
       </div>
       <div class="card" style="border-color:rgba(251,191,36,0.3)">
         <div class="card-title" style="color:#fbbf24">⚡ Contingency</div>
-        <p>Neither a tautology nor a contradiction — sometimes true, sometimes false.</p>
+        <p>Neither — sometimes true, sometimes false.</p>
         <div class="big-formula" style="margin-top:12px;font-size:16px">p → q</div>
       </div>
     </div>
-    <div class="info-box" style="margin-top:16px">A proposition is <strong>satisfiable</strong> if it is true under at least one truth assignment. Tautologies and contingencies are satisfiable. Contradictions are not.</div>
+    <div class="info-box" style="margin-top:16px">A proposition is <strong>satisfiable</strong> if true under at least one assignment. Contradictions are not satisfiable.</div>
   </div>
 
   <div class="subsection fade-in">
     <h3>Logical Equivalence Laws</h3>
-    <p>Two propositions p and q are <strong>logically equivalent</strong> (written p ≡ q) if they have the same truth value under every truth assignment — i.e., p ↔ q is a tautology.</p>
     <table class="eq-table">
       <thead><tr><th>Equivalence</th><th>Name</th></tr></thead>
       <tbody>
@@ -1125,7 +1786,6 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
       </div>
     </div>
   </div>
-
 </section>
 
 <!-- ==================== MODULE 3: LOGIC GATES ==================== -->
@@ -1137,28 +1797,16 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
 
   <div class="subsection fade-in">
     <h3>Basic Logic Gates</h3>
-    <p>Logic gates are physical implementations of boolean operations. Toggle the inputs below to see how each gate responds.</p>
+    <p>Toggle the inputs below to see how each gate responds.</p>
   </div>
 
   <div id="gate-sim" class="fade-in">
     <div class="gates-grid">
-      <!-- NOT GATE -->
       <div class="gate-card">
         <h4>Inverter (NOT) — ¬p</h4>
-        <div class="gate-inputs">
-          <div class="gate-input-row">
-            <label>p</label>
-            <div class="toggle-btn" id="not-p" onclick="toggleGate('not-p');updateGates()"></div>
-            <span class="toggle-val" id="not-p-val">0</span>
-          </div>
-        </div>
-        <div class="gate-output">
-          <label>Output:</label>
-          <span class="gate-result false" id="not-out">1</span>
-          <span class="gate-formula">¬p</span>
-        </div>
+        <div class="gate-inputs"><div class="gate-input-row"><label>p</label><div class="toggle-btn" id="not-p" onclick="toggleGate('not-p');updateGates()"></div><span class="toggle-val" id="not-p-val">0</span></div></div>
+        <div class="gate-output"><label>Output:</label><span class="gate-result false" id="not-out">1</span><span class="gate-formula">¬p</span></div>
       </div>
-      <!-- AND GATE -->
       <div class="gate-card">
         <h4>AND Gate — p ∧ q</h4>
         <div class="gate-inputs">
@@ -1167,7 +1815,6 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
         </div>
         <div class="gate-output"><label>Output:</label><span class="gate-result false" id="and-out">0</span><span class="gate-formula">p ∧ q</span></div>
       </div>
-      <!-- OR GATE -->
       <div class="gate-card">
         <h4>OR Gate — p ∨ q</h4>
         <div class="gate-inputs">
@@ -1176,7 +1823,6 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
         </div>
         <div class="gate-output"><label>Output:</label><span class="gate-result false" id="or-out">0</span><span class="gate-formula">p ∨ q</span></div>
       </div>
-      <!-- XOR GATE -->
       <div class="gate-card">
         <h4>XOR Gate — p ⊕ q</h4>
         <div class="gate-inputs">
@@ -1185,7 +1831,6 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
         </div>
         <div class="gate-output"><label>Output:</label><span class="gate-result false" id="xor-out">0</span><span class="gate-formula">p ⊕ q</span></div>
       </div>
-      <!-- NAND GATE -->
       <div class="gate-card">
         <h4>NAND Gate — ¬(p ∧ q)</h4>
         <div class="gate-inputs">
@@ -1194,7 +1839,6 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
         </div>
         <div class="gate-output"><label>Output:</label><span class="gate-result true" id="nand-out">1</span><span class="gate-formula">¬(p ∧ q)</span></div>
       </div>
-      <!-- NOR GATE -->
       <div class="gate-card">
         <h4>NOR Gate — ¬(p ∨ q)</h4>
         <div class="gate-inputs">
@@ -1211,27 +1855,27 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
     <div class="practice-box">
       <h4>Practice Problems</h4>
       <div class="problem">
-        <div class="problem-q">What is the output of a circuit with inputs p and q, where p goes through a NOT gate, q goes through a NOT gate, both outputs go to an AND gate, and then that AND gate output goes with another AND(p,r) into an OR gate?</div>
+        <div class="problem-q">What is the output of a circuit where p → NOT gate, q → NOT gate, both → AND gate, then AND(result, AND(p,r)) → OR gate?</div>
         <button class="reveal-btn" onclick="toggleAns(this)">Reveal Answer</button>
-        <div class="problem-ans">The circuit computes: <strong>(¬p ∧ ¬q) ∨ (p ∧ r)</strong><br>This is equivalent to the expression from the lecture notes: <span class="formula">(¬p ∧ ¬q) ∨ (p ∧ r)</span></div>
+        <div class="problem-ans">The circuit computes: <strong>(¬p ∧ ¬q) ∨ (p ∧ r)</strong></div>
       </div>
       <div class="problem">
         <div class="problem-q">Design a circuit for: <span class="formula">((¬p ∨ ¬r) ∧ ¬q) ∨ (¬p ∧ (q ∨ r))</span></div>
         <button class="reveal-btn" onclick="toggleAns(this)">Reveal Steps</button>
         <div class="problem-ans">
-          1. Compute ¬p, ¬q, ¬r using three NOT (Inverter) gates<br>
-          2. Compute ¬p ∨ ¬r using an OR gate on outputs of step 1<br>
-          3. Compute (¬p ∨ ¬r) ∧ ¬q using an AND gate<br>
-          4. Compute q ∨ r using an OR gate on original inputs<br>
-          5. Compute ¬p ∧ (q ∨ r) using an AND gate<br>
-          6. Combine results of steps 3 and 5 with a final OR gate
+          1. Compute ¬p, ¬q, ¬r using three NOT gates<br>
+          2. Compute ¬p ∨ ¬r with an OR gate<br>
+          3. Compute (¬p ∨ ¬r) ∧ ¬q with an AND gate<br>
+          4. Compute q ∨ r with an OR gate<br>
+          5. Compute ¬p ∧ (q ∨ r) with an AND gate<br>
+          6. Combine steps 3 and 5 with a final OR gate
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ==================== MODULE 4: PREDICATES & QUANTIFIERS ==================== -->
+<!-- ==================== MODULE 4: PREDICATES ==================== -->
 <section class="module-section" id="pred">
   <div class="section-header">
     <span class="section-num">Module 04</span>
@@ -1240,69 +1884,40 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
 
   <div class="subsection fade-in">
     <h3>When Propositional Logic Fails</h3>
-    <p>Propositional logic can't capture statements like:</p>
+    <p>Propositional logic can't capture arguments like:</p>
     <div class="info-box">
       "All candy made with chocolate is delicious."<br>
-      "M&M's are made with chocolate."<br>
-      <strong>∴ M&M's are delicious.</strong>
+      "M&amp;M's are made with chocolate."<br>
+      <strong>∴ M&amp;M's are delicious.</strong>
     </div>
-    <p>We need <strong>predicate logic</strong> — which adds <em>variables</em>, <em>predicates</em>, and <em>quantifiers</em>.</p>
-
+    <p>We need <strong>predicate logic</strong> — which adds variables, predicates, and quantifiers.</p>
     <div class="card-grid" style="margin-top:20px">
-      <div class="card"><div class="card-title">Variables</div><p>x, y, z — the subjects of our statements. Like variables in programming, they represent elements from a domain.</p></div>
-      <div class="card"><div class="card-title">Predicates</div><p>Properties that variables can have. P(x): "x is greater than 3". Denoted with capital letters: P(x), Q(x,y).</p></div>
-      <div class="card"><div class="card-title">Domain (Universe U)</div><p>The set of all possible values for variables. Must be specified! E.g., integers, real numbers, students in class.</p></div>
-    </div>
-  </div>
-
-  <div class="subsection fade-in">
-    <h3>Propositional Functions</h3>
-    <p>A propositional function <span class="formula">P(x)</span> becomes a proposition (with a truth value) when we substitute a specific value for x from the domain.</p>
-    <div class="practice-box">
-      <h4>Interactive Examples — P(x) = "x > 0" with domain ℤ</h4>
-      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-        <span style="padding:8px 16px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#f87171">P(−3) = False</span>
-        <span style="padding:8px 16px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#f87171">P(0) = False</span>
-        <span style="padding:8px 16px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#4ade80">P(3) = True</span>
-        <span style="padding:8px 16px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:6px;font-family:var(--font-mono);font-size:13px;color:#4ade80">P(100) = True</span>
-      </div>
-      <div class="problem">
-        <div class="problem-q">Let R(x,y,z) denote "x + y = z" with domain ℤ. Find: R(2, −1, 5).</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
-        <div class="problem-ans">R(2, −1, 5): Is 2 + (−1) = 5? → 1 = 5? → <strong style="color:#f87171">False</strong></div>
-      </div>
-      <div class="problem">
-        <div class="problem-q">Let R(x,y,z) denote "x + y = z". Find: R(3, 4, 7).</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
-        <div class="problem-ans">R(3, 4, 7): Is 3 + 4 = 7? → 7 = 7? → <strong style="color:#4ade80">True</strong></div>
-      </div>
+      <div class="card"><div class="card-title">Variables</div><p>x, y, z — the subjects of our statements.</p></div>
+      <div class="card"><div class="card-title">Predicates</div><p>Properties variables can have. P(x): "x is greater than 3".</p></div>
+      <div class="card"><div class="card-title">Domain (Universe U)</div><p>The set of all possible values for variables. Must be specified!</p></div>
     </div>
   </div>
 
   <div class="subsection fade-in">
     <h3>Quantifiers</h3>
-    <p>Quantifiers turn propositional functions into propositions by specifying <em>how many</em> elements in the domain satisfy the predicate.</p>
     <div class="quant-compare">
       <div class="quant-box universal">
         <span class="quant-sym">∀</span>
         <h4>Universal Quantifier — "For All"</h4>
-        <p><span class="formula">∀x P(x)</span> — P(x) is true for <strong>every</strong> x in the domain.</p>
-        <p style="margin-top:8px">Think: ∀x P(x) ≡ P(x₁) ∧ P(x₂) ∧ ... ∧ P(xₙ)</p>
+        <p><span class="formula">∀x P(x)</span> — P(x) is true for every x in the domain.</p>
         <div class="when-true">True when: P(x) holds for every x in the domain</div>
-        <div class="when-false">False when: There exists at least one x where P(x) is false (a counterexample)</div>
+        <div class="when-false">False when: There exists at least one counterexample</div>
       </div>
       <div class="quant-box existential">
         <span class="quant-sym">∃</span>
         <h4>Existential Quantifier — "There Exists"</h4>
-        <p><span class="formula">∃x P(x)</span> — P(x) is true for <strong>at least one</strong> x in the domain.</p>
-        <p style="margin-top:8px">Think: ∃x P(x) ≡ P(x₁) ∨ P(x₂) ∨ ... ∨ P(xₙ)</p>
-        <div class="when-true">True when: There is at least one x in the domain where P(x) is true</div>
+        <p><span class="formula">∃x P(x)</span> — P(x) is true for at least one x.</p>
+        <div class="when-true">True when: At least one x in the domain satisfies P(x)</div>
         <div class="when-false">False when: P(x) is false for every x in the domain</div>
       </div>
     </div>
-
     <div class="practice-box" style="margin-top:20px">
-      <h4>Quick Evaluation Practice</h4>
+      <h4>Quantifier Practice</h4>
       <div class="problem">
         <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∀x P(x)</span> true?</div>
         <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
@@ -1311,68 +1926,35 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
       <div class="problem">
         <div class="problem-q">Let P(x) = "x² > 0" with domain ℤ. Is <span class="formula">∃x P(x)</span> true?</div>
         <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
-        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — P(1) = "1² > 0" = "1 > 0" = True. x = 1 (and many others) satisfy P(x).</div>
+        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — P(1) = "1 > 0" = True.</div>
       </div>
-      <div class="problem">
-        <div class="problem-q">∃! is the <em>uniqueness quantifier</em>. ∃!x P(x) means P(x) is true for <em>exactly one</em> x. With P(x) = "2x = 4" over ℤ, is ∃!x P(x) true?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
-        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — Only x = 2 satisfies 2x = 4. There is exactly one solution.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="subsection fade-in">
-    <h3>De Morgan's Laws for Quantifiers — Negation</h3>
-    <p>Just like De Morgan's laws for propositions, there are rules for negating quantifiers:</p>
-    <div class="demorgan-box">
-      <div class="demorgan-row">
-        <div class="dm-orig">¬∀x P(x)</div>
-        <div class="dm-arrow">≡</div>
-        <div class="dm-equiv">∃x ¬P(x)</div>
-        <div class="dm-note">Negating "for all" gives "there exists some x where it fails"</div>
-      </div>
-      <div class="demorgan-row">
-        <div class="dm-orig">¬∃x P(x)</div>
-        <div class="dm-arrow">≡</div>
-        <div class="dm-equiv">∀x ¬P(x)</div>
-        <div class="dm-note">Negating "there exists" gives "it fails for all x"</div>
-      </div>
-    </div>
-    <div class="practice-box" style="margin-top:20px">
-      <h4>Negation Practice</h4>
       <div class="problem">
         <div class="problem-q">Negate: "There is an honest politician."</div>
         <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
-        <div class="problem-ans">Original: ∃x H(x) [H(x) = "x is honest"]<br>Negation: ¬∃x H(x) ≡ <strong>∀x ¬H(x)</strong><br>In English: "No politician is honest" (every politician is dishonest).</div>
+        <div class="problem-ans">Original: ∃x H(x)<br>Negation: ¬∃x H(x) ≡ <strong>∀x ¬H(x)</strong><br>"No politician is honest."</div>
       </div>
       <div class="problem">
         <div class="problem-q">Negate: "All Americans eat cheeseburgers."</div>
         <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
-        <div class="problem-ans">Original: ∀x C(x) [C(x) = "x eats cheeseburgers"]<br>Negation: ¬∀x C(x) ≡ <strong>∃x ¬C(x)</strong><br>In English: "There is some American who does not eat cheeseburgers."</div>
+        <div class="problem-ans">Original: ∀x C(x)<br>Negation: ¬∀x C(x) ≡ <strong>∃x ¬C(x)</strong><br>"There is some American who does not eat cheeseburgers."</div>
       </div>
     </div>
   </div>
 
   <div class="subsection fade-in">
     <h3>Translation Practice</h3>
-    <p>Click any row to reveal the logical translation.</p>
     <div class="translator">
       <h4>↔ English ↔ Logic Translator</h4>
       <div class="trans-examples">
         <div class="trans-row hidden-logic" onclick="revealTrans(this)">
-          <div class="trans-english">Some student in this class has visited Mexico.<br><small style="color:var(--muted)">Domain: students in class, M(x): "x has visited Mexico"</small></div>
+          <div class="trans-english">Some student in this class has visited Mexico.<br><small style="color:var(--muted)">Domain: students, M(x): "x visited Mexico"</small></div>
           <div class="trans-arrow">→</div>
           <div class="trans-logic">∃x M(x)</div>
         </div>
         <div class="trans-row hidden-logic" onclick="revealTrans(this)">
-          <div class="trans-english">Every student in this class has visited Canada or Mexico.<br><small style="color:var(--muted)">C(x): "x visited Canada", M(x): "x visited Mexico"</small></div>
+          <div class="trans-english">Every student has visited Canada or Mexico.<br><small style="color:var(--muted)">C(x): "x visited Canada", M(x): "x visited Mexico"</small></div>
           <div class="trans-arrow">→</div>
           <div class="trans-logic">∀x (C(x) ∨ M(x))</div>
-        </div>
-        <div class="trans-row hidden-logic" onclick="revealTrans(this)">
-          <div class="trans-english">Every student in class sent an email to Joe.<br><small style="color:var(--muted)">E(x,y): "x sent y an email", domain: students</small></div>
-          <div class="trans-arrow">→</div>
-          <div class="trans-logic">∀x E(x, Joe)</div>
         </div>
         <div class="trans-row hidden-logic" onclick="revealTrans(this)">
           <div class="trans-english">The sum of two positive integers is always positive.<br><small style="color:var(--muted)">Domain: positive integers</small></div>
@@ -1392,99 +1974,53 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
   </div>
 
   <div class="subsection fade-in">
-    <h3>Nested Quantifiers</h3>
-    <p>We can use multiple quantifiers together. The <strong>order matters</strong> for mixed quantifiers (∀∃ ≠ ∃∀)!</p>
+    <h3>Order Matters!</h3>
     <div class="info-box">"Every real number has an additive inverse."<br><span class="formula" style="margin-top:8px;display:inline-block">∀x ∃y (x + y = 0)</span></div>
-
     <div class="card-grid" style="margin-top:24px">
-      <div class="card">
-        <div class="card-title">∀x ∀y P(x,y)</div>
-        <p>For all x and for all y, P(x,y) is true. <em>Symmetric — order doesn't matter here.</em></p>
-      </div>
-      <div class="card">
-        <div class="card-title">∃x ∃y P(x,y)</div>
-        <p>There exist some x and y such that P(x,y) is true. <em>Symmetric — order doesn't matter here.</em></p>
-      </div>
-      <div class="card">
-        <div class="card-title" style="color:#fbbf24">∀x ∃y P(x,y)</div>
-        <p>For every x, there exists some y (possibly different for each x!) such that P(x,y) holds.</p>
-      </div>
-      <div class="card">
-        <div class="card-title" style="color:#f87171">∃y ∀x P(x,y)</div>
-        <p>There is a SINGLE y that works for ALL x simultaneously. Much stronger than ∀x ∃y!</p>
-      </div>
+      <div class="card"><div class="card-title">∀x ∀y P(x,y)</div><p>For all x and y, P(x,y) is true. Symmetric.</p></div>
+      <div class="card"><div class="card-title">∃x ∃y P(x,y)</div><p>There exist some x and y where P is true. Symmetric.</p></div>
+      <div class="card"><div class="card-title" style="color:#fbbf24">∀x ∃y P(x,y)</div><p>For every x, there exists some y (can differ per x).</p></div>
+      <div class="card"><div class="card-title" style="color:#f87171">∃y ∀x P(x,y)</div><p>One fixed y that works for ALL x. Much stronger!</p></div>
     </div>
-
-    <div class="warn-box">⚠️ <strong>Critical distinction:</strong> ∀x ∃y P(x,y) means each x can have its own y. But ∃y ∀x P(x,y) requires one fixed y that works for every x. These are usually NOT equivalent!</div>
-  </div>
-
-  <div class="subsection fade-in">
-    <h3>Truth Value Evaluation</h3>
-    <div class="practice-box">
-      <h4>P(x,y) = "xy = yx" over domain ℝ</h4>
-      <div class="problem">
-        <div class="problem-q">Is <span class="formula">∀x ∀y P(x,y)</span> true?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
-        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — Multiplication is commutative over the reals: xy = yx for all real x and y.</div>
-      </div>
-      <div class="problem">
-        <div class="problem-q">Let Q(x,y) = "x + y = 5" over domain ℝ. Is <span class="formula">∀x ∃y Q(x,y)</span> true?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
-        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — For any x, choose y = 5 − x. Then x + (5 − x) = 5. Each x gets its own y.</div>
-      </div>
-      <div class="problem">
-        <div class="problem-q">Is <span class="formula">∃y ∀x Q(x,y)</span> true (where Q(x,y) = "x + y = 5")?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
-        <div class="problem-ans"><strong style="color:#f87171">False</strong> — This asks if there is ONE fixed y that makes x + y = 5 for ALL x simultaneously. But if y = 3, it only works for x = 2. No single y satisfies all x at once.</div>
-      </div>
-      <div class="problem">
-        <div class="problem-q">Let P(x,y) = "x·y = 0" over domain ℝ. Evaluate ∀x∀y P(x,y), ∀x∃y P(x,y), ∃x∀y P(x,y), ∃x∃y P(x,y).</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate All</button>
-        <div class="problem-ans">
-          <strong>∀x∀y P(x,y):</strong> <span style="color:#f87171">False</span> — 2·3 = 6 ≠ 0<br>
-          <strong>∀x∃y P(x,y):</strong> <span style="color:#4ade80">True</span> — For any x, choose y = 0. Then x·0 = 0 ✓<br>
-          <strong>∃x∀y P(x,y):</strong> <span style="color:#4ade80">True</span> — Choose x = 0. Then 0·y = 0 for all y ✓<br>
-          <strong>∃x∃y P(x,y):</strong> <span style="color:#4ade80">True</span> — x = 0, y = 0 works ✓
-        </div>
-      </div>
-    </div>
+    <div class="warn-box">⚠️ ∀x ∃y P(x,y) and ∃y ∀x P(x,y) are usually NOT equivalent!</div>
   </div>
 
   <div class="subsection fade-in">
     <h3>Negating Nested Quantifiers</h3>
-    <p>Push the negation inside, flipping quantifiers each time you pass one:</p>
     <div class="demorgan-box">
       <div class="demorgan-row">
         <div class="dm-orig">¬∀x ∃y P(x,y)</div>
         <div class="dm-arrow">≡</div>
         <div class="dm-equiv">∃x ∀y ¬P(x,y)</div>
-        <div class="dm-note">Flip ∀→∃, then ∃→∀, negate the predicate</div>
+        <div class="dm-note">Flip each quantifier, negate the predicate</div>
       </div>
       <div class="demorgan-row">
         <div class="dm-orig">¬∃x ∀y P(x,y)</div>
         <div class="dm-arrow">≡</div>
         <div class="dm-equiv">∀x ∃y ¬P(x,y)</div>
-        <div class="dm-note">Flip ∃→∀, then ∀→∃, negate the predicate</div>
+        <div class="dm-note">Flip each quantifier, negate the predicate</div>
       </div>
     </div>
-
     <div class="practice-box" style="margin-top:20px">
-      <h4>Negation Practice</h4>
+      <h4>Practice Problems</h4>
       <div class="problem">
-        <div class="problem-q">Find the negation of ∀x ∃y P(x,y) where P(x,y) = "(x = −y)" over ℝ. Express in English.</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal</button>
-        <div class="problem-ans">
-          ¬∀x ∃y P(x,y) ≡ <strong>∃x ∀y ¬P(x,y)</strong> ≡ ∃x ∀y (x ≠ −y)<br><br>
-          In English: "There exists a real number x such that for all real y, x ≠ −y."<br>
-          (The original says every real number has an additive inverse; the negation says some real number does not.)
-        </div>
+        <div class="problem-q">Let Q(x,y) = "x + y = 5" over ℝ. Is <span class="formula">∀x ∃y Q(x,y)</span> true?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#4ade80">True</strong> — For any x, choose y = 5 − x. Each x gets its own y.</div>
       </div>
       <div class="problem">
-        <div class="problem-q">Translate: "There is a man that has taken a flight on every airline in the world." Let M(x): "x is a man", F(x,y): "x has taken flight y", A(y,z): "y operates on airline z".</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Translation</button>
+        <div class="problem-q">Is <span class="formula">∃y ∀x Q(x,y)</span> true (Q(x,y) = "x + y = 5")?</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate</button>
+        <div class="problem-ans"><strong style="color:#f87171">False</strong> — No single y makes x + y = 5 for ALL x simultaneously.</div>
+      </div>
+      <div class="problem">
+        <div class="problem-q">Let P(x,y) = "x·y = 0" over ℝ. Evaluate ∀x∀y, ∀x∃y, ∃x∀y, ∃x∃y.</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Evaluate All</button>
         <div class="problem-ans">
-          <strong>∃m ∀a ∃f (M(m) ∧ F(m,f) ∧ A(f,a))</strong><br>
-          "There exists a man m such that for every airline a, there exists a flight f taken by m on airline a."
+          <strong>∀x∀y:</strong> <span style="color:#f87171">False</span> — 2·3 ≠ 0<br>
+          <strong>∀x∃y:</strong> <span style="color:#4ade80">True</span> — choose y = 0<br>
+          <strong>∃x∀y:</strong> <span style="color:#4ade80">True</span> — choose x = 0<br>
+          <strong>∃x∃y:</strong> <span style="color:#4ade80">True</span> — x = 0, y = 0
         </div>
       </div>
     </div>
@@ -1500,19 +2036,7 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
 
   <div class="subsection fade-in">
     <h3>Arguments and Valid Arguments</h3>
-    <p>An <strong>argument</strong> is a sequence of propositions (premises) that lead to a conclusion. An argument is <strong>valid</strong> if whenever all premises are true, the conclusion must also be true.</p>
-    <div class="info-box">
-      <strong>Example:</strong><br>
-      If it is raining, I will need an umbrella. [Premise 1]<br>
-      It is raining. [Premise 2]<br>
-      <hr style="border-color:rgba(255,255,255,0.2);margin:8px 0">
-      ∴ I will need an umbrella. [Conclusion]
-    </div>
-    <p>Click each rule card to see an English example.</p>
-  </div>
-
-  <div class="subsection fade-in">
-    <h3>Rules of Inference — Propositional Logic</h3>
+    <p>An argument is valid if whenever all premises are true, the conclusion must also be true. Click rule cards for English examples.</p>
     <div class="rule-grid">
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
@@ -1520,122 +2044,69 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
         <div class="rule-premises"><div>p → q</div><div>p</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">q</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "If it rains, I carry an umbrella." (p → q)<br>
-          "It is raining." (p)<br>
-          ∴ "I carry an umbrella." (q)<br><br>
-          <strong>Key insight:</strong> Affirming the antecedent lets us conclude the consequent.
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>"If it rains, I carry an umbrella." + "It is raining." ∴ "I carry an umbrella."</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Modus Tollens</h4>
         <div class="rule-premises"><div>p → q</div><div>¬q</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">¬p</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "If it rains, the ground gets wet." (p → q)<br>
-          "The ground is NOT wet." (¬q)<br>
-          ∴ "It did NOT rain." (¬p)<br><br>
-          <strong>Key insight:</strong> Denying the consequent lets us deny the antecedent.
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>"If it rains, ground gets wet." + "Ground is NOT wet." ∴ "It did NOT rain."</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Hypothetical Syllogism</h4>
         <div class="rule-premises"><div>p → q</div><div>q → r</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">p → r</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "If I study, I'll pass." (p → q)<br>
-          "If I pass, I'll graduate." (q → r)<br>
-          ∴ "If I study, I'll graduate." (p → r)<br><br>
-          <strong>Key insight:</strong> Chain of implications — transitivity of →.
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>"Study → pass" + "Pass → graduate" ∴ "Study → graduate"</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Disjunctive Syllogism</h4>
         <div class="rule-premises"><div>p ∨ q</div><div>¬p</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">q</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "I'll take CS or Math." (p ∨ q)<br>
-          "I won't take CS." (¬p)<br>
-          ∴ "I'll take Math." (q)<br><br>
-          <strong>Key insight:</strong> If you eliminate one option from a disjunction, the other must hold.
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>"CS or Math." + "Not CS." ∴ "Math."</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Addition</h4>
         <div class="rule-premises"><div>p</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">p ∨ q</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "It is raining." (p)<br>
-          ∴ "It is raining or I am a cat." (p ∨ q)<br><br>
-          <strong>Key insight:</strong> If p is true, p ∨ (anything) is true. You can always "add" a disjunct.
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>"It is raining." ∴ "It is raining or I am a cat." — add any disjunct.</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Simplification</h4>
         <div class="rule-premises"><div>p ∧ q</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">q</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "It is raining AND cold." (p ∧ q)<br>
-          ∴ "It is cold." (q)<br><br>
-          <strong>Key insight:</strong> If a conjunction is true, each conjunct is individually true. (You can also conclude p!)
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>"Raining AND cold." ∴ "Cold." (Also valid: "Raining.")</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Conjunction</h4>
         <div class="rule-premises"><div>p</div><div>q</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">p ∧ q</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "It is raining." (p)<br>
-          "It is cold." (q)<br>
-          ∴ "It is raining and cold." (p ∧ q)<br><br>
-          <strong>Key insight:</strong> Two true propositions can be joined into a conjunction.
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>"Raining." + "Cold." ∴ "Raining and cold."</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Resolution</h4>
         <div class="rule-premises"><div>¬p ∨ r</div><div>p ∨ q</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">q ∨ r</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "Either you didn't study or you'll pass." (¬p ∨ r)<br>
-          "Either you studied or you cheated." (p ∨ q)<br>
-          ∴ "Either you cheated or you'll pass." (q ∨ r)<br><br>
-          <strong>Key insight:</strong> The p and ¬p cancel out. Fundamental to automated theorem proving.
-        </div>
+        <div class="rule-example"><strong>Example:</strong><br>The p and ¬p cancel out. Fundamental to automated theorem proving.</div>
       </div>
     </div>
   </div>
 
   <div class="subsection fade-in">
-    <h3>Rules of Inference — Quantified Statements</h3>
+    <h3>Quantified Rules of Inference</h3>
     <div class="rule-grid">
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
@@ -1643,456 +2114,377 @@ svg.venn circle { fill: var(--blue); stroke: var(--blue-bright); stroke-width: 3
         <div class="rule-premises"><div>∀x P(x)</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">P(c)</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "Every dog has 4 legs." (∀x D(x) → L(x))<br>
-          "Oliver is a dog." (D(Oliver))<br>
-          ∴ UI gives us: D(Oliver) → L(Oliver)<br><br>
-          If something is true for ALL elements, it is true for any specific element c.
-        </div>
+        <div class="rule-example">If true for ALL elements, true for any specific c.</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Universal Generalization (UG)</h4>
         <div class="rule-premises"><div>P(c) for arbitrary c</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">∀x P(x)</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          If you can prove P(c) for an <em>arbitrary</em> (unspecified) c in the domain, you can conclude it holds for all x.<br><br>
-          Used in math proofs where "let c be an arbitrary element."
-        </div>
+        <div class="rule-example">Prove for arbitrary c → holds for all x. Used in "let c be arbitrary" proofs.</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Existential Instantiation (EI)</h4>
         <div class="rule-premises"><div>∃x P(x)</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">P(c) for some c</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "Someone in class didn't read the book." (∃x ¬B(x))<br>
-          We can give that person a name: call them c.<br>
-          Then: ¬B(c) for this particular (but unspecified) c.<br><br>
-          The c must be a NEW constant not used before.
-        </div>
+        <div class="rule-example">Name the witness c. c must be a NEW constant not used before.</div>
       </div>
-
       <div class="rule-card" onclick="toggleRule(this)">
         <span class="rule-hint">CLICK FOR EXAMPLE</span>
         <h4>Existential Generalization (EG)</h4>
         <div class="rule-premises"><div>P(c) for some element c</div></div>
         <div class="rule-line"></div>
         <div class="rule-conclusion">∃x P(x)</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "Alice has taken Discrete Math." P(Alice)<br>
-          ∴ "There exists someone who has taken Discrete Math." ∃x P(x)<br><br>
-          If a specific element satisfies P, then there exists at least one element satisfying P.
-        </div>
-      </div>
-
-      <div class="rule-card" onclick="toggleRule(this)">
-        <span class="rule-hint">CLICK FOR EXAMPLE</span>
-        <h4>Universal Modus Ponens</h4>
-        <div class="rule-premises"><div>∀x (P(x) → Q(x))</div><div>P(a) — for particular a</div></div>
-        <div class="rule-line"></div>
-        <div class="rule-conclusion">Q(a)</div>
-        <div class="rule-example">
-          <strong>Example:</strong><br>
-          "Every dog has 4 legs." ∀x (D(x) → L(x))<br>
-          "Oliver is a dog." D(Oliver)<br>
-          ∴ "Oliver has 4 legs." L(Oliver)<br><br>
-          Combines UI and Modus Ponens in one step.
-        </div>
+        <div class="rule-example">"Alice took Discrete Math." ∴ "Someone took Discrete Math."</div>
       </div>
     </div>
   </div>
 
   <div class="subsection fade-in">
-    <h3>Proof Example — Step-Through</h3>
+    <h3>Proof Practice</h3>
     <div class="practice-box">
-      <h4>Example: Show that "John will not make any friends" follows from the given premises</h4>
-      <div style="margin-bottom:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
-        <div style="font-size:13px;color:#a8c4f0;line-height:1.8">
-          <span style="color:#ff9ec0">p</span> = "John works hard"<br>
-          <span style="color:#fbbf24">p → q</span> = "If John works hard then he isn't having fun"<br>
-          <span style="color:#4ade80">q → r</span> = "If John isn't having fun, he won't make any friends"<br>
-          <span style="color:var(--cyan)">∴ r</span> = "John will not make any friends"
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
-          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 1</span>
-          <span style="font-family:var(--font-mono);font-size:14px;color:#ff9ec0">p</span>
-          <span style="font-size:12px;color:var(--muted)">Premise</span>
-        </div>
-        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
-          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 2</span>
-          <span style="font-family:var(--font-mono);font-size:14px;color:#fbbf24">p → q</span>
-          <span style="font-size:12px;color:var(--muted)">Premise</span>
-        </div>
-        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
-          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 3</span>
-          <span style="font-family:var(--font-mono);font-size:14px;color:#a8c4f0">q</span>
-          <span style="font-size:12px;color:var(--muted)">Modus Ponens (1, 2)</span>
-        </div>
-        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(26,115,232,0.06);border:1px solid var(--border);border-radius:6px">
-          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 4</span>
-          <span style="font-family:var(--font-mono);font-size:14px;color:#4ade80">q → r</span>
-          <span style="font-size:12px;color:var(--muted)">Premise</span>
-        </div>
-        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:10px 14px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);border-radius:6px">
-          <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted)">Step 5</span>
-          <span style="font-family:var(--font-mono);font-size:14px;color:var(--cyan)">∴ r</span>
-          <span style="font-size:12px;color:var(--cyan)">Modus Ponens (3, 4) ✓</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="practice-box" style="margin-top:20px">
-      <h4>Practice Problems</h4>
+      <h4>Step-Through Proof Problems</h4>
       <div class="problem">
-        <div class="problem-q">From p ∧ (p → q), show that q is a conclusion.</div>
+        <div class="problem-q">From p ∧ (p → q), show that q follows.</div>
         <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
         <div class="problem-ans">
           Step 1: p ∧ (p → q) &nbsp;&nbsp; [Premise]<br>
-          Step 2: p &nbsp;&nbsp; [Simplification on Step 1]<br>
-          Step 3: p → q &nbsp;&nbsp; [Simplification on Step 1]<br>
-          Step 4: ∴ q &nbsp;&nbsp; [Modus Ponens, Steps 2 and 3] ✓
+          Step 2: p &nbsp;&nbsp; [Simplification]<br>
+          Step 3: p → q &nbsp;&nbsp; [Simplification]<br>
+          Step 4: ∴ q &nbsp;&nbsp; [Modus Ponens, 2, 3] ✓
         </div>
       </div>
       <div class="problem">
-        <div class="problem-q">Show "Oliver has 4 legs" follows from "Every dog has 4 legs" and "Oliver is a dog." Use quantifiers D(x)="x is a dog", L(x)="x has 4 legs".</div>
+        <div class="problem-q">Show "Oliver has 4 legs" from "Every dog has 4 legs" and "Oliver is a dog." D(x)="x is a dog", L(x)="x has 4 legs".</div>
         <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
         <div class="problem-ans">
-          Step 1: ∀x (D(x) → L(x)) &nbsp;&nbsp; [Premise: every dog has 4 legs]<br>
-          Step 2: D(Oliver) &nbsp;&nbsp; [Premise: Oliver is a dog]<br>
-          Step 3: D(Oliver) → L(Oliver) &nbsp;&nbsp; [Universal Instantiation on Step 1, c = Oliver]<br>
-          Step 4: ∴ L(Oliver) &nbsp;&nbsp; [Modus Ponens, Steps 2 and 3] ✓
+          Step 1: ∀x (D(x) → L(x)) &nbsp;&nbsp; [Premise]<br>
+          Step 2: D(Oliver) &nbsp;&nbsp; [Premise]<br>
+          Step 3: D(Oliver) → L(Oliver) &nbsp;&nbsp; [Universal Instantiation, c = Oliver]<br>
+          Step 4: ∴ L(Oliver) &nbsp;&nbsp; [Modus Ponens, 2, 3] ✓
         </div>
       </div>
       <div class="problem">
-        <div class="problem-q">Premises: (p ∧ t) → (r ∨ s), &nbsp;q → (u ∧ t), &nbsp;(u → p), &nbsp;¬s, &nbsp;q. Conclusion: q → r. Is it valid?</div>
-        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Proof</button>
+        <div class="problem-q">Premises: (p ∧ t) → (r ∨ s), q → (u ∧ t), u → p, ¬s, q. Show: r.</div>
+        <button class="reveal-btn" onclick="toggleAns(this)">Reveal Full Proof</button>
         <div class="problem-ans">
-          Step 1: q &nbsp;&nbsp; [Premise]<br>
-          Step 2: q → (u ∧ t) &nbsp;&nbsp; [Premise]<br>
-          Step 3: u ∧ t &nbsp;&nbsp; [Modus Ponens, 1,2]<br>
-          Step 4: u &nbsp;&nbsp; [Simplification, 3]<br>
-          Step 5: t &nbsp;&nbsp; [Simplification, 3]<br>
-          Step 6: u → p &nbsp;&nbsp; [Premise]<br>
-          Step 7: p &nbsp;&nbsp; [Modus Ponens, 4,6]<br>
-          Step 8: p ∧ t &nbsp;&nbsp; [Conjunction, 7,5]<br>
-          Step 9: (p ∧ t) → (r ∨ s) &nbsp;&nbsp; [Premise]<br>
-          Step 10: r ∨ s &nbsp;&nbsp; [Modus Ponens, 8,9]<br>
-          Step 11: ¬s &nbsp;&nbsp; [Premise]<br>
-          Step 12: ∴ r &nbsp;&nbsp; [Disjunctive Syllogism, 10,11] ✓<br><br>
-          Since we derived r from q (through the premises), q → r is valid.
+          1: q [Premise]<br>
+          2: q → (u ∧ t) [Premise]<br>
+          3: u ∧ t [MP 1,2]<br>
+          4: u [Simp 3]<br>
+          5: t [Simp 3]<br>
+          6: u → p [Premise]<br>
+          7: p [MP 4,6]<br>
+          8: p ∧ t [Conj 7,5]<br>
+          9: (p ∧ t) → (r ∨ s) [Premise]<br>
+          10: r ∨ s [MP 8,9]<br>
+          11: ¬s [Premise]<br>
+          12: ∴ r [Disjunctive Syllogism 10,11] ✓
         </div>
       </div>
     </div>
   </div>
-
 </section>
+
+  </div><!-- end #content-page -->
 
 </div><!-- end #main -->
 
 <script>
-// ============================================================
-// NAVIGATION ACTIVE STATE
-// ============================================================
-const sections = document.querySelectorAll('section[id], div[id="tt-builder"], div[id="gate-sim"], div[id="proof-step"]');
-const navItems = document.querySelectorAll('.nav-item');
+// ====================================================
+// PAGE NAVIGATION
+// ====================================================
+let duckScore = 0;
 
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 200) current = s.id;
-  });
-  navItems.forEach(n => {
-    n.classList.remove('active');
-    if (n.getAttribute('href') === '#' + current) n.classList.add('active');
-  });
-});
-
-// ============================================================
-// FADE IN ANIMATIONS
-// ============================================================
-const fadeEls = document.querySelectorAll('.fade-in');
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-fadeEls.forEach(el => observer.observe(el));
-
-// ============================================================
-// OPERATOR CARDS TOGGLE
-// ============================================================
-function toggleOp(card) {
-  card.classList.toggle('expanded');
+function showHome() {
+  document.getElementById('home-page').style.display = 'block';
+  document.getElementById('content-page').style.display = 'none';
+  window.scrollTo(0, 0);
 }
 
-// ============================================================
+function showContent(sectionId) {
+  document.getElementById('home-page').style.display = 'none';
+  document.getElementById('content-page').style.display = 'block';
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    const el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+
+  // Update breadcrumb
+  const names = {
+    prop: 'Unit 1 › Propositional Logic',
+    equiv: 'Unit 1 › Propositional Equivalencies',
+    gates: 'Unit 1 › Logic Gates',
+    pred: 'Unit 1 › Predicates & Quantifiers',
+    nested: 'Unit 1 › Nested Quantifiers',
+    rules: 'Unit 1 › Rules of Inference'
+  };
+  document.getElementById('content-breadcrumb').textContent = names[sectionId] || 'Unit 1';
+
+  // Update active nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + sectionId + "'")) {
+      n.classList.add('active');
+    }
+  });
+
+  reinitFadeIns();
+  reinitProof();
+}
+
+// ====================================================
+// SIDEBAR ACCORDION
+// ====================================================
+function toggleAccordion(id) {
+  const acc = document.getElementById(id);
+  acc.classList.toggle('open');
+}
+
+// ====================================================
+// DUCK COUNTER
+// ====================================================
+function incrementDuck() {
+  duckScore++;
+  document.getElementById('duck-score').textContent = duckScore;
+  const duck = document.getElementById('duck-emoji');
+  duck.classList.remove('duck-pop');
+  void duck.offsetWidth;
+  duck.classList.add('duck-pop');
+
+  // Floating emoji
+  const floater = document.createElement('div');
+  floater.className = 'duck-float';
+  floater.textContent = '+1 🦆';
+  floater.style.right = '32px';
+  floater.style.bottom = '90px';
+  floater.style.color = '#4d9fff';
+  floater.style.fontFamily = 'var(--font-head)';
+  floater.style.fontWeight = '700';
+  floater.style.fontSize = '16px';
+  document.body.appendChild(floater);
+  setTimeout(() => floater.remove(), 1200);
+}
+
+function duckClicked() {
+  const duck = document.getElementById('duck-emoji');
+  duck.classList.remove('duck-pop');
+  void duck.offsetWidth;
+  duck.classList.add('duck-pop');
+  const quacks = ['Quack!', '🦆', 'Keep going!', 'Smart duck!'];
+  const floater = document.createElement('div');
+  floater.className = 'duck-float';
+  floater.textContent = quacks[Math.floor(Math.random() * quacks.length)];
+  floater.style.right = '32px';
+  floater.style.bottom = '90px';
+  floater.style.color = '#4d9fff';
+  floater.style.fontFamily = 'var(--font-head)';
+  floater.style.fontWeight = '700';
+  floater.style.fontSize = '14px';
+  document.body.appendChild(floater);
+  setTimeout(() => floater.remove(), 1200);
+}
+
+// ====================================================
+// PRACTICE ANSWERS — DUCK INTEGRATION
+// ====================================================
+function toggleAns(btn) {
+  const ans = btn.nextElementSibling;
+  const wasHidden = !ans.classList.contains('shown');
+  ans.classList.toggle('shown');
+  if (wasHidden) {
+    btn.textContent = 'Hide Answer';
+    // Award duck when revealing answer (reward curiosity!)
+    incrementDuck();
+  } else {
+    btn.textContent = 'Reveal Answer';
+  }
+}
+
+// ====================================================
+// FADE IN OBSERVER
+// ====================================================
+let fadeObserver;
+function reinitFadeIns() {
+  const fadeEls = document.querySelectorAll('#content-page .fade-in');
+  if (fadeObserver) fadeObserver.disconnect();
+  fadeObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.05 });
+  fadeEls.forEach(el => {
+    el.classList.remove('visible');
+    fadeObserver.observe(el);
+  });
+}
+
+// ====================================================
+// OPERATOR CARDS
+// ====================================================
+function toggleOp(card) { card.classList.toggle('expanded'); }
+
+// ====================================================
 // TRUTH TABLE BUILDER
-// ============================================================
-let ttInput = document.getElementById('tt-expr');
+// ====================================================
+let ttInput;
+function getTTInput() { return document.getElementById('tt-expr'); }
 
 function insertSym(sym) {
-  const pos = ttInput.selectionStart;
-  const before = ttInput.value.substring(0, pos);
-  const after = ttInput.value.substring(pos);
-  ttInput.value = before + sym + (sym === '(' ? ')' : '') + after;
-  ttInput.focus();
-  ttInput.selectionStart = ttInput.selectionEnd = pos + 1;
+  const inp = getTTInput();
+  if (!inp) return;
+  const pos = inp.selectionStart;
+  const before = inp.value.substring(0, pos);
+  const after = inp.value.substring(pos);
+  inp.value = before + sym + (sym === '(' ? ')' : '') + after;
+  inp.focus();
+  inp.selectionStart = inp.selectionEnd = pos + 1;
 }
 
 function loadExample(expr) {
-  ttInput.value = expr;
+  const inp = getTTInput();
+  if (!inp) return;
+  inp.value = expr;
   buildTT();
 }
 
-// --- Parser ---
 class Parser {
   constructor(expr) {
     this.tokens = this.tokenize(expr);
     this.pos = 0;
   }
-  
   tokenize(expr) {
     const result = [];
     let i = 0;
     while (i < expr.length) {
       const c = expr[i];
       if (/\s/.test(c)) { i++; continue; }
-      if (c === 'p' || c === 'q' || c === 'r' || c === 'T' || c === 'F') {
-        result.push({type:'VAR', val:c}); i++;
-      } else if (c === '¬' || c === '!') {
-        result.push({type:'NOT'}); i++;
-      } else if (c === '∧' || c === '&') {
-        result.push({type:'AND'}); i++;
-      } else if (c === '∨' || c === '|') {
-        result.push({type:'OR'}); i++;
-      } else if (c === '⊕') {
-        result.push({type:'XOR'}); i++;
-      } else if (c === '→' || c === '>') {
-        result.push({type:'IMPLIES'}); i++;
-      } else if (c === '↔') {
-        result.push({type:'IFF'}); i++;
-      } else if (c === '(') {
-        result.push({type:'LPAREN'}); i++;
-      } else if (c === ')') {
-        result.push({type:'RPAREN'}); i++;
-      } else { throw new Error('Unknown symbol: ' + c); }
+      if (['p','q','r','T','F'].includes(c)) { result.push({type:'VAR',val:c}); i++; }
+      else if (c==='¬'||c==='!') { result.push({type:'NOT'}); i++; }
+      else if (c==='∧'||c==='&') { result.push({type:'AND'}); i++; }
+      else if (c==='∨'||c==='|') { result.push({type:'OR'}); i++; }
+      else if (c==='⊕') { result.push({type:'XOR'}); i++; }
+      else if (c==='→'||c==='>') { result.push({type:'IMPLIES'}); i++; }
+      else if (c==='↔') { result.push({type:'IFF'}); i++; }
+      else if (c==='(') { result.push({type:'LPAREN'}); i++; }
+      else if (c===')') { result.push({type:'RPAREN'}); i++; }
+      else { throw new Error('Unknown symbol: '+c); }
     }
     result.push({type:'EOF'});
     return result;
   }
-  
   peek() { return this.tokens[this.pos]; }
   consume() { return this.tokens[this.pos++]; }
-  
-  parseExpr(vars) { return this.parseIff(vars); }
-  
-  parseIff(vars) {
-    let left = this.parseImplies(vars);
-    while (this.peek().type === 'IFF') {
-      this.consume();
-      const right = this.parseImplies(vars);
-      const l = left, r = right;
-      left = (v) => l(v) === r(v);
-    }
-    return left;
+  parseExpr(v) { return this.parseIff(v); }
+  parseIff(v) {
+    let l = this.parseImplies(v);
+    while (this.peek().type==='IFF') { this.consume(); const r=this.parseImplies(v),ll=l; l=(val)=>ll(val)===r(val); }
+    return l;
   }
-  
-  parseImplies(vars) {
-    let left = this.parseOr(vars);
-    while (this.peek().type === 'IMPLIES') {
-      this.consume();
-      const right = this.parseOr(vars);
-      const l = left, r = right;
-      left = (v) => !l(v) || r(v);
-    }
-    return left;
+  parseImplies(v) {
+    let l = this.parseOr(v);
+    while (this.peek().type==='IMPLIES') { this.consume(); const r=this.parseOr(v),ll=l; l=(val)=>!ll(val)||r(val); }
+    return l;
   }
-  
-  parseOr(vars) {
-    let left = this.parseXor(vars);
-    while (this.peek().type === 'OR') {
-      this.consume();
-      const right = this.parseXor(vars);
-      const l = left, r = right;
-      left = (v) => l(v) || r(v);
-    }
-    return left;
+  parseOr(v) {
+    let l = this.parseXor(v);
+    while (this.peek().type==='OR') { this.consume(); const r=this.parseXor(v),ll=l; l=(val)=>ll(val)||r(val); }
+    return l;
   }
-  
-  parseXor(vars) {
-    let left = this.parseAnd(vars);
-    while (this.peek().type === 'XOR') {
-      this.consume();
-      const right = this.parseAnd(vars);
-      const l = left, r = right;
-      left = (v) => l(v) !== r(v);
-    }
-    return left;
+  parseXor(v) {
+    let l = this.parseAnd(v);
+    while (this.peek().type==='XOR') { this.consume(); const r=this.parseAnd(v),ll=l; l=(val)=>ll(val)!==r(val); }
+    return l;
   }
-  
-  parseAnd(vars) {
-    let left = this.parseNot(vars);
-    while (this.peek().type === 'AND') {
-      this.consume();
-      const right = this.parseNot(vars);
-      const l = left, r = right;
-      left = (v) => l(v) && r(v);
-    }
-    return left;
+  parseAnd(v) {
+    let l = this.parseNot(v);
+    while (this.peek().type==='AND') { this.consume(); const r=this.parseNot(v),ll=l; l=(val)=>ll(val)&&r(val); }
+    return l;
   }
-  
-  parseNot(vars) {
-    if (this.peek().type === 'NOT') {
-      this.consume();
-      const inner = this.parseNot(vars);
-      return (v) => !inner(v);
-    }
-    return this.parseAtom(vars);
+  parseNot(v) {
+    if (this.peek().type==='NOT') { this.consume(); const inner=this.parseNot(v); return (val)=>!inner(val); }
+    return this.parseAtom(v);
   }
-  
-  parseAtom(vars) {
-    const tok = this.peek();
-    if (tok.type === 'VAR') {
-      this.consume();
-      const varName = tok.val;
-      if (varName === 'T') return (v) => true;
-      if (varName === 'F') return (v) => false;
-      vars.add(varName);
-      return (v) => v[varName];
-    }
-    if (tok.type === 'LPAREN') {
-      this.consume();
-      const inner = this.parseExpr(vars);
-      if (this.peek().type !== 'RPAREN') throw new Error('Expected )');
-      this.consume();
-      return inner;
-    }
-    throw new Error('Unexpected token: ' + tok.type + ' at position ' + this.pos);
+  parseAtom(v) {
+    const tok=this.peek();
+    if (tok.type==='VAR') { this.consume(); if (tok.val==='T') return ()=>true; if (tok.val==='F') return ()=>false; v.add(tok.val); return (val)=>val[tok.val]; }
+    if (tok.type==='LPAREN') { this.consume(); const inner=this.parseExpr(v); if (this.peek().type!=='RPAREN') throw new Error('Expected )'); this.consume(); return inner; }
+    throw new Error('Unexpected: '+tok.type);
   }
 }
 
 function buildTT() {
-  const expr = ttInput.value.trim();
+  const expr = getTTInput().value.trim();
   const out = document.getElementById('tt-output');
+  if (!out) return;
   if (!expr) { out.innerHTML = ''; return; }
-  
   try {
     const vars = new Set();
     const parser = new Parser(expr);
     const evalFn = parser.parseExpr(vars);
     if (parser.peek().type !== 'EOF') throw new Error('Unexpected input after expression');
-    
     const varList = [...vars].sort();
-    const numVars = varList.length;
-    const rows = Math.pow(2, numVars);
-    
-    // Build HTML
+    const rows = Math.pow(2, varList.length);
     let html = '<table class="truth-table"><thead><tr>';
     varList.forEach(v => { html += `<th>${v}</th>`; });
     html += `<th class="tt-highlight">${expr}</th></tr></thead><tbody>`;
-    
     let isTauto = true, isContrad = true, isSatisf = false;
-    
     for (let i = 0; i < rows; i++) {
       const assignment = {};
-      varList.forEach((v, idx) => {
-        assignment[v] = !!(i & (1 << (numVars - 1 - idx)));
-      });
-      
+      varList.forEach((v, idx) => { assignment[v] = !!(i & (1 << (varList.length - 1 - idx))); });
       const result = evalFn(assignment);
       if (result) { isContrad = false; isSatisf = true; } else { isTauto = false; }
-      
       html += '<tr>';
-      varList.forEach(v => {
-        html += `<td class="${assignment[v] ? 'tt-true' : 'tt-false'}">${assignment[v] ? 'T' : 'F'}</td>`;
-      });
-      html += `<td class="${result ? 'tt-true' : 'tt-false'} tt-highlight">${result ? 'T' : 'F'}</td>`;
-      html += '</tr>';
+      varList.forEach(v => { html += `<td class="${assignment[v]?'tt-true':'tt-false'}">${assignment[v]?'T':'F'}</td>`; });
+      html += `<td class="${result?'tt-true':'tt-false'} tt-highlight">${result?'T':'F'}</td></tr>`;
     }
-    
     html += '</tbody></table>';
-    
     let badge = '';
     if (isTauto) badge = '<span style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.4);color:#4ade80;padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--font-head)">✅ TAUTOLOGY</span>';
     else if (isContrad) badge = '<span style="background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.4);color:#f87171;padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--font-head)">❌ CONTRADICTION</span>';
     else badge = '<span style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;padding:4px 12px;border-radius:20px;font-size:12px;font-family:var(--font-head)">⚡ CONTINGENCY</span>';
-    
     out.innerHTML = `<div style="margin-bottom:12px">${badge} <span style="font-size:12px;color:var(--muted);margin-left:8px">${isSatisf?'Satisfiable':'Unsatisfiable'}</span></div>` + html;
   } catch(e) {
-    out.innerHTML = `<div class="error-msg">❌ Error: ${e.message}. Check your expression syntax.</div>`;
+    out.innerHTML = `<div class="error-msg">❌ Error: ${e.message}</div>`;
   }
 }
 
-// ============================================================
+// ====================================================
 // LOGIC GATES
-// ============================================================
+// ====================================================
 const gateStates = {};
-
 function toggleGate(id) {
   gateStates[id] = !gateStates[id];
   const btn = document.getElementById(id);
-  btn.classList.toggle('on', gateStates[id]);
-  const val = document.getElementById(id + '-val');
+  if (btn) btn.classList.toggle('on', gateStates[id]);
+  const val = document.getElementById(id+'-val');
   if (val) val.textContent = gateStates[id] ? '1' : '0';
 }
-
 function setGateResult(id, val) {
   const el = document.getElementById(id);
+  if (!el) return;
   el.textContent = val ? '1' : '0';
   el.className = 'gate-result ' + (val ? 'true' : 'false');
 }
-
 function updateGates() {
-  const p = !!gateStates['not-p'];
-  setGateResult('not-out', !p);
-  
-  const ap = !!gateStates['and-p'], aq = !!gateStates['and-q'];
-  setGateResult('and-out', ap && aq);
-  
-  const op = !!gateStates['or-p'], oq = !!gateStates['or-q'];
-  setGateResult('or-out', op || oq);
-  
-  const xp = !!gateStates['xor-p'], xq = !!gateStates['xor-q'];
-  setGateResult('xor-out', xp !== xq);
-  
-  const np = !!gateStates['nand-p'], nq = !!gateStates['nand-q'];
-  setGateResult('nand-out', !(np && nq));
-  
-  const rp = !!gateStates['nor-p'], rq = !!gateStates['nor-q'];
-  setGateResult('nor-out', !(rp || rq));
+  setGateResult('not-out', !gateStates['not-p']);
+  setGateResult('and-out', !!gateStates['and-p'] && !!gateStates['and-q']);
+  setGateResult('or-out', !!gateStates['or-p'] || !!gateStates['or-q']);
+  setGateResult('xor-out', !!gateStates['xor-p'] !== !!gateStates['xor-q']);
+  setGateResult('nand-out', !(!!gateStates['nand-p'] && !!gateStates['nand-q']));
+  setGateResult('nor-out', !(!!gateStates['nor-p'] || !!gateStates['nor-q']));
 }
 
-// init gate displays
-updateGates();
+// ====================================================
+// RULES OF INFERENCE
+// ====================================================
+function toggleRule(card) { card.classList.toggle('open'); }
 
-// ============================================================
-// RULES OF INFERENCE TOGGLE
-// ============================================================
-function toggleRule(card) {
-  card.classList.toggle('open');
-}
-
-// ============================================================
-// PRACTICE PROBLEMS — REVEAL
-// ============================================================
-function toggleAns(btn) {
-  const ans = btn.nextElementSibling;
-  ans.classList.toggle('shown');
-  btn.textContent = ans.classList.contains('shown') ? 'Hide Answer' : 'Reveal Answer';
-}
-
-// ============================================================
+// ====================================================
 // CONVERSE / INVERSE / CONTRAPOSITIVE
-// ============================================================
+// ====================================================
 function updateCIC() {
   const p = document.getElementById('cic-p').value || 'it is raining';
   const q = document.getElementById('cic-q').value || 'I need an umbrella';
@@ -2102,69 +2494,60 @@ function updateCIC() {
   document.getElementById('cic-contra').textContent = `If it is not the case that ${q}, then it is not the case that ${p}.`;
 }
 
-// ============================================================
+// ====================================================
 // PROOF STEPPER
-// ============================================================
+// ====================================================
 const proofs = [
-  {
-    title: '¬(p ∨ (¬p ∧ q)) ≡ ¬p ∧ ¬q',
-    steps: [
-      { expr: '¬(p ∨ (¬p ∧ q))', law: 'Starting expression' },
-      { expr: '¬p ∧ ¬(¬p ∧ q)', law: "De Morgan's Law: ¬(A ∨ B) ≡ ¬A ∧ ¬B" },
-      { expr: '¬p ∧ (¬(¬p) ∨ ¬q)', law: "De Morgan's Law: ¬(A ∧ B) ≡ ¬A ∨ ¬B" },
-      { expr: '¬p ∧ (p ∨ ¬q)', law: 'Double Negation: ¬(¬p) ≡ p' },
-      { expr: '(¬p ∧ p) ∨ (¬p ∧ ¬q)', law: 'Distributive Law: A ∧ (B ∨ C) ≡ (A ∧ B) ∨ (A ∧ C)' },
-      { expr: 'F ∨ (¬p ∧ ¬q)', law: 'Negation Law: ¬p ∧ p ≡ F' },
-      { expr: '¬p ∧ ¬q', law: 'Identity Law: F ∨ A ≡ A ✓' },
-    ]
-  },
-  {
-    title: '(p ∨ q) ∧ ¬p ≡ ¬p ∧ q',
-    steps: [
-      { expr: '(p ∨ q) ∧ ¬p', law: 'Starting expression' },
-      { expr: '¬p ∧ (p ∨ q)', law: 'Commutative Law: A ∧ B ≡ B ∧ A' },
-      { expr: '(¬p ∧ p) ∨ (¬p ∧ q)', law: 'Distributive Law: A ∧ (B ∨ C) ≡ (A ∧ B) ∨ (A ∧ C)' },
-      { expr: 'F ∨ (¬p ∧ q)', law: 'Negation Law: ¬p ∧ p ≡ F' },
-      { expr: '¬p ∧ q', law: 'Identity Law: F ∨ A ≡ A ✓' },
-    ]
-  },
-  {
-    title: 'p ∨ (p ∧ q) ≡ p  (Absorption)',
-    steps: [
-      { expr: 'p ∨ (p ∧ q)', law: 'Starting expression' },
-      { expr: '(p ∧ T) ∨ (p ∧ q)', law: 'Identity Law: p ≡ p ∧ T' },
-      { expr: 'p ∧ (T ∨ q)', law: 'Distributive Law: A ∧ B ∨ A ∧ C ≡ A ∧ (B ∨ C)' },
-      { expr: 'p ∧ T', law: 'Domination Law: T ∨ q ≡ T' },
-      { expr: 'p', law: 'Identity Law: p ∧ T ≡ p ✓' },
-    ]
-  },
-  {
-    title: '(¬p ∧ (p ∨ q)) → q is a Tautology',
-    steps: [
-      { expr: '(¬p ∧ (p ∨ q)) → q', law: 'Starting — need to show this ≡ T' },
-      { expr: '¬(¬p ∧ (p ∨ q)) ∨ q', law: 'p → q ≡ ¬p ∨ q' },
-      { expr: '(¬(¬p) ∨ ¬(p ∨ q)) ∨ q', law: "De Morgan's: ¬(A ∧ B) ≡ ¬A ∨ ¬B" },
-      { expr: '(p ∨ ¬(p ∨ q)) ∨ q', law: 'Double Negation: ¬(¬p) ≡ p' },
-      { expr: '(p ∨ (¬p ∧ ¬q)) ∨ q', law: "De Morgan's: ¬(p ∨ q) ≡ ¬p ∧ ¬q" },
-      { expr: '((p ∨ ¬p) ∧ (p ∨ ¬q)) ∨ q', law: 'Distributive Law' },
-      { expr: '(T ∧ (p ∨ ¬q)) ∨ q', law: 'Negation Law: p ∨ ¬p ≡ T' },
-      { expr: '(p ∨ ¬q) ∨ q', law: 'Identity Law: T ∧ A ≡ A' },
-      { expr: 'p ∨ (¬q ∨ q)', law: 'Associative Law' },
-      { expr: 'p ∨ T', law: 'Negation Law: ¬q ∨ q ≡ T' },
-      { expr: 'T ✓', law: 'Domination Law: p ∨ T ≡ T  — TAUTOLOGY!' },
-    ]
-  }
+  { steps: [
+    { expr:'¬(p ∨ (¬p ∧ q))', law:'Starting expression' },
+    { expr:'¬p ∧ ¬(¬p ∧ q)', law:"De Morgan's: ¬(A ∨ B) ≡ ¬A ∧ ¬B" },
+    { expr:'¬p ∧ (¬(¬p) ∨ ¬q)', law:"De Morgan's: ¬(A ∧ B) ≡ ¬A ∨ ¬B" },
+    { expr:'¬p ∧ (p ∨ ¬q)', law:'Double Negation' },
+    { expr:'(¬p ∧ p) ∨ (¬p ∧ ¬q)', law:'Distributive Law' },
+    { expr:'F ∨ (¬p ∧ ¬q)', law:'Negation Law: ¬p ∧ p ≡ F' },
+    { expr:'¬p ∧ ¬q', law:'Identity Law: F ∨ A ≡ A ✓' },
+  ]},
+  { steps: [
+    { expr:'(p ∨ q) ∧ ¬p', law:'Starting expression' },
+    { expr:'¬p ∧ (p ∨ q)', law:'Commutative Law' },
+    { expr:'(¬p ∧ p) ∨ (¬p ∧ q)', law:'Distributive Law' },
+    { expr:'F ∨ (¬p ∧ q)', law:'Negation Law' },
+    { expr:'¬p ∧ q', law:'Identity Law ✓' },
+  ]},
+  { steps: [
+    { expr:'p ∨ (p ∧ q)', law:'Starting expression' },
+    { expr:'(p ∧ T) ∨ (p ∧ q)', law:'Identity Law: p ≡ p ∧ T' },
+    { expr:'p ∧ (T ∨ q)', law:'Distributive Law' },
+    { expr:'p ∧ T', law:'Domination: T ∨ q ≡ T' },
+    { expr:'p', law:'Identity Law ✓' },
+  ]},
+  { steps: [
+    { expr:'(¬p ∧ (p ∨ q)) → q', law:'Show this ≡ T' },
+    { expr:'¬(¬p ∧ (p ∨ q)) ∨ q', law:'p → q ≡ ¬p ∨ q' },
+    { expr:'(p ∨ ¬(p ∨ q)) ∨ q', law:"De Morgan's + Double Negation" },
+    { expr:'(p ∨ (¬p ∧ ¬q)) ∨ q', law:"De Morgan's: ¬(p∨q) ≡ ¬p∧¬q" },
+    { expr:'((p ∨ ¬p) ∧ (p ∨ ¬q)) ∨ q', law:'Distributive Law' },
+    { expr:'(T ∧ (p ∨ ¬q)) ∨ q', law:'Negation Law' },
+    { expr:'p ∨ (¬q ∨ q)', law:'Associative + Identity' },
+    { expr:'p ∨ T', law:'Negation Law: ¬q ∨ q ≡ T' },
+    { expr:'T ✓', law:'Domination Law — TAUTOLOGY!' },
+  ]}
 ];
 
 let currentProof = 0;
-let currentStep = 0;
-let visibleSteps = 0;
+let visibleSteps = 1;
+
+function reinitProof() {
+  setTimeout(() => {
+    const firstTab = document.querySelector('.proof-tab');
+    if (firstTab) { loadProof(0, firstTab); }
+  }, 100);
+}
 
 function loadProof(idx, tabEl) {
   document.querySelectorAll('.proof-tab').forEach(t => t.classList.remove('active'));
-  tabEl.classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
   currentProof = idx;
-  currentStep = 0;
   visibleSteps = 1;
   renderProof();
 }
@@ -2172,44 +2555,37 @@ function loadProof(idx, tabEl) {
 function renderProof() {
   const proof = proofs[currentProof];
   const container = document.getElementById('proof-steps');
+  if (!container) return;
   container.innerHTML = '';
   proof.steps.forEach((step, i) => {
     const div = document.createElement('div');
     div.className = 'proof-step' + (i < visibleSteps ? ' visible' : '');
-    div.innerHTML = `<div class="step-num">Step ${i + 1}</div><div class="step-expr">${step.expr}</div><div class="step-law">${step.law}</div>`;
+    div.innerHTML = `<div class="step-num">Step ${i+1}</div><div class="step-expr">${step.expr}</div><div class="step-law">${step.law}</div>`;
     container.appendChild(div);
   });
-  document.getElementById('step-counter').textContent = `Step ${visibleSteps}/${proof.steps.length}`;
+  const counter = document.getElementById('step-counter');
+  if (counter) counter.textContent = `Step ${visibleSteps}/${proof.steps.length}`;
 }
 
 function nextStep() {
-  const proof = proofs[currentProof];
-  if (visibleSteps < proof.steps.length) {
-    visibleSteps++;
-    renderProof();
-  }
+  if (visibleSteps < proofs[currentProof].steps.length) { visibleSteps++; renderProof(); }
 }
-
 function prevStep() {
-  if (visibleSteps > 1) {
-    visibleSteps--;
-    renderProof();
-  }
+  if (visibleSteps > 1) { visibleSteps--; renderProof(); }
 }
-
 function resetProof() { visibleSteps = 1; renderProof(); }
 function showAllSteps() { visibleSteps = proofs[currentProof].steps.length; renderProof(); }
 
-// Initialize proof
-loadProof(0, document.querySelector('.proof-tab'));
+// ====================================================
+// TRANSLATOR
+// ====================================================
+function revealTrans(row) { row.classList.remove('hidden-logic'); }
 
-// ============================================================
-// TRANSLATOR — REVEAL LOGIC
-// ============================================================
-function revealTrans(row) {
-  row.classList.remove('hidden-logic');
-}
-
+// ====================================================
+// INIT
+// ====================================================
+showHome();
+updateGates();
 </script>
 </body>
 </html>
