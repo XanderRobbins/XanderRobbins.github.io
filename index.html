@@ -1,195 +1,725 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alexander Robbins · Home</title>
-    <link rel="stylesheet" href="styles-new.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xander — Quant Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --accent-glow: rgba(198,97,63,0.35);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  cursor: none;
+}
+
+/* ── Custom cursor ── */
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(198,97,63,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, opacity 0.2s;
+}
+body.hovering #cursor { width: 6px; height: 6px; }
+body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--accent); }
+
+/* ── Layers ── */
+#terminal-layer {
+  position: fixed; inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d0e13;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#terminal-layer.hidden { opacity: 0; visibility: hidden; }
+
+#canvas-layer {
+  position: fixed; inset: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1.2s ease 0.2s;
+}
+#canvas-layer.visible { opacity: 1; }
+
+#ui-layer {
+  position: fixed; inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.9s ease 0.6s;
+}
+#ui-layer.visible { opacity: 1; pointer-events: all; }
+
+/* ── Terminal ── */
+#terminal {
+  width: min(680px, 92vw);
+  background: #0d0e13;
+  border: 1px solid rgba(198,97,63,0.25);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(198,97,63,0.08);
+}
+.term-titlebar {
+  background: #161821;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(198,97,63,0.1);
+}
+.term-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.term-dot.r { background: #ff5f57; }
+.term-dot.y { background: #febc2e; }
+.term-dot.g { background: #28c840; }
+.term-title {
+  margin-left: auto; margin-right: auto;
+  font-size: 11px;
+  color: rgba(232,221,212,0.3);
+  letter-spacing: 0.08em;
+  transform: translateX(-12px);
+}
+.term-body {
+  padding: 24px 28px 28px;
+  min-height: 280px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: rgba(232,221,212,0.85);
+}
+.term-line { display: block; }
+.term-line.cmd { color: var(--accent); }
+.term-line.out { color: rgba(232,221,212,0.6); }
+.term-line.highlight { color: var(--text); font-weight: 500; }
+.term-line.dim { color: rgba(232,221,212,0.3); }
+.caret {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--accent);
+  vertical-align: middle;
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── Canvas ── */
+#c { width: 100%; height: 100%; display: block; }
+
+/* ── Connector SVG overlay ── */
+#connector-svg {
+  position: fixed; inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  width: 100%; height: 100%;
+}
+
+/* ── UI overlay ── */
+.header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  padding: 36px 52px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.name-block {}
+.name-main {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(38px, 5vw, 64px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--text);
+}
+.name-sub {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+.status-block {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  line-height: 2;
+}
+.status-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #3ddc84;
+  margin-right: 6px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+/* ── Cards ── */
+.cards-container {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+  padding: 0 52px;
+}
+
+.card {
+  width: 240px;
+  background: rgba(28,29,41,0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--card-border);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 28px 28px 36px;
+  cursor: none;
+  transform: translateY(0);
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.25s,
+              background 0.25s,
+              box-shadow 0.35s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.card:hover::before { opacity: 1; }
+.card:hover {
+  transform: translateY(-18px);
+  border-color: rgba(198,97,63,0.65);
+  background: rgba(32,33,47,0.92);
+  box-shadow: 0 -20px 60px rgba(198,97,63,0.12), 0 0 0 1px rgba(198,97,63,0.1) inset;
+}
+
+.card-index {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.card-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  letter-spacing: 0.03em;
+}
+.card-arrow {
+  position: absolute;
+  bottom: 28px; right: 28px;
+  font-size: 18px;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.card:hover .card-arrow { opacity: 1; transform: translate(0,0); }
+
+/* card stagger heights */
+.card:nth-child(1) { padding-bottom: 44px; }
+.card:nth-child(2) { padding-bottom: 56px; width: 260px; }
+.card:nth-child(3) { padding-bottom: 44px; }
+
+/* ── Scanline overlay ── */
+.scanlines {
+  position: fixed; inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* ── Bottom bar ── */
+.bottom-bar {
+  position: absolute;
+  bottom: 0; left: 52px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  padding-bottom: 18px;
+  display: flex;
+  gap: 32px;
+}
+.bottom-bar span { text-transform: uppercase; }
+
+/* ── Section pages (placeholder) ── */
+.section-page {
+  position: fixed; inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s, visibility 0.6s;
+}
+.section-page.open { opacity: 1; visibility: visible; }
+.section-page h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(48px,8vw,96px);
+  color: var(--text);
+  letter-spacing: -0.03em;
+}
+.section-page p {
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-top: 16px;
+  text-transform: uppercase;
+}
+.back-btn {
+  margin-top: 48px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--card-border);
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: none;
+  transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace;
+}
+.back-btn:hover { border-color: var(--accent); color: var(--text); }
+</style>
 </head>
 <body>
-    <!-- Animated canvas background -->
-    <canvas id="canvas" class="bg-canvas"></canvas>
-    <!-- Left Sidebar Navigation -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="profile-photo">
-                <img src="your-photo.jpg" alt="Alexander Robbins">
-            </div>
-            <div class="logo">
-                Alexander<br>Robbins
-            </div>
-        </div>
-<nav class="nav-links">
-    <a href="index.html" class="nav-item active">
-        <div class="nav-left">
-            <span class="nav-icon">
-                <img src="https://www.sj.land/feather/recents.svg" alt="Home">
-            </span>
-            <span class="nav-label">Home</span>
-        </div>
-        <span class="nav-shortcut">1</span>
-    </a>
-    <a href="about.html" class="nav-item">
-        <div class="nav-left">
-            <span class="nav-icon">
-                <img src="https://www.sj.land/feather/about.svg" alt="About">
-            </span>
-            <span class="nav-label">About</span>
-        </div>
-        <span class="nav-shortcut">2</span>
-    </a>
-    <a href="projects.html" class="nav-item">
-        <div class="nav-left">
-            <span class="nav-icon">
-                <img src="https://www.sj.land/feather/projects.svg" alt="Projects">
-            </span>
-            <span class="nav-label">Projects</span>
-        </div>
-        <span class="nav-shortcut">3</span>
-    </a>
-    <a href="blog.html" class="nav-item">
-        <div class="nav-left">
-            <span class="nav-icon">
-                <img src="https://www.sj.land/feather/edit-3.svg" alt="Blog">
-            </span>
-            <span class="nav-label">Blog</span>
-        </div>
-        <span class="nav-shortcut">4</span>
-    </a>
-</nav>
-        
-        
-        
-        <!-- Theme Switcher -->
-        <div class="theme-switcher">
-            <button class="theme-btn active" data-theme="light">Light</button>
-            <button class="theme-btn" data-theme="dark">Dark</button>
-            <button class="theme-btn" data-theme="auto">Auto</button>
-            <span class="theme-glider"></span>
-        </div>
-    </aside>
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="content-wrapper">
-            <!-- Hero Section -->
-            <section class="hero">
-                <h1 class="greeting">Hello! - Welcome to my corner of the Internet.</h1>
-                <p class="intro-text">
-                    Mathematics | Economics | Computer Science
-                </p>
-            </section>
-            <!-- Updates Section -->
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Organizations</h2>
-                    <a href="#updates" class="view-all">View All</a>
-                </div>
-                <div class="updates-grid">
-                    <div class="update-card" data-tilt>
-                        <div class="update-icon">
-                            <img src="Algo.png" alt="AlgoGators">
-                        </div>
-                        <div class="update-content">
-                            <h3 class="update-title">Senior MacroEconomic Analyst at AlgoGators</h3>
-                            <p class="update-subtitle">Quantitative hedge fund</p>
-                        </div>
-                    </div>
-                    <div class="update-card" data-tilt>
-                        <div class="update-icon">
-                            <img src="CHIV.jpg" alt="CHIV LLC">
-                        </div>
-                        <div class="update-content">
-                            <h3 class="update-title">CEO and Founder of CHIV LLC</h3>
-                            <p class="update-subtitle">Launching February 2026</p>
-                        </div>
-                    </div>
-                    <div class="update-card" data-tilt>
-                        <div class="update-icon">
-                            <img src="UF.webp" alt="UF">
-                        </div>
-                        <div class="update-content">
-                            <h3 class="update-title">University of Florida</h3>
-                            <p class="update-subtitle">Mathematics, CS, Economics • Graduating 2027</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- Featured Projects Section -->
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Featured Projects</h2>
-                    <a href="projects.html" class="view-all">View All</a>
-                </div>
-                <div class="projects-grid">
-                    <a href="#" class="project-card" data-tilt>
-                        <div class="project-image">
-                            <img src="Volitility_Surface.png" alt="Volatility Surface">
-                        </div>
-                        <div class="project-info">
-                            <h3 class="project-title">Arbitrage-Free Volatility Surface</h3>
-                            <p class="project-description">Python toolkit for implied volatility computation and Heston model calibration</p>
-                            <div class="project-tags">
-                                <span class="tag">Python</span>
-                                <span class="tag">Finance</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="project-card" data-tilt>
-                        <div class="project-image">
-                            <img src="Monte_Carlo.webp" alt="Monte Carlo">
-                        </div>
-                        <div class="project-info">
-                            <h3 class="project-title">Monte Carlo Variance Reduction</h3>
-                            <p class="project-description">Research project • In progress</p>
-                            <div class="project-tags">
-                                <span class="tag">Research</span>
-                                <span class="tag">Monte Carlo</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="project-card" data-tilt>
-                        <div class="project-image">
-                            <img src="Trade_Statistics.png" alt="Market Research">
-                        </div>
-                        <div class="project-info">
-                            <h3 class="project-title">Universal Pairs Trading System</h3>
-                            <p class="project-description">Quantitative trading system that implements statistical arbitrage through mean-reversion</p>
-                            <div class="project-tags">
-                                <span class="tag">Python</span>
-                                <span class="tag">Trading</span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </section>
-            <!-- Recent Thoughts Section (iMessage style) -->
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Recent Thoughts</h2>
-                    <a href="blog.html" class="view-all">View All</a>
-                </div>
-                <div class="imessage-container-home">
-                    <div class="message-group">
-                        <div class="message sent">
-                            <div class="bubble">
-                                <p>Why I'm more interested in models than answers these days. For the longest time, I cared about getting the "right" result. Now? I care way more about understanding the framework that produces results.</p>
-                            </div>
-                            <span class="timestamp">Dec 21, 8:34 PM</span>
-                        </div>
-                    </div>
-                    
-                    <div class="message-group">
-                        <div class="message sent">
-                            <div class="bubble">
-                                <p>Been thinking about how probability reshapes the way you see everything. Once you start modeling uncertainty explicitly, you can't go back to thinking in absolutes.</p>
-                            </div>
-                            <span class="timestamp">Dec 21, 8:36 PM</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-    <script src="script.js"></script>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<!-- Terminal intro -->
+<div id="terminal-layer">
+  <div id="terminal">
+    <div class="term-titlebar">
+      <div class="term-dot r"></div>
+      <div class="term-dot y"></div>
+      <div class="term-dot g"></div>
+      <span class="term-title">claude — xander@portfolio ~ </span>
+    </div>
+    <div class="term-body" id="term-body"></div>
+  </div>
+</div>
+
+<!-- Orbital canvas -->
+<div id="canvas-layer">
+  <canvas id="c"></canvas>
+</div>
+
+<!-- Connector lines SVG -->
+<svg id="connector-svg" style="opacity:0;transition:opacity 1s ease 1s;"></svg>
+
+<!-- Main UI -->
+<div id="ui-layer">
+  <div class="header">
+    <div class="name-block">
+      <div class="name-main">Xander</div>
+      <div class="name-sub">Quant Finance · UF · AlgoGators</div>
+    </div>
+    <div class="status-block">
+      <div><span class="status-dot"></span>Available Jan 2027</div>
+      <div>NYC — Full Time</div>
+      <div style="margin-top:4px;color:rgba(198,97,63,0.7)">xander@example.com</div>
+    </div>
+  </div>
+
+  <div class="cards-container">
+    <div class="card" onclick="openSection('trading')">
+      <div class="card-index">01 ——</div>
+      <div class="card-title">Trading<br>Strategies</div>
+      <div class="card-desc">Pairs trading systems, volatility surfaces, arbitrage models built at AlgoGators.</div>
+      <div class="card-arrow">↗</div>
+    </div>
+
+    <div class="card" onclick="openSection('awards')">
+      <div class="card-index">02 ——</div>
+      <div class="card-title">Awards &amp;<br>Recognition</div>
+      <div class="card-desc">Hackathons, academic honors, and competitive achievements across math &amp; finance.</div>
+      <div class="card-arrow">↗</div>
+    </div>
+
+    <div class="card" onclick="openSection('research')">
+      <div class="card-index">03 ——</div>
+      <div class="card-title">Research</div>
+      <div class="card-desc">Monte Carlo options pricing, variance reduction, ASVR algorithm — targeting MCQMC 2026.</div>
+      <div class="card-arrow">↗</div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <span>Mathematics · Economics · CS</span>
+    <span>Graduating Dec 2026</span>
+  </div>
+</div>
+
+<!-- Section pages -->
+<div class="section-page" id="page-trading">
+  <h1>Trading Strategies</h1>
+  <p>AlgoGators · Senior Macro Analyst</p>
+  <button class="back-btn" onclick="closeSection('trading')">← Back</button>
+</div>
+<div class="section-page" id="page-awards">
+  <h1>Awards</h1>
+  <p>Recognition · Honors</p>
+  <button class="back-btn" onclick="closeSection('awards')">← Back</button>
+</div>
+<div class="section-page" id="page-research">
+  <h1>Research</h1>
+  <p>Monte Carlo · MCQMC 2026</p>
+  <button class="back-btn" onclick="closeSection('research')">← Back</button>
+</div>
+
+<script>
+/* ── Cursor ── */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = -100, my = -100, rx = -100, ry = -100;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('.card, .back-btn, button').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+/* ── Terminal typewriter ── */
+const lines = [
+  { text: '$ claude --init portfolio', cls: 'cmd', delay: 0 },
+  { text: '> Initializing session...', cls: 'out', delay: 600 },
+  { text: '> Loading subject: Xander Doe', cls: 'out', delay: 1000 },
+  { text: '> Double major: Mathematics + Economics', cls: 'out', delay: 1400 },
+  { text: '> Minor: Computer Science · GPA(upper): 3.54', cls: 'out', delay: 1800 },
+  { text: '', cls: 'dim', delay: 2200 },
+  { text: '$ ls ./projects', cls: 'cmd', delay: 2500 },
+  { text: '  pairs_trading/   vol_surface/   monte_carlo_pricer/', cls: 'out', delay: 3000 },
+  { text: '', cls: 'dim', delay: 3200 },
+  { text: '$ ./launch --site', cls: 'cmd', delay: 3500 },
+  { text: '> Rendering portfolio...', cls: 'highlight', delay: 4000 },
+];
+
+const body = document.getElementById('term-body');
+let caretEl = null;
+
+function addLine(line, idx) {
+  setTimeout(() => {
+    if (caretEl) caretEl.remove();
+    const span = document.createElement('span');
+    span.className = 'term-line ' + line.cls;
+    span.textContent = line.text;
+    if (idx === lines.length - 1) {
+      caretEl = document.createElement('span');
+      caretEl.className = 'caret';
+      span.appendChild(caretEl);
+    }
+    body.appendChild(span);
+  }, line.delay);
+}
+
+lines.forEach((l, i) => addLine(l, i));
+
+/* transition to main site */
+setTimeout(() => {
+  document.getElementById('terminal-layer').classList.add('hidden');
+  document.getElementById('canvas-layer').classList.add('visible');
+  document.getElementById('ui-layer').classList.add('visible');
+  document.getElementById('connector-svg').style.opacity = '1';
+  startCanvas();
+}, 5200);
+
+/* ── 3D Sphere node network ── */
+function startCanvas() {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const svg = document.getElementById('connector-svg');
+  let W, H, cx, cy, R;
+
+  const AC = [198, 97, 63];
+  const BG = '#282a3a';
+  const MOUSE_R = 190;
+  const MOUSE_PULL = 65;
+
+  let mouseX = -9999, mouseY = -9999;
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+  const RINGS = [
+    { lat: 90,  n: 1  },
+    { lat: 65,  n: 8  },
+    { lat: 40,  n: 14 },
+    { lat: 18,  n: 18 },
+    { lat: -18, n: 18 },
+    { lat: -40, n: 14 },
+    { lat: -65, n: 8  },
+    { lat: -90, n: 1  },
+  ];
+
+  let nodes3D = [];
+
+  function buildNodes() {
+    nodes3D = [];
+    RINGS.forEach((ring, ri) => {
+      const phi = (90 - ring.lat) * Math.PI / 180;
+      for (let j = 0; j < ring.n; j++) {
+        const theta0 = (j / ring.n) * Math.PI * 2 + ri * 0.15;
+        nodes3D.push({ phi, theta0, theta: theta0, ringIdx: ri, posInRing: j, n: ring.n });
+      }
+    });
+  }
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cx = W / 2; cy = H / 2;
+    R = Math.min(W, H) * 0.25;
+    buildNodes();
+  }
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const connLines = [0, 1, 2].map(() => {
+    const g = document.createElementNS(svgNS, 'g');
+    const glow = document.createElementNS(svgNS, 'path');
+    glow.setAttribute('fill', 'none');
+    glow.setAttribute('stroke', `rgb(${AC})`);
+    glow.setAttribute('stroke-width', '6');
+    glow.setAttribute('stroke-opacity', '0.07');
+    const line = document.createElementNS(svgNS, 'path');
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', `rgb(${AC})`);
+    line.setAttribute('stroke-width', '1.2');
+    const dot = document.createElementNS(svgNS, 'circle');
+    dot.setAttribute('r', '4');
+    dot.setAttribute('fill', `rgb(${AC})`);
+    g.appendChild(glow); g.appendChild(line); g.appendChild(dot);
+    svg.appendChild(g);
+    return { line, glow, dot };
+  });
+
+  function getCardTops() {
+    return Array.from(document.querySelectorAll('.card')).map(card => {
+      const r = card.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top };
+    });
+  }
+
+  let t = 0;
+  let rotY = 0;
+
+  function project(x3, y3, z3, rotX) {
+    const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    const x2 = x3 * cosY - z3 * sinY;
+    const z2 = x3 * sinY + z3 * cosY;
+    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+    const y2 = y3 * cosX - z2 * sinX;
+    const z3f = y3 * sinX + z2 * cosX;
+    const fov = 2.4;
+    const sc = fov / (fov + z3f / R);
+    return { sx: cx + x2 * sc, sy: cy + y2 * sc, depth: z3f };
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, W, H);
+
+    rotY += 0.0016;
+    const breathe = 1 + Math.sin(t * 0.005) * 0.022;
+    const mOffX = (mouseX - cx) / (W || 1);
+    const mOffY = (mouseY - cy) / (H || 1);
+    const rotX = 0.2 + mOffY * 0.28;
+    const rotYExtra = mOffX * 0.28;
+
+    // Project all nodes
+    const projected = nodes3D.map(n => {
+      const wobble = 1 + Math.sin(t * 0.006 + n.theta0 * 2.5 + n.phi * 1.8) * 0.035;
+      const r = R * breathe * wobble;
+      const sinPhi = Math.sin(n.phi), cosPhi = Math.cos(n.phi);
+      const theta = n.theta0 + rotY + rotYExtra;
+      const x3 = r * sinPhi * Math.cos(theta);
+      const y3 = r * cosPhi;
+      const z3 = r * sinPhi * Math.sin(theta);
+      const proj = project(x3, y3, z3, rotX);
+
+      // Mouse gravity
+      const mdx = proj.sx - mouseX, mdy = proj.sy - mouseY;
+      const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+      let px = proj.sx, py = proj.sy;
+      if (mdist < MOUSE_R && mdist > 1) {
+        const force = (1 - mdist / MOUSE_R) * MOUSE_PULL;
+        px += (-mdx / mdist) * force;
+        py += (-mdy / mdist) * force;
+      }
+
+      const depthNorm = (proj.depth / R + 1) / 2;
+      return { ...n, sx: px, sy: py, depth: proj.depth, depthNorm, x3, y3, z3, theta };
+    });
+
+    projected.sort((a, b) => a.depth - b.depth);
+
+    // Build ring lookup
+    const byRing = RINGS.map((_, ri) => projected.filter(n => n.ringIdx === ri));
+
+    // Draw same-ring edges
+    ctx.lineWidth = 0.9;
+    byRing.forEach(ring => {
+      if (ring.length < 2) return;
+      for (let i = 0; i < ring.length; i++) {
+        const a = ring[i], b = ring[(i + 1) % ring.length];
+        const alpha = ((a.depthNorm + b.depthNorm) / 2) * 0.6;
+        ctx.strokeStyle = `rgba(${AC},${alpha.toFixed(2)})`;
+        ctx.beginPath();
+        ctx.moveTo(a.sx, a.sy);
+        ctx.lineTo(b.sx, b.sy);
+        ctx.stroke();
+      }
+    });
+
+    // Draw inter-ring edges
+    for (let ri = 0; ri < RINGS.length - 1; ri++) {
+      const rA = byRing[ri], rB = byRing[ri + 1];
+      rA.forEach(a => {
+        let best = null, bestD = Infinity;
+        rB.forEach(b => {
+          const d = (a.x3-b.x3)**2+(a.y3-b.y3)**2+(a.z3-b.z3)**2;
+          if (d < bestD) { bestD = d; best = b; }
+        });
+        if (!best) return;
+        const alpha = ((a.depthNorm + best.depthNorm) / 2) * 0.38;
+        ctx.strokeStyle = `rgba(${AC},${alpha.toFixed(2)})`;
+        ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(best.sx, best.sy); ctx.stroke();
+      });
+    }
+
+    // Draw nodes
+    projected.forEach(n => {
+      const mdx = n.sx - mouseX, mdy = n.sy - mouseY;
+      const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+      const prox = mdist < MOUSE_R ? (1 - mdist / MOUSE_R) : 0;
+
+      const size = 2.2 + n.depthNorm * 3 + prox * 6;
+      const alpha = Math.min(1, 0.6 + n.depthNorm * 0.4 + prox * 0.4);
+
+      // Wide glow
+      const hR = size * 5.5;
+      const g1 = ctx.createRadialGradient(n.sx, n.sy, 0, n.sx, n.sy, hR);
+      g1.addColorStop(0, `rgba(${AC},${(alpha*0.5).toFixed(2)})`);
+      g1.addColorStop(0.35, `rgba(${AC},${(alpha*0.15).toFixed(2)})`);
+      g1.addColorStop(1, `rgba(${AC},0)`);
+      ctx.beginPath(); ctx.arc(n.sx, n.sy, hR, 0, Math.PI*2);
+      ctx.fillStyle = g1; ctx.fill();
+
+      // Specular core
+      const g2 = ctx.createRadialGradient(n.sx - size*0.32, n.sy - size*0.32, 0, n.sx, n.sy, size);
+      g2.addColorStop(0, `rgba(255,210,170,${alpha})`);
+      g2.addColorStop(0.45, `rgba(${AC},${alpha})`);
+      g2.addColorStop(1, `rgba(120,48,25,${(alpha*0.7).toFixed(2)})`);
+      ctx.beginPath(); ctx.arc(n.sx, n.sy, size, 0, Math.PI*2);
+      ctx.fillStyle = g2; ctx.fill();
+    });
+
+    // Card connectors
+    const cardTops = getCardTops();
+    const outerNodes = projected.filter(n => n.depthNorm > 0.4);
+    cardTops.forEach((ct, i) => {
+      if (!connLines[i]) return;
+      let best = null, bestD = Infinity;
+      outerNodes.forEach(n => {
+        const dx = n.sx - ct.x, dy = n.sy - ct.y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d < bestD) { bestD = d; best = n; }
+      });
+      if (!best) return;
+      const { line, glow, dot } = connLines[i];
+      const pulse = 0.38 + Math.sin(t * 0.03 + i * 2.1) * 0.13;
+      const cpx = (best.sx + ct.x) / 2 + (i - 1) * 25;
+      const cpy = best.sy * 0.55 + ct.y * 0.45;
+      const d = `M ${best.sx.toFixed(1)} ${best.sy.toFixed(1)} Q ${cpx.toFixed(1)} ${cpy.toFixed(1)} ${ct.x.toFixed(1)} ${ct.y.toFixed(1)}`;
+      line.setAttribute('d', d);
+      line.setAttribute('stroke-opacity', pulse.toFixed(2));
+      glow.setAttribute('d', d);
+      dot.setAttribute('cx', best.sx.toFixed(1));
+      dot.setAttribute('cy', best.sy.toFixed(1));
+      dot.setAttribute('fill-opacity', Math.min(1, pulse + 0.35).toFixed(2));
+    });
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+}
+
+/* ── Sections ── */
+function openSection(name) {
+  document.getElementById('page-' + name).classList.add('open');
+}
+function closeSection(name) {
+  document.getElementById('page-' + name).classList.remove('open');
+}
+</script>
 </body>
 </html>
