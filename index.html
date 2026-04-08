@@ -708,16 +708,15 @@ window.addEventListener('scroll', updateConnectorVisibility, { passive: true });
 /* ── Terminal typewriter ── */
 const lines = [
   { text: '$ claude --init portfolio', cls: 'cmd', delay: 0 },
-  { text: '> Initializing session...', cls: 'out', delay: 600 },
-  { text: '> Loading subject: Xander Doe', cls: 'out', delay: 1000 },
-  { text: '> Double major: Mathematics + Economics', cls: 'out', delay: 1400 },
-  { text: '> Minor: Computer Science · GPA(upper): 3.54', cls: 'out', delay: 1800 },
-  { text: '', cls: 'dim', delay: 2200 },
-  { text: '$ ls ./projects', cls: 'cmd', delay: 2500 },
+  { text: '> Initializing session...', cls: 'out', delay: 400 },
+  { text: '> Loading subject: Xander Robbins', cls: 'out', delay: 800 },
+  { text: '> Degrees: Mathematics + Economics + Computer Science', cls: 'out', delay: 1200 },
+  { text: '', cls: 'dim', delay: 2000 },
+  { text: '$ ls ./projects', cls: 'cmd', delay: 2400 },
   { text: '  pairs_trading/   vol_surface/   monte_carlo_pricer/', cls: 'out', delay: 3000 },
-  { text: '', cls: 'dim', delay: 3200 },
+  { text: '', cls: 'dim', delay: 3400 },
   { text: '$ ./launch --site', cls: 'cmd', delay: 3500 },
-  { text: '> Rendering portfolio...', cls: 'highlight', delay: 4000 },
+  { text: '> Rendering portfolio...', cls: 'highlight', delay: 3800 },
 ];
 
 const body = document.getElementById('term-body');
