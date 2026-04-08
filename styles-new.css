@@ -847,17 +847,17 @@ body {
     .imessage-container {
         padding: 1.5rem 0.75rem;
     }
-    
+
     .message {
         max-width: 85%;
     }
-    
+
     .bubble {
         font-size: 0.9rem;
         padding: 0.65rem 0.9rem;
     }
-    
-    
+}
+
 /* ==================== */
 /* Homepage iMessage    */
 /* ==================== */
@@ -878,7 +878,6 @@ body {
     .imessage-container-home .message {
         max-width: 85%;
     }
-}
 }
 
 
