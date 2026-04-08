@@ -45,14 +45,15 @@ html, body {
 /* ── Custom cursor ── */
 #cursor {
   position: fixed;
-  width: 10px; height: 10px;
-  background: var(--accent);
+  width: 12px; height: 12px;
+  background: #c6613f;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%,-50%);
   transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
   mix-blend-mode: screen;
+  box-shadow: 0 0 12px rgba(198,97,63,0.6);
 }
 #cursor-ring {
   position: fixed;
@@ -122,7 +123,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 .term-dot.g { background: #28c840; }
 .term-title {
   margin-left: auto; margin-right: auto;
-  font-size: 11px;
+  font-size: 14px;
   color: rgba(232,221,212,0.3);
   letter-spacing: 0.08em;
   transform: translateX(-12px);
@@ -769,7 +770,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
     <div class="status-block">
       <div><span class="status-dot"></span>Available Jan 2027</div>
       <div>NYC — Full Time</div>
-      <div style="margin-top:5px;color:rgba(198,97,63,0.7)">xanderrobbins10@gmail.com</div>
+      <div style="margin-top:5px;color:rgba(198,97,63,0.7);font-size:13px">xanderrobbins10@gmail.com</div>
     </div>
   </div>
 
