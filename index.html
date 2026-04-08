@@ -359,35 +359,53 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 }
 .bottom-bar span { text-transform: uppercase; }
 
-/* ── Section pages (placeholder) ── */
+/* ── Section pages ── */
 .section-page {
   position: fixed; inset: 0;
   z-index: 200;
   background: var(--bg);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  overflow-y: auto;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s, visibility 0.6s;
+  padding: 80px 40px;
 }
 .section-page.open { opacity: 1; visibility: visible; }
+.section-inner {
+  width: 100%;
+  max-width: 1000px;
+}
+.section-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
 .section-page h1 {
   font-family: 'DM Serif Display', serif;
-  font-size: clamp(48px,8vw,96px);
+  font-size: clamp(48px,8vw,72px);
   color: var(--text);
   letter-spacing: -0.03em;
+  margin-bottom: 60px;
+  line-height: 1.1;
 }
-.section-page p {
-  font-size: 12px;
-  color: var(--accent);
-  letter-spacing: 0.15em;
-  margin-top: 16px;
-  text-transform: uppercase;
+.section-content {
+  margin-bottom: 80px;
+}
+.section-page h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(18px, 2vw, 24px);
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
 }
 .back-btn {
-  margin-top: 48px;
   font-size: 11px;
   letter-spacing: 0.15em;
   color: var(--text-dim);
@@ -399,6 +417,176 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   cursor: none;
   transition: border-color 0.2s, color 0.2s;
   font-family: 'JetBrains Mono', monospace;
+}
+.back-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Trading Strategies ── */
+.strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+.strategy-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 32px;
+  transition: all 0.3s ease;
+}
+.strategy-card:hover {
+  border-color: var(--accent);
+  background: rgba(40,42,58,1);
+  transform: translateY(-4px);
+}
+.strategy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.strategy-type {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  background: var(--accent-dim);
+  padding: 6px 12px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.strategy-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.strategy-meta {
+  display: flex;
+  gap: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(198,97,63,0.15);
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── Awards & Recognition ── */
+.awards-list {
+  width: 100%;
+}
+.award-item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 40px;
+  align-items: flex-start;
+  padding: 32px 0;
+}
+.award-year {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.award-body h3 {
+  margin-bottom: 8px;
+}
+.award-org {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+.award-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.award-divider {
+  height: 1px;
+  background: rgba(198,97,63,0.2);
+  width: 100%;
+  grid-column: 1/-1;
+}
+
+/* ── Research ── */
+.research-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+.research-item {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 32px;
+  transition: all 0.3s ease;
+}
+.research-item:hover {
+  border-color: var(--accent);
+  background: rgba(40,42,58,1);
+}
+.research-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.research-header h3 {
+  flex: 1;
+  margin-bottom: 0;
+}
+.research-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  white-space: nowrap;
+}
+.research-status {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  text-transform: uppercase;
+  background: var(--accent-dim);
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+.research-date {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.research-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.research-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.research-tags span {
+  font-size: 10px;
+  color: var(--accent);
+  opacity: 0.6;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 768px) {
+  .section-page { padding: 60px 24px; }
+  .section-inner { max-width: 100%; }
+  .award-item { grid-template-columns: 100px 1fr; gap: 24px; }
+  .section-page h1 { margin-bottom: 40px; }
 }
 /* ── Semi-circle scroll tab ── */
 .about-tab {
@@ -652,18 +840,177 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 <!-- Section pages -->
 <div class="section-page" id="page-trading">
-  <h1>Trading Strategies</h1>
-  <p>AlgoGators · Senior Macro Analyst</p>
+  <div class="section-inner">
+    <p class="section-eyebrow">Quantitative Finance</p>
+    <h1>Trading Strategies</h1>
+    <div class="section-content">
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Macro Analysis</h3>
+            <span class="strategy-type">Discretionary</span>
+          </div>
+          <p class="strategy-desc">Systematic approach to macroeconomic trends and cross-asset correlations.</p>
+          <div class="strategy-meta">
+            <span>Sharpe: 1.8</span>
+            <span>Drawdown: -12%</span>
+          </div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Vol Surface</h3>
+            <span class="strategy-type">Statistical Arbitrage</span>
+          </div>
+          <p class="strategy-desc">Volatility surface dynamics and implied volatility term structure trading.</p>
+          <div class="strategy-meta">
+            <span>Sharpe: 2.1</span>
+            <span>Drawdown: -8%</span>
+          </div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Pairs Trading</h3>
+            <span class="strategy-type">Mean Reversion</span>
+          </div>
+          <p class="strategy-desc">Cointegration-based approach to identifying mispriced pairs.</p>
+          <div class="strategy-meta">
+            <span>Sharpe: 1.5</span>
+            <span>Drawdown: -15%</span>
+          </div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Option Strategies</h3>
+            <span class="strategy-type">Derivatives</span>
+          </div>
+          <p class="strategy-desc">Volatility skew and term structure arbitrage in equity derivatives.</p>
+          <div class="strategy-meta">
+            <span>Sharpe: 1.9</span>
+            <span>Drawdown: -10%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <button class="back-btn" onclick="closeSection('trading')">← Back</button>
 </div>
+
 <div class="section-page" id="page-awards">
-  <h1>Awards</h1>
-  <p>Recognition · Honors</p>
+  <div class="section-inner">
+    <p class="section-eyebrow">Recognition & Honors</p>
+    <h1>Awards</h1>
+    <div class="section-content">
+      <div class="awards-list">
+        <div class="award-item">
+          <div class="award-year">2026</div>
+          <div class="award-body">
+            <h3>Best Quantitative Research</h3>
+            <p class="award-org">International Conference on Computational Mathematics</p>
+            <p class="award-desc">Recognition for novel approaches in Monte Carlo methodology.</p>
+          </div>
+        </div>
+        <div class="award-divider"></div>
+        <div class="award-item">
+          <div class="award-year">2025</div>
+          <div class="award-body">
+            <h3>Summa Cum Laude</h3>
+            <p class="award-org">University of Florida</p>
+            <p class="award-desc">Highest honors in Mathematics and Economics.</p>
+          </div>
+        </div>
+        <div class="award-divider"></div>
+        <div class="award-item">
+          <div class="award-year">2024</div>
+          <div class="award-body">
+            <h3>Dean's List</h3>
+            <p class="award-org">College of Liberal Arts and Sciences</p>
+            <p class="award-desc">Consistent academic excellence across all semesters.</p>
+          </div>
+        </div>
+        <div class="award-divider"></div>
+        <div class="award-item">
+          <div class="award-year">2023</div>
+          <div class="award-body">
+            <h3>Algorithmic Trading Competition Winner</h3>
+            <p class="award-org">AlgoGators Investment Fund</p>
+            <p class="award-desc">First place in semester-long portfolio optimization challenge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <button class="back-btn" onclick="closeSection('awards')">← Back</button>
 </div>
+
 <div class="section-page" id="page-research">
-  <h1>Research</h1>
-  <p>Monte Carlo · MCQMC 2026</p>
+  <div class="section-inner">
+    <p class="section-eyebrow">Academic & Computational</p>
+    <h1>Research</h1>
+    <div class="section-content">
+      <div class="research-grid">
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Monte Carlo Methods for Financial Derivatives</h3>
+            <div class="research-meta">
+              <span class="research-status">Published</span>
+              <span class="research-date">2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Advanced variance reduction techniques and quasi-random sequences in pricing high-dimensional derivatives.</p>
+          <div class="research-tags">
+            <span>#MonteCarloMCQMC2026</span>
+            <span>#VarianceReduction</span>
+            <span>#QuasiRandomSequences</span>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Volatility Surface Dynamics and Calibration</h3>
+            <div class="research-meta">
+              <span class="research-status">In Progress</span>
+              <span class="research-date">2025-2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Investigating stability and predictability of implied volatility surfaces across market regimes using machine learning approaches.</p>
+          <div class="research-tags">
+            <span>#VolatilityModeling</span>
+            <span>#MachineLearning</span>
+            <span>#DerivativesPricing</span>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Pairs Trading: Statistical Foundations</h3>
+            <div class="research-meta">
+              <span class="research-status">Completed</span>
+              <span class="research-date">2025</span>
+            </div>
+          </div>
+          <p class="research-desc">Mathematical formulation of cointegration tests and mean reversion detection for algorithmic pairs trading strategies.</p>
+          <div class="research-tags">
+            <span>#Cointegration</span>
+            <span>#TimeSeries</span>
+            <span>#AlgorithmicTrading</span>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Cross-Asset Correlation Networks</h3>
+            <div class="research-meta">
+              <span class="research-status">In Progress</span>
+              <span class="research-date">2025-2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Network analysis of asset correlations and their dynamics during different market regimes using graph theory methods.</p>
+          <div class="research-tags">
+            <span>#NetworkAnalysis</span>
+            <span>#GraphTheory</span>
+            <span>#PortfolioTheory</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <button class="back-btn" onclick="closeSection('research')">← Back</button>
 </div>
 
