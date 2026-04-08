@@ -197,14 +197,14 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 .card {
   position: absolute;
-  width: clamp(180px, 16vw, 280px);
+  width: clamp(200px, 18vw, 310px);
   background: rgba(28,29,41,0.80);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: clamp(16px, 1.8vw, 28px);
-  padding-bottom: clamp(20px, 2.2vw, 32px);
+  padding: clamp(18px, 2vw, 32px);
+  padding-bottom: clamp(24px, 2.5vw, 38px);
   cursor: none;
   pointer-events: all;
   transition: border-color 0.28s,
@@ -253,21 +253,21 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 .card-research:hover { transform: translateY(calc(-50% + 10px)) translateX(10px); }
 
 .card-index {
-  font-size: clamp(9px, 0.8vw, 11px);
+  font-size: clamp(10px, 0.9vw, 12px);
   letter-spacing: 0.2em;
   color: var(--accent);
-  margin-bottom: clamp(10px, 1.2vw, 18px);
+  margin-bottom: clamp(12px, 1.4vw, 20px);
   opacity: 0.65;
 }
 .card-title {
   font-family: 'DM Serif Display', serif;
-  font-size: clamp(16px, 1.6vw, 24px);
+  font-size: clamp(18px, 1.9vw, 28px);
   color: var(--text);
   line-height: 1.2;
-  margin-bottom: clamp(8px, 0.9vw, 14px);
+  margin-bottom: clamp(10px, 1vw, 16px);
 }
 .card-desc {
-  font-size: clamp(10px, 0.75vw, 12px);
+  font-size: clamp(11px, 0.85vw, 13px);
   color: var(--text-dim);
   line-height: 1.8;
   letter-spacing: 0.02em;
