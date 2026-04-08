@@ -99,7 +99,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 /* ── Terminal ── */
 #terminal {
-  width: min(680px, 92vw);
+  width: min(820px, 92vw);
   background: #0d0e13;
   border: 1px solid rgba(198,97,63,0.25);
   border-radius: 12px;
@@ -143,7 +143,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 .caret {
   display: inline-block;
   width: 8px; height: 14px;
-  background: var(--accent);
+  background: white;
   vertical-align: middle;
   margin-left: 2px;
   animation: blink 1s step-end infinite;
@@ -758,7 +758,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 </div>
 
 <!-- Connector lines SVG -->
-<svg id="connector-svg" style="opacity:0;transition:opacity 1s ease 1s;"></svg>
+<svg id="connector-svg" style="opacity:0;transition:opacity 1s ease 1s;pointer-events:none;"></svg>
 
 <!-- Main UI -->
 <div id="ui-layer">
@@ -1056,15 +1056,15 @@ window.addEventListener('scroll', updateConnectorVisibility, { passive: true });
 /* ── Terminal typewriter ── */
 const lines = [
   { text: '$ claude --init portfolio', cls: 'cmd', delay: 0 },
-  { text: '> Initializing session...', cls: 'out', delay: 400 },
-  { text: '> Loading subject: Xander Robbins', cls: 'out', delay: 800 },
-  { text: '> Degrees: Mathematics + Economics + Computer Science', cls: 'out', delay: 1200 },
-  { text: '', cls: 'dim', delay: 2000 },
-  { text: '$ ls ./projects', cls: 'cmd', delay: 2400 },
-  { text: '  pairs_trading/   vol_surface/   monte_carlo_pricer/', cls: 'out', delay: 3000 },
-  { text: '', cls: 'dim', delay: 3200 },
-  { text: '$ ./launch --site', cls: 'cmd', delay: 3300 },
-  { text: '> Rendering portfolio...', cls: 'highlight', delay: 3600 },
+  { text: '> Initializing session...', cls: 'out', delay: 160 },
+  { text: '> Loading subject: Xander Robbins', cls: 'out', delay: 320 },
+  { text: '> Degrees: Mathematics + Economics + Computer Science', cls: 'out', delay: 480 },
+  { text: '', cls: 'dim', delay: 790 },
+  { text: '$ ls ./projects', cls: 'cmd', delay: 950 },
+  { text: '  pairs_trading/   vol_surface/   monte_carlo_pricer/', cls: 'out', delay: 1180 },
+  { text: '', cls: 'dim', delay: 1260 },
+  { text: '$ ./launch --site', cls: 'cmd', delay: 1300 },
+  { text: '> Rendering portfolio...', cls: 'highlight', delay: 1420 },
 ];
 
 const body = document.getElementById('term-body');
@@ -1094,7 +1094,7 @@ setTimeout(() => {
   document.getElementById('ui-layer').classList.add('visible');
   document.getElementById('connector-svg').style.opacity = '1';
   startCanvas();
-}, 5200);
+}, 2100);
 
 /* ── 3D Sphere node network ── */
 function startCanvas() {
@@ -1111,12 +1111,17 @@ function startCanvas() {
   const MOUSE_PULL = 38;
 
   let mouseX = -9999, mouseY = -9999;
-  let smoothMX = 0, smoothMY = 0, mouseReady = false;
+  let smoothMX = -9999, smoothMY = -9999, mouseReady = false;
+
+  // Get card elements
+  const cards = [
+    { el: document.querySelector('.card-trading'), name: 'trading' },
+    { el: document.querySelector('.card-awards'), name: 'awards' },
+    { el: document.querySelector('.card-research'), name: 'research' }
+  ];
 
   document.addEventListener('mousemove', e => {
     if (!mouseReady) {
-      smoothMX = e.clientX;
-      smoothMY = e.clientY;
       mouseReady = true;
     }
     mouseX = e.clientX;
@@ -1155,6 +1160,9 @@ function startCanvas() {
     cy = H / 2;
 
     R = Math.min(W, H) * 0.22;
+
+    if (smoothMX === -9999) smoothMX = W * 0.15;
+    if (smoothMY === -9999) smoothMY = H * 0.15;
 
     buildNodes();
   }
@@ -1201,8 +1209,8 @@ function startCanvas() {
 
     rotY += 0.0016;
 
-    const targetMX = mouseReady ? mouseX : cx;
-    const targetMY = mouseReady ? mouseY : cy;
+    const targetMX = mouseReady ? mouseX : W * 0.15;
+    const targetMY = mouseReady ? mouseY : H * 0.15;
 
     smoothMX += (targetMX - smoothMX) * 0.055;
     smoothMY += (targetMY - smoothMY) * 0.055;
@@ -1225,7 +1233,7 @@ function startCanvas() {
       let sx = p.sx;
       let sy = p.sy;
 
-      if (mdist < MOUSE_R && mdist > 1) {
+      if (mdist < MOUSE_R && mdist > 1 && p.z2 < R * 0.08) {
 
         const force = (1 - mdist / MOUSE_R) * MOUSE_PULL;
 
@@ -1316,6 +1324,83 @@ function startCanvas() {
       ctx.arc(n.sx,n.sy,size,0,Math.PI*2);
       ctx.fillStyle = `rgba(${AC},${alpha})`;
       ctx.fill();
+    });
+
+    // Draw back grid lines
+    ctx.lineWidth = 0.8;
+    for (let li=0; li<N_LAT; li++) {
+      for (let ji=0; ji<N_LON; ji++) {
+        const a = grid[li][ji];
+        const b = grid[li][(ji+1)%N_LON];
+        if (!a || !b) continue;
+        if (a.z2 <= CULL || b.z2 <= CULL) continue;
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.5;
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
+      }
+    }
+    for (let ji=0; ji<N_LON; ji++) {
+      for (let li=0; li<N_LAT-1; li++) {
+        const a = grid[li][ji];
+        const b = grid[li+1][ji];
+        if (!a || !b) continue;
+        if (a.z2 <= CULL || b.z2 <= CULL) continue;
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.45;
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
+      }
+    }
+
+    // Draw back nodes as light outlines
+    const backNodes = projected.filter(n => n.z2 >= CULL + R * 0.15);
+    ctx.lineWidth = 1.2;
+    backNodes.forEach(n => {
+      const size = 1;
+      ctx.beginPath();
+      ctx.arc(n.sx,n.sy,size,0,Math.PI*2);
+      ctx.strokeStyle = `rgba(${AC},0.25)`;
+      ctx.stroke();
+    });
+
+    // Draw connector lines from cards to closest nodes
+    svg.innerHTML = '';
+    cards.forEach(card => {
+      if (!card.el) return;
+      const rect = card.el.getBoundingClientRect();
+      const cardX = rect.left + rect.width / 2;
+      const cardY = rect.top + rect.height / 2;
+
+      // Find closest visible node
+      let closestNode = null;
+      let closestDist = Infinity;
+
+      projected.forEach(n => {
+        if (n.z2 > CULL) return; // Skip back-facing nodes
+        const dx = n.sx - cardX;
+        const dy = n.sy - cardY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestNode = n;
+        }
+      });
+
+      if (closestNode) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cardX);
+        line.setAttribute('y1', cardY);
+        line.setAttribute('x2', closestNode.sx);
+        line.setAttribute('y2', closestNode.sy);
+        line.setAttribute('stroke', `rgba(${AC},0.35)`);
+        line.setAttribute('stroke-width', '1');
+        svg.appendChild(line);
+      }
     });
 
     t++;
