@@ -1331,6 +1331,12 @@ function startCanvas() {
   window.addEventListener('resize', resize);
   draw();
 }
-</script>
 
-/* ── Secti
+/* ── Sections ── */
+function openSection(name) {
+  document.getElementById('page-' + name).classList.add('open');
+}
+function closeSection(name) {
+  document.getElementById('page-' + name).classList.remove('open');
+}
+</script>
