@@ -1101,221 +1101,221 @@ function startCanvas() {
   const canvas = document.getElementById('c');
   const ctx = canvas.getContext('2d');
   const svg = document.getElementById('connector-svg');
+
   let W, H, cx, cy, R;
 
-  const AC = [230, 115, 60];
+  const AC = [198, 97, 63];
   const BG = '#282a3a';
+
   const MOUSE_R = 160;
-  const MOUSE_PULL = 50;
+  const MOUSE_PULL = 38;
 
   let mouseX = -9999, mouseY = -9999;
   let smoothMX = 0, smoothMY = 0, mouseReady = false;
+
   document.addEventListener('mousemove', e => {
-    if (!mouseReady) { smoothMX = e.clientX; smoothMY = e.clientY; mouseReady = true; }
-    mouseX = e.clientX; mouseY = e.clientY;
+    if (!mouseReady) {
+      smoothMX = e.clientX;
+      smoothMY = e.clientY;
+      mouseReady = true;
+    }
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
-  // Uniform longitude count on every ring — this is the key to clean meridian lines
-  const N_LON = 10;   // longitudes (vertical lines)
-  const LATS = [-72, -48, -24, 0, 24, 48, 72]; // latitude bands, no poles
+  const N_LAT = 9;
+  const N_LON = 12;
 
   let nodes3D = [];
 
   function buildNodes() {
     nodes3D = [];
-    LATS.forEach((lat, li) => {
+    for (let li = 0; li < N_LAT; li++) {
+      const lat = -80 + (160 / (N_LAT - 1)) * li;
       const phi = (90 - lat) * Math.PI / 180;
+
       for (let j = 0; j < N_LON; j++) {
-        const theta0 = (j / N_LON) * Math.PI * 2; // NO offset — same longitude for all rings
-        nodes3D.push({ phi, theta0, latIdx: li, lonIdx: j });
+        const theta0 = (j / N_LON) * Math.PI * 2;
+
+        nodes3D.push({
+          phi,
+          theta0,
+          latIdx: li,
+          lonIdx: j
+        });
       }
-    });
+    }
   }
 
   function resize() {
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
-    cx = W / 2; cy = H / 2;
-    R = Math.min(W, H) * 0.2118;
+
+    cx = W / 2;
+    cy = H / 2;
+
+    R = Math.min(W, H) * 0.22;
+
     buildNodes();
   }
 
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const connLines = [0, 1, 2].map(() => {
-    const g = document.createElementNS(svgNS, 'g');
-    const glow = document.createElementNS(svgNS, 'path');
-    glow.setAttribute('fill', 'none');
-    glow.setAttribute('stroke', `rgb(${AC})`);
-    glow.setAttribute('stroke-width', '5');
-    glow.setAttribute('stroke-opacity', '0.06');
-    const line = document.createElementNS(svgNS, 'path');
-    line.setAttribute('fill', 'none');
-    line.setAttribute('stroke', `rgb(${AC})`);
-    line.setAttribute('stroke-width', '1');
-    const dot = document.createElementNS(svgNS, 'circle');
-    dot.setAttribute('r', '3');
-    dot.setAttribute('fill', `rgb(${AC})`);
-    g.appendChild(glow); g.appendChild(line); g.appendChild(dot);
-    svg.appendChild(g);
-    return { line, glow, dot };
-  });
-
-  function getCardAnchors() {
-    const heroRect = document.getElementById('hero').getBoundingClientRect();
-    const cards = Array.from(document.querySelectorAll('.card'));
-    return cards.map((card, i) => {
-      const r = card.getBoundingClientRect();
-      const mid_y = r.top + r.height / 2 - heroRect.top;
-      if (i === 0) {
-        return { x: r.right - heroRect.left, y: mid_y, side: 'left' };
-      } else {
-        return { x: r.left - heroRect.left, y: mid_y, side: 'right' };
-      }
-    });
-  }
-
-  let t = 0, rotY = 0;
-
   function projectNode(n, rotX, rotYTotal) {
-    const theta = n.theta0 + rotYTotal;
-    const sinPhi = Math.sin(n.phi), cosPhi = Math.cos(n.phi);
-    let x3 = R * sinPhi * Math.cos(theta);
-    let y3 = R * cosPhi;
-    let z3 = R * sinPhi * Math.sin(theta);
 
-    // Rotate X
-    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+    const theta = n.theta0 + rotYTotal;
+
+    const sinPhi = Math.sin(n.phi);
+    const cosPhi = Math.cos(n.phi);
+
+    const x3 = R * sinPhi * Math.cos(theta);
+    const y3 = R * cosPhi;
+    const z3 = R * sinPhi * Math.sin(theta);
+
+    const cosX = Math.cos(rotX);
+    const sinX = Math.sin(rotX);
+
     const y2 = y3 * cosX - z3 * sinX;
     const z2 = y3 * sinX + z3 * cosX;
 
-    // Perspective
-    const fov = 3.2;
+    const fov = 4.5;
     const sc = fov / (fov + z2 / R);
+
+    const depthNorm = (-z2 / R + 1) / 2;
+
     return {
       sx: cx + x3 * sc,
       sy: cy + y2 * sc,
-      depth: z2,
-      depthNorm: (z2 / R + 1) / 2,
-      x3, y3: y2, z3: z2
+      z2,
+      depthNorm
     };
   }
 
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, W, H);
+  let rotY = 0;
+  let t = 0;
 
-    rotY += 0.0014;
-    // Smoothly interpolate toward real mouse — eliminates snap on first move
+  function draw() {
+
+    ctx.clearRect(0,0,W,H);
+
+    ctx.fillStyle = BG;
+    ctx.fillRect(0,0,W,H);
+
+    rotY += 0.0016;
+
     const targetMX = mouseReady ? mouseX : cx;
     const targetMY = mouseReady ? mouseY : cy;
-    smoothMX += (targetMX - smoothMX) * 0.06;
-    smoothMY += (targetMY - smoothMY) * 0.06;
-    const mOffX = (smoothMX - cx) / (W || 1);
-    const mOffY = (smoothMY - cy) / (H || 1);
-    const rotX = Math.max(-0.12, Math.min(0.12, 0.22 + mOffY * 0.22));
-    const rotYTotal = rotY + mOffX * 0.22;
 
-    // Project all nodes
+    smoothMX += (targetMX - smoothMX) * 0.055;
+    smoothMY += (targetMY - smoothMY) * 0.055;
+
+    const mOffX = (smoothMX - cx) / (W * 0.5);
+    const mOffY = (smoothMY - cy) / (H * 0.5);
+
+    const rotX = mOffY * 0.38;
+    const rotYTotal = rotY + mOffX * 0.32;
+
     const projected = nodes3D.map(n => {
+
       const p = projectNode(n, rotX, rotYTotal);
 
-      // Mouse pull
-      const mdx = p.sx - smoothMX, mdy = p.sy - smoothMY;
-      const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-      let sx = p.sx, sy = p.sy;
+      const mdx = p.sx - smoothMX;
+      const mdy = p.sy - smoothMY;
+
+      const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+
+      let sx = p.sx;
+      let sy = p.sy;
+
       if (mdist < MOUSE_R && mdist > 1) {
+
         const force = (1 - mdist / MOUSE_R) * MOUSE_PULL;
-        sx += (-mdx / mdist) * force;
-        sy += (-mdy / mdist) * force;
+
+        sx += (-mdx/mdist) * force;
+        sy += (-mdy/mdist) * force;
       }
-      return { ...n, sx, sy, depth: p.depth, depthNorm: p.depthNorm };
+
+      return {
+        ...n,
+        sx,
+        sy,
+        z2: p.z2,
+        depthNorm: p.depthNorm
+      };
     });
 
-    // Lookup: [latIdx][lonIdx] → projected node
-    const grid = Array.from({ length: LATS.length }, (_, li) =>
-      Array.from({ length: N_LON }, (__, ji) =>
-        projected.find(n => n.latIdx === li && n.lonIdx === ji)
+    const grid = Array.from({ length:N_LAT }, (_,li) =>
+      Array.from({ length:N_LON }, (_,ji) =>
+        projected.find(n => n.latIdx===li && n.lonIdx===ji)
       )
     );
 
+    const CULL = R * 0.08;
+
     ctx.lineWidth = 0.8;
 
-    // Latitude edges (horizontal rings)
-    for (let li = 0; li < LATS.length; li++) {
-      for (let ji = 0; ji < N_LON; ji++) {
+    for (let li=0; li<N_LAT; li++) {
+
+      for (let ji=0; ji<N_LON; ji++) {
+
         const a = grid[li][ji];
-        const b = grid[li][(ji + 1) % N_LON];
+        const b = grid[li][(ji+1)%N_LON];
+
         if (!a || !b) continue;
-        const alpha = ((a.depthNorm + b.depthNorm) / 2) * 0.55;
-        ctx.strokeStyle = `rgba(${AC},${alpha.toFixed(2)})`;
-        ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy); ctx.stroke();
+        if (a.z2 > CULL && b.z2 > CULL) continue;
+
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.75;
+
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
       }
     }
 
-    // Meridian edges (vertical lines) — same lonIdx, adjacent latIdx
-    for (let ji = 0; ji < N_LON; ji++) {
-      for (let li = 0; li < LATS.length - 1; li++) {
+    for (let ji=0; ji<N_LON; ji++) {
+
+      for (let li=0; li<N_LAT-1; li++) {
+
         const a = grid[li][ji];
-        const b = grid[li + 1][ji];
+        const b = grid[li+1][ji];
+
         if (!a || !b) continue;
-        const alpha = ((a.depthNorm + b.depthNorm) / 2) * 0.42;
-        ctx.strokeStyle = `rgba(${AC},${alpha.toFixed(2)})`;
-        ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy); ctx.stroke();
+        if (a.z2 > CULL && b.z2 > CULL) continue;
+
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.6;
+
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
       }
     }
 
-    // Nodes — back to front
-    projected.sort((a, b) => a.depth - b.depth);
-    projected.forEach(n => {
-      const mdx = n.sx - smoothMX, mdy = n.sy - smoothMY;
-      const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-      const prox = mdist < MOUSE_R ? (1 - mdist / MOUSE_R) : 0;
+    const frontNodes = projected
+      .filter(n => n.z2 < CULL + R * 0.15)
+      .sort((a,b)=>b.z2-a.z2);
 
-      const size = 1.4 + n.depthNorm * 1.6 + prox * 2.8;
-      const alpha = Math.min(1, 0.45 + n.depthNorm * 0.55 + prox * 0.3);
+    frontNodes.forEach(n => {
 
-      // Tight halo
-      const hR = size * 2.8;
-      const halo = ctx.createRadialGradient(n.sx, n.sy, size * 0.5, n.sx, n.sy, hR);
-      halo.addColorStop(0, `rgba(${AC},${(alpha * 0.22).toFixed(2)})`);
-      halo.addColorStop(1, `rgba(${AC},0)`);
-      ctx.beginPath(); ctx.arc(n.sx, n.sy, hR, 0, Math.PI * 2);
-      ctx.fillStyle = halo; ctx.fill();
+      const mdx = n.sx - smoothMX;
+      const mdy = n.sy - smoothMY;
 
-      // Solid dot
-      ctx.beginPath(); ctx.arc(n.sx, n.sy, size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${AC},${alpha.toFixed(2)})`;
+      const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+
+      const prox = mdist < MOUSE_R ? (1-mdist/MOUSE_R) : 0;
+
+      const dn = Math.max(0,Math.min(1,n.depthNorm));
+
+      const size  = 1.2 + dn*2.2 + prox*2.5;
+      const alpha = Math.min(1,0.35 + dn*0.65 + prox*0.2);
+
+      ctx.beginPath();
+      ctx.arc(n.sx,n.sy,size,0,Math.PI*2);
+      ctx.fillStyle = `rgba(${AC},${alpha})`;
       ctx.fill();
-    });
-
-    // Card connectors — anchor from sphere edge toward each card
-    const cardAnchors = getCardAnchors();
-    cardAnchors.forEach((ct, i) => {
-      if (!connLines[i]) return;
-      const sideNodes = projected.filter(n =>
-        n.depthNorm > 0.35 &&
-        (ct.side === 'left' ? n.sx < cx : n.sx > cx)
-      );
-      if (!sideNodes.length) return;
-      let best = null, bestD = Infinity;
-      sideNodes.forEach(n => {
-        const dx = n.sx - ct.x, dy = n.sy - ct.y;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        if (d < bestD) { bestD = d; best = n; }
-      });
-      if (!best) return;
-      const { line, glow, dot } = connLines[i];
-      const pulse = 0.35 + Math.sin(t * 0.028 + i * 2.1) * 0.12;
-      const cpx = best.sx + (ct.x - best.sx) * 0.5;
-      const cpy = best.sy + (ct.y - best.sy) * 0.3;
-      const d = `M ${best.sx.toFixed(1)} ${best.sy.toFixed(1)} Q ${cpx.toFixed(1)} ${cpy.toFixed(1)} ${ct.x.toFixed(1)} ${ct.y.toFixed(1)}`;
-      line.setAttribute('d', d);
-      line.setAttribute('stroke-opacity', pulse.toFixed(2));
-      glow.setAttribute('d', d);
-      dot.setAttribute('cx', best.sx.toFixed(1));
-      dot.setAttribute('cy', best.sy.toFixed(1));
-      dot.setAttribute('fill-opacity', Math.min(1, pulse + 0.3).toFixed(2));
     });
 
     t++;
