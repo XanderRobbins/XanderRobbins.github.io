@@ -197,20 +197,20 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 .card {
   position: absolute;
-  width: 210px;
+  width: clamp(180px, 16vw, 280px);
   background: rgba(28,29,41,0.80);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 24px 24px 28px;
+  padding: clamp(16px, 1.8vw, 28px);
+  padding-bottom: clamp(20px, 2.2vw, 32px);
   cursor: none;
   pointer-events: all;
   transition: border-color 0.28s,
               background 0.28s,
               box-shadow 0.28s,
               transform 0.38s cubic-bezier(0.22,1,0.36,1);
-  position: absolute;
 }
 .card::before {
   content: '';
@@ -230,7 +230,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 /* Left card — Trading — hovers left */
 .card-trading {
-  left: 52px;
+  left: clamp(24px, 3.5vw, 64px);
   top: 50%;
   transform: translateY(-50%);
 }
@@ -238,7 +238,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 /* Right top — Awards — hovers right+up */
 .card-awards {
-  right: 52px;
+  right: clamp(24px, 3.5vw, 64px);
   top: 28%;
   transform: translateY(-50%);
 }
@@ -246,35 +246,36 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 /* Right bottom — Research — hovers right+down */
 .card-research {
-  right: 82px;
+  right: clamp(54px, 6vw, 94px);
   top: 74%;
   transform: translateY(-50%);
 }
 .card-research:hover { transform: translateY(calc(-50% + 10px)) translateX(10px); }
 
 .card-index {
-  font-size: 10px;
+  font-size: clamp(9px, 0.8vw, 11px);
   letter-spacing: 0.2em;
   color: var(--accent);
-  margin-bottom: 16px;
+  margin-bottom: clamp(10px, 1.2vw, 18px);
   opacity: 0.65;
 }
 .card-title {
   font-family: 'DM Serif Display', serif;
-  font-size: 20px;
+  font-size: clamp(16px, 1.6vw, 24px);
   color: var(--text);
   line-height: 1.2;
-  margin-bottom: 12px;
+  margin-bottom: clamp(8px, 0.9vw, 14px);
 }
 .card-desc {
-  font-size: 11px;
+  font-size: clamp(10px, 0.75vw, 12px);
   color: var(--text-dim);
   line-height: 1.8;
   letter-spacing: 0.02em;
 }
 .card-arrow {
   position: absolute;
-  bottom: 20px; right: 20px;
+  bottom: clamp(14px, 1.4vw, 22px);
+  right: clamp(14px, 1.4vw, 22px);
   font-size: 16px;
   color: var(--accent);
   opacity: 0;
@@ -282,6 +283,40 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   transition: opacity 0.25s, transform 0.25s;
 }
 .card:hover .card-arrow { opacity: 1; transform: translate(0,0); }
+
+/* ── Mobile: stack at bottom ── */
+@media (max-width: 768px) {
+  .cards-container {
+    position: absolute;
+    inset: auto;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+  }
+  .card {
+    position: relative;
+    width: auto;
+    flex: 1;
+    max-width: 160px;
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+    padding: 16px 14px 22px;
+    top: auto; left: auto; right: auto;
+    transform: none !important;
+    inset: auto;
+  }
+  .card-trading, .card-awards, .card-research {
+    position: relative;
+    top: auto; left: auto; right: auto;
+    transform: none;
+  }
+  .card:hover { transform: translateY(-10px) !important; }
+  .card-desc { display: none; }
+  .card-arrow { display: none; }
+}
 
 /* ── Scanline overlay ── */
 .scanlines {
