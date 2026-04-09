@@ -1,44 +1,1458 @@
-<h1 align="center"><b>Xander Robbins</b></h1>
-<p align="center">
-  <a href="https://git.io/typing-svg">
-    <img src="https://readme-typing-svg.demolab.com/?lines=Math+%7C+CS+%7C+Econ+@+University+of+Florida;Quantitative+Researcher+%26+Developer;Python+%2B+C%2B%2B+%7C+Finance+%2B+Algorithms;Exploring+combinatorics+%26+number+theory;Always+learning%2C+always+building&font=Fira%20Code&center=true&width=500&height=50&color=00ffff&vCenter=true&pause=1000&size=20" /></a>
-</p>
----
-## About Me
-🎓 **University of Florida** • Math, Computer Science, Economics (Class of 2027)  
-📊 **Quantitative Researcher** at AlgoGators hedge fund  
-🧮 Passionate about **algorithmic trading**, **mathematical research**, and **data science**  
-💻 Building with **Python** and **C++** daily
----
-## Tech Stack
-**Languages:**  
-![Python](https://img.shields.io/badge/-Python-3776AB?style=flat&logo=python&logoColor=white)
-![C++](https://img.shields.io/badge/-C++-00599C?style=flat&logo=cplusplus&logoColor=white)
-![SQL](https://img.shields.io/badge/-SQL-4479A1?style=flat&logo=postgresql&logoColor=white)
-**Tools & Libraries:**  
-![Pandas](https://img.shields.io/badge/-Pandas-150458?style=flat&logo=pandas&logoColor=white)
-![NumPy](https://img.shields.io/badge/-NumPy-013243?style=flat&logo=numpy&logoColor=white)
-![Jupyter](https://img.shields.io/badge/-Jupyter-F37626?style=flat&logo=jupyter&logoColor=white)
-![Git](https://img.shields.io/badge/-Git-F05032?style=flat&logo=git&logoColor=white)
-![VS Code](https://img.shields.io/badge/-VS%20Code-007ACC?style=flat&logo=visualstudiocode&logoColor=white)
-![AWS](https://img.shields.io/badge/-AWS-232F3E?style=flat&logo=amazonaws&logoColor=white)
----
-## Current Focus
-- 📈 **Quantitative Finance**: Developing trading algorithms and financial models
-- 🧮 **Math Research**: Combinatorics, number theory, Fibonacci sequences
-- 💻 **Software Engineering**: Data structures, algorithms, optimization
-- 📊 **Statistics**: Statistical methods, probability theory, data analysis
----
-## Connect With Me
-<p align="center">
-  <a href="https://www.linkedin.com/in/xander-robbins">
-    <img src="https://img.shields.io/badge/-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xander — Quant Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --accent-glow: rgba(198,97,63,0.35);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  width: 100%;
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  cursor: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* ── Hero section — full viewport ── */
+#hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Custom cursor ── */
+#cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: #8b4620;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 12px rgba(139,70,32,0.6);
+}
+#cursor-ring {
+  position: fixed;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(139,70,32,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, opacity 0.2s;
+}
+body.hovering #cursor { width: 6px; height: 6px; }
+body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--accent); }
+
+/* ── Layers ── */
+#terminal-layer {
+  position: absolute; inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d0e13;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#terminal-layer.hidden { opacity: 0; visibility: hidden; }
+
+#canvas-layer {
+  position: absolute; inset: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1.2s ease 0.2s;
+}
+#canvas-layer.visible { opacity: 1; }
+
+#ui-layer {
+  position: absolute; inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.9s ease 0.6s;
+}
+#ui-layer.visible { opacity: 1; pointer-events: all; }
+
+/* ── Terminal ── */
+#terminal {
+  width: min(820px, 92vw);
+  background: #0d0e13;
+  border: 1px solid rgba(198,97,63,0.25);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(198,97,63,0.08);
+}
+.term-titlebar {
+  background: #161821;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(198,97,63,0.1);
+}
+.term-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.term-dot.r { background: #ff5f57; }
+.term-dot.y { background: #febc2e; }
+.term-dot.g { background: #28c840; }
+.term-title {
+  margin-left: auto; margin-right: auto;
+  font-size: 14px;
+  color: rgba(232,221,212,0.3);
+  letter-spacing: 0.08em;
+  transform: translateX(-12px);
+}
+.term-body {
+  padding: 24px 28px 28px;
+  min-height: 280px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: rgba(232,221,212,0.85);
+}
+.term-line { display: block; }
+.term-line.cmd { color: var(--accent); }
+.term-line.out { color: rgba(232,221,212,0.6); }
+.term-line.highlight { color: var(--text); font-weight: 500; }
+.term-line.dim { color: rgba(232,221,212,0.3); }
+.caret {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: white;
+  vertical-align: middle;
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── Canvas ── */
+#c { width: 100%; height: 100%; display: block; }
+
+/* ── Connector SVG overlay ── */
+#connector-svg {
+  position: absolute; inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  width: 100%; height: 100%;
+  transition: opacity 0.4s ease;
+}
+
+/* ── UI overlay ── */
+.header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  padding: 36px 52px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.name-block {}
+.name-main {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(38px, 5vw, 64px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--text);
+}
+.name-sub {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+.status-block {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  line-height: 2;
+}
+.status-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #3ddc84;
+  margin-right: 6px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+/* ── Cards ── */
+.cards-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.card {
+  position: absolute;
+  width: clamp(200px, 18vw, 310px);
+  background: rgba(28,29,41,0.80);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: clamp(18px, 2vw, 32px);
+  padding-bottom: clamp(24px, 2.5vw, 38px);
+  cursor: none;
+  pointer-events: all;
+  transition: border-color 0.28s,
+              background 0.28s,
+              box-shadow 0.28s,
+              transform 0.38s cubic-bezier(0.22,1,0.36,1);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(198,97,63,0.06) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.card:hover::before { opacity: 1; }
+.card:hover {
+  border-color: rgba(198,97,63,0.6);
+  background: rgba(32,33,47,0.92);
+  box-shadow: 0 0 40px rgba(198,97,63,0.1), 0 0 0 1px rgba(198,97,63,0.08) inset;
+}
+
+/* Left card — Trading — hovers left */
+.card-trading {
+  left: clamp(24px, 3.5vw, 64px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+.card-trading:hover { transform: translateY(-50%) translateX(-10px); }
+
+/* Right top — Awards — hovers right+up */
+.card-awards {
+  right: clamp(24px, 3.5vw, 64px);
+  top: 28%;
+  transform: translateY(-50%);
+}
+.card-awards:hover { transform: translateY(calc(-50% - 10px)) translateX(10px); }
+
+/* Right bottom — Research — hovers right+down */
+.card-research {
+  right: clamp(54px, 6vw, 94px);
+  top: 74%;
+  transform: translateY(-50%);
+}
+.card-research:hover { transform: translateY(calc(-50% + 10px)) translateX(10px); }
+
+.card-index {
+  font-size: clamp(10px, 0.9vw, 12px);
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: clamp(12px, 1.4vw, 20px);
+  opacity: 0.65;
+}
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(18px, 1.9vw, 28px);
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: clamp(10px, 1vw, 16px);
+}
+.card-desc {
+  font-size: clamp(11px, 0.85vw, 13px);
+  color: var(--text-dim);
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+}
+.card-arrow {
+  position: absolute;
+  bottom: clamp(14px, 1.4vw, 22px);
+  right: clamp(14px, 1.4vw, 22px);
+  font-size: 16px;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.card:hover .card-arrow { opacity: 1; transform: translate(0,0); }
+
+/* ── Mobile: stack at bottom ── */
+@media (max-width: 768px) {
+  .cards-container {
+    position: absolute;
+    inset: auto;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+  }
+  .card {
+    position: relative;
+    width: auto;
+    flex: 1;
+    max-width: 160px;
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+    padding: 16px 14px 22px;
+    top: auto; left: auto; right: auto;
+    transform: none !important;
+    inset: auto;
+  }
+  .card-trading, .card-awards, .card-research {
+    position: relative;
+    top: auto; left: auto; right: auto;
+    transform: none;
+  }
+  .card:hover { transform: translateY(-10px) !important; }
+  .card-desc { display: none; }
+  .card-arrow { display: none; }
+}
+
+/* ── Scanline overlay ── */
+.scanlines {
+  position: fixed; inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* ── Bottom bar ── */
+.bottom-bar {
+  position: absolute;
+  bottom: 0; left: 52px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  padding-bottom: 18px;
+  display: flex;
+  gap: 32px;
+}
+.bottom-bar span { text-transform: uppercase; }
+
+/* ── Section pages ── */
+.section-page {
+  position: fixed; inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s, visibility 0.6s;
+  padding: 80px 40px;
+}
+.section-page.open { opacity: 1; visibility: visible; }
+.section-inner {
+  width: 100%;
+  max-width: 1000px;
+}
+.section-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+.section-page h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(48px,8vw,72px);
+  color: var(--text);
+  letter-spacing: -0.03em;
+  margin-bottom: 60px;
+  line-height: 1.1;
+}
+.section-content {
+  margin-bottom: 80px;
+}
+.section-page h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(18px, 2vw, 24px);
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.back-btn {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--card-border);
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: none;
+  transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace;
+}
+.back-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Trading Strategies ── */
+.strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+.strategy-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 32px;
+  transition: all 0.3s ease;
+}
+.strategy-card:hover {
+  border-color: var(--accent);
+  background: rgba(40,42,58,1);
+  transform: translateY(-4px);
+}
+.strategy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.strategy-type {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+  background: var(--accent-dim);
+  padding: 6px 12px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.strategy-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.strategy-meta {
+  display: flex;
+  gap: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(198,97,63,0.15);
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── Awards & Recognition ── */
+.awards-list {
+  width: 100%;
+}
+.award-item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 40px;
+  align-items: flex-start;
+  padding: 32px 0;
+}
+.award-year {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.award-body h3 {
+  margin-bottom: 8px;
+}
+.award-org {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+.award-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.award-divider {
+  height: 1px;
+  background: rgba(198,97,63,0.2);
+  width: 100%;
+  grid-column: 1/-1;
+}
+
+/* ── Research ── */
+.research-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+.research-item {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 32px;
+  transition: all 0.3s ease;
+}
+.research-item:hover {
+  border-color: var(--accent);
+  background: rgba(40,42,58,1);
+}
+.research-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.research-header h3 {
+  flex: 1;
+  margin-bottom: 0;
+}
+.research-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  white-space: nowrap;
+}
+.research-status {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  text-transform: uppercase;
+  background: var(--accent-dim);
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+.research-date {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.research-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.research-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.research-tags span {
+  font-size: 10px;
+  color: var(--accent);
+  opacity: 0.6;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 768px) {
+  .section-page { padding: 60px 24px; }
+  .section-inner { max-width: 100%; }
+  .award-item { grid-template-columns: 100px 1fr; gap: 24px; }
+  .section-page h1 { margin-bottom: 40px; }
+}
+/* ── Semi-circle scroll tab ── */
+.about-tab {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 80px;
+  background: rgba(28,29,41,0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--card-border);
+  border-bottom: none;
+  border-radius: 80px 80px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: none;
+  z-index: 20;
+  pointer-events: all;
+  transition: background 0.25s, border-color 0.25s, transform 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.about-tab:hover {
+  background: rgba(32,33,47,0.95);
+  border-color: rgba(198,97,63,0.55);
+  transform: translateX(-50%) translateY(-6px);
+}
+.about-tab-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.about-tab-arrow {
+  color: var(--accent);
+  font-size: 14px;
+  animation: bob 2s ease-in-out infinite;
+}
+@keyframes bob {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* ── About section ── */
+#about {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #1c1d29;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 52px;
+  box-sizing: border-box;
+}
+.about-inner {
+  max-width: 860px;
+  width: 100%;
+}
+.about-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0.8;
+}
+.about-heading {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 72px);
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 40px;
+}
+.about-heading em {
+  font-style: italic;
+  color: var(--accent);
+}
+.about-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px 60px;
+}
+.about-para {
+  font-size: clamp(13px, 1.1vw, 15px);
+  color: var(--text-dim);
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+}
+.about-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(198,97,63,0.15);
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 3vw, 48px);
+  color: var(--text);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.about-divider {
+  width: 1px;
+  background: rgba(198,97,63,0.12);
+  align-self: stretch;
+}
+
+/* scroll-in animation */
+.about-inner > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.about-inner.visible > * { opacity: 1; transform: translateY(0); }
+.about-inner.visible > *:nth-child(2) { transition-delay: 0.1s; }
+.about-inner.visible > *:nth-child(3) { transition-delay: 0.2s; }
+.about-inner.visible > *:nth-child(4) { transition-delay: 0.3s; }
+
+@media (max-width: 768px) {
+  .about-body { grid-template-columns: 1fr; gap: 24px; }
+  #about { padding: 80px 24px; }
+  .about-stats { flex-wrap: wrap; gap: 28px; }
+  .about-tab { width: 130px; height: 65px; }
+}
+
+.strategy-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(198,97,63,0.15);
+}
+.stag {
+  font-size: 10px;
+  color: var(--accent);
+  opacity: 0.7;
+  letter-spacing: 0.08em;
+  background: var(--accent-dim);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<div id="hero">
+
+<!-- Terminal intro -->
+<div id="terminal-layer">
+  <div id="terminal">
+    <div class="term-titlebar">
+      <div class="term-dot r"></div>
+      <div class="term-dot y"></div>
+      <div class="term-dot g"></div>
+      <span class="term-title">claude — xander@portfolio ~ </span>
+    </div>
+    <div class="term-body" id="term-body"></div>
+  </div>
+</div>
+
+<!-- Orbital canvas -->
+<div id="canvas-layer">
+  <canvas id="c"></canvas>
+</div>
+
+<!-- Connector lines SVG -->
+<svg id="connector-svg" style="opacity:0;transition:opacity 1s ease 1s;pointer-events:none;"></svg>
+
+<!-- Main UI -->
+<div id="ui-layer">
+  <div class="header">
+    <div class="name-block">
+      <div class="name-main">Xander Robbins</div>
+      <div class="name-sub">Quant Finance · UF · AlgoGators</div>
+    </div>
+    <div class="status-block">
+      <div><span class="status-dot"></span>Available Dec 2026</div>
+      <div>UF - Class of 2026</div>
+      <div style="margin-top:2px;color:rgba(198,97,63,0.7);font-size:13px">xanderrobbins10@gmail.com</div>
+    </div>
+  </div>
+
+  <div class="cards-container">
+    <div class="card card-trading" onclick="openSection('trading')">
+      <div class="card-index">01 ——</div>
+      <div class="card-title">Trading<br>Strategies</div>
+      <div class="card-desc">Pairs trading systems, volatility surfaces, arbitrage models built at AlgoGators.</div>
+      <div class="card-arrow">↗</div>
+    </div>
+
+    <div class="card card-awards" onclick="openSection('awards')">
+      <div class="card-index">02 ——</div>
+      <div class="card-title">Awards &amp;<br>Recognition</div>
+      <div class="card-desc">Hackathons, academic honors, and competitive achievements across math &amp; finance.</div>
+      <div class="card-arrow">↗</div>
+    </div>
+
+    <div class="card card-research" onclick="openSection('research')">
+      <div class="card-index">03 ——</div>
+      <div class="card-title">Research</div>
+      <div class="card-desc">Monte Carlo options pricing, variance reduction, ASVR algorithm — targeting MCQMC 2026.</div>
+      <div class="card-arrow">↗</div>
+    </div>
+  </div>
+
+  <!-- Semi-circle scroll tab -->
+  <a class="about-tab" href="#about">
+    <span class="about-tab-label">About Me</span>
+    <span class="about-tab-arrow">↓</span>
   </a>
-  <a href="mailto:robbins.a@ufl.edu">
-    <img src="https://img.shields.io/badge/-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" />
-  </a>
-</p>
----
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=XanderRobbins&color=blueviolet&style=flat-square&label=Profile+Views" alt="Profile Views" />
-</p>
+</div>
+
+</div><!-- end #hero -->
+
+<!-- About section -->
+<section id="about">
+  <div class="about-inner" id="about-inner">
+    <div class="about-eyebrow">00 — About</div>
+    <h2 class="about-heading">Quantitative mind,<br><em>built for markets.</em></h2>
+    <div class="about-body">
+      <p class="about-para">I'm a double major in Mathematics and Economics with a minor in Computer Science at the University of Florida, graduating December 2026 @ 19 years old. I've been on an accelerated timeline after exhausting the available upper-division coursework. My focus sits at the intersection of financial theory and computational methods.</p>
+      <p class="about-para">At AlgoGators — The only student-run quant fund in the US — I serve as Senior Macro Analyst, building production trading systems including a Universal Pairs Trading System and arbitrage-free volatility surfaces. I also teach as a Senior Lecturer at QuantED, where I lecture over Options Futures and Other Derivatives, I simultanously work for UF as head TA for Discrete Structures.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat">
+        <span class="stat-num">3.54</span>
+        <span class="stat-label">Upper-div GPA</span>
+      </div>
+      <div class="about-divider"></div>
+      <div class="stat">
+        <span class="stat-num">3.85</span>
+        <span class="stat-label">Econ GPA</span>
+      </div>
+      <div class="about-divider"></div>
+      <div class="stat">
+        <span class="stat-num">Dec '26</span>
+        <span class="stat-label">Graduating</span>
+      </div>
+      <div class="about-divider"></div>
+      <div class="stat">
+        <span class="stat-num">NYC</span>
+        <span class="stat-label">Target</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section pages -->
+<div class="section-page" id="page-trading">
+  <div class="section-inner">
+    <p class="section-eyebrow">Quantitative Finance</p>
+    <h1>Trading Strategies</h1>
+    <div class="section-content">
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Universal Pairs Trading System</h3>
+            <span class="strategy-type">Mean Reversion</span>
+          </div>
+          <p class="strategy-desc">Production cointegration-based pairs trading system built at AlgoGators. Uses Engle-Granger and Johansen cointegration tests to identify statistically significant pairs, with dynamic z-score entry/exit signals and Kelly criterion position sizing.</p>
+          <div class="strategy-tags">
+            <span class="stag">Cointegration</span>
+            <span class="stag">Z-Score Signals</span>
+            <span class="stag">Kelly Sizing</span>
+          </div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Arbitrage-Free Volatility Surface</h3>
+            <span class="strategy-type">Statistical Arbitrage</span>
+          </div>
+          <p class="strategy-desc">Constructs and calibrates arbitrage-free implied volatility surfaces from live options chains. Enforces butterfly and calendar spread no-arbitrage constraints with SVI parameterization for smooth surface interpolation.</p>
+          <div class="strategy-tags">
+            <span class="stag">SVI Parameterization</span>
+            <span class="stag">No-Arb Constraints</span>
+            <span class="stag">IV Term Structure</span>
+          </div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Macro Cross-Asset Analysis</h3>
+            <span class="strategy-type">Discretionary Macro</span>
+          </div>
+          <p class="strategy-desc">Systematic discretionary approach to cross-asset macro positioning. Analyzes yield curve dynamics, FX carry, commodity momentum, and equity factor exposures to generate directional macro views for the AlgoGators portfolio.</p>
+          <div class="strategy-tags">
+            <span class="stag">Yield Curve</span>
+            <span class="stag">FX Carry</span>
+            <span class="stag">Factor Exposure</span>
+          </div>
+        </div>
+        <div class="strategy-card">
+          <div class="strategy-header">
+            <h3>Monte Carlo Options Pricing (ASVR)</h3>
+            <span class="strategy-type">Computational Finance</span>
+          </div>
+          <p class="strategy-desc">Novel variance reduction methodology for Monte Carlo pricing of high-dimensional derivatives. Implements the ASVR (Adaptive Stratified Variance Reduction) algorithm with Sobol QMC sequences, achieving significant convergence improvement over standard MC baselines.</p>
+          <div class="strategy-tags">
+            <span class="stag">Quasi-Monte Carlo</span>
+            <span class="stag">ASVR Algorithm</span>
+            <span class="stag">Variance Reduction</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="back-btn" onclick="closeSection('trading')">← Back</button>
+</div>
+
+<div class="section-page" id="page-awards">
+  <div class="section-inner">
+    <p class="section-eyebrow">Recognition & Honors</p>
+    <h1>Awards</h1>
+    <div class="section-content">
+      <div class="awards-list">
+        <div class="award-item">
+          <div class="award-year">2024</div>
+          <div class="award-body">
+            <h3>VandyHacks XII — QuantQuest</h3>
+            <p class="award-org">VandyHacks — Vanderbilt University</p>
+            <p class="award-desc">Built QuantQuest, a Canvas LMS gamification platform integrating with the Canvas API to add XP, achievements, and progress tracking for students. Developed in TypeScript over 36 hours.</p>
+          </div>
+        </div>
+
+        <div class="award-divider"></div>
+
+        <div class="award-item">
+          <div class="award-year">2024</div>
+          <div class="award-body">
+            <h3>Senior Macro Analyst — AlgoGators</h3>
+            <p class="award-org">AlgoGators Investment Fund — University of Florida</p>
+            <p class="award-desc">Promoted to Senior Macro Analyst at AlgoGators, the only student-run quantitative investment fund in the US. Responsible for production trading systems and macro strategy research.</p>
+          </div>
+        </div>
+
+        <div class="award-divider"></div>
+
+        <div class="award-item">
+          <div class="award-year">2024</div>
+          <div class="award-body">
+            <h3>Senior Lecturer — Options, Futures & Other Derivatives</h3>
+            <p class="award-org">QuantED</p>
+            <p class="award-desc">Appointed Senior Lecturer at QuantED, teaching Options, Futures and Other Derivatives to students pursuing quantitative finance careers.</p>
+          </div>
+        </div>
+
+        <div class="award-divider"></div>
+
+        <div class="award-item">
+          <div class="award-year">2023</div>
+          <div class="award-body">
+            <h3>Head Teaching Assistant — Discrete Structures (COT 3100)</h3>
+            <p class="award-org">University of Florida — Department of Computer Science</p>
+            <p class="award-desc">Selected as head TA for COT 3100, responsible for leading recitation, developing course curriculum, and building interactive teaching tools used by enrolled students.</p>
+          </div>
+        </div>
+
+        <!-- TODO: confirm — add Dean's List semesters or other academic honors if applicable -->
+      </div>
+    </div>
+  </div>
+  <button class="back-btn" onclick="closeSection('awards')">← Back</button>
+</div>
+
+<div class="section-page" id="page-research">
+  <div class="section-inner">
+    <p class="section-eyebrow">Academic & Computational</p>
+    <h1>Research</h1>
+    <div class="section-content">
+      <div class="research-grid">
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Adaptive Stratified Variance Reduction for Monte Carlo Options Pricing</h3>
+            <div class="research-meta">
+              <span class="research-status">In Progress</span>
+              <span class="research-date">2025–2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Developing the ASVR algorithm for pricing high-dimensional financial derivatives via Monte Carlo simulation. The C++ library <code>lfmc</code> implements lock-free parallelism with Sobol QMC sequences, importance sampling calibration, and a Bayesian fusion estimator. Establishes novelty over Neufeld et al. (2014). Targeting submission to MCQMC 2026 or Journal of Computational Finance.</p>
+          <div class="research-tags">
+            <span>#ASVR</span>
+            <span>#QuasiMonteCarlo</span>
+            <span>#VarianceReduction</span>
+            <span>#MCQMC2026</span>
+            <span>#C++</span>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Arbitrage-Free Implied Volatility Surface Calibration</h3>
+            <div class="research-meta">
+              <span class="research-status">In Progress</span>
+              <span class="research-date">2025–2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Constructing and calibrating arbitrage-free implied volatility surfaces from live options chains at AlgoGators. Applies SVI parameterization with butterfly and calendar spread no-arbitrage enforcement across market regimes.</p>
+          <div class="research-tags">
+            <span>#VolatilitySurface</span>
+            <span>#SVI</span>
+            <span>#NoArbitrage</span>
+            <span>#DerivativesPricing</span>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Cointegration-Based Pairs Trading: Statistical Foundations & Production Implementation</h3>
+            <div class="research-meta">
+              <span class="research-status">Completed</span>
+              <span class="research-date">2024–2025</span>
+            </div>
+          </div>
+          <p class="research-desc">Mathematical formulation and production deployment of a Universal Pairs Trading System at AlgoGators. Covers Engle-Granger and Johansen cointegration theory, z-score signal generation, and Kelly criterion position sizing.</p>
+          <div class="research-tags">
+            <span>#Cointegration</span>
+            <span>#MeanReversion</span>
+            <span>#TimeSeries</span>
+            <span>#AlgorithmicTrading</span>
+          </div>
+        </div>
+        <div class="research-item">
+          <div class="research-header">
+            <h3>Cross-Asset Correlation Network Dynamics</h3>
+            <div class="research-meta">
+              <span class="research-status">In Progress</span>
+              <span class="research-date">2025–2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Modeling cross-asset correlation networks using graph-theoretic methods. Analyzing how correlation structures evolve across market regimes and their implications for portfolio construction and tail risk management.</p>
+          <div class="research-tags">
+            <span>#NetworkAnalysis</span>
+            <span>#GraphTheory</span>
+            <span>#PortfolioTheory</span>
+            <span>#MacroFinance</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="back-btn" onclick="closeSection('research')">← Back</button>
+</div>
+
+<script>
+/* ── Cursor ── */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = -100, my = -100, rx = -100, ry = -100;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('.card, .back-btn, button, .about-tab').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+/* ── About section scroll reveal ── */
+const aboutInner = document.getElementById('about-inner');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) aboutInner.classList.add('visible'); });
+}, { threshold: 0.15 });
+observer.observe(aboutInner);
+
+/* ── Hide connectors when scrolled off hero ── */
+const connSvg = document.getElementById('connector-svg');
+const hero = document.getElementById('hero');
+function updateConnectorVisibility() {
+  const scrolled = window.scrollY;
+  const heroH = hero.offsetHeight;
+  const pastHero = scrolled > heroH * 0.15;
+  connSvg.style.opacity = pastHero ? '0' : '1';
+  connSvg.style.pointerEvents = 'none';
+  document.getElementById('canvas-layer').style.opacity = pastHero ? '0' : '1';
+}
+window.addEventListener('scroll', updateConnectorVisibility, { passive: true });
+
+/* ── Terminal typewriter ── */
+const lines = [
+  { text: '$ claude --init portfolio', cls: 'cmd', delay: 0 },
+  { text: '> Initializing session...', cls: 'out', delay: 160 },
+  { text: '> Loading subject: Xander Robbins', cls: 'out', delay: 320 },
+  { text: '> Degrees: Mathematics + Economics + Computer Science', cls: 'out', delay: 480 },
+  { text: '', cls: 'dim', delay: 790 },
+  { text: '$ ls ./projects', cls: 'cmd', delay: 950 },
+  { text: '  pairs_trading/   vol_surface/   monte_carlo_pricer/', cls: 'out', delay: 1180 },
+  { text: '', cls: 'dim', delay: 1260 },
+  { text: '$ ./launch --site', cls: 'cmd', delay: 1300 },
+  { text: '> Rendering portfolio...', cls: 'highlight', delay: 1420 },
+];
+
+const body = document.getElementById('term-body');
+let caretEl = null;
+
+function addLine(line, idx) {
+  setTimeout(() => {
+    if (caretEl) caretEl.remove();
+    const span = document.createElement('span');
+    span.className = 'term-line ' + line.cls;
+    span.textContent = line.text;
+    if (idx === lines.length - 1) {
+      caretEl = document.createElement('span');
+      caretEl.className = 'caret';
+      span.appendChild(caretEl);
+    }
+    body.appendChild(span);
+  }, line.delay);
+}
+
+lines.forEach((l, i) => addLine(l, i));
+
+/* transition to main site */
+setTimeout(() => {
+  document.getElementById('terminal-layer').classList.add('hidden');
+  document.getElementById('canvas-layer').classList.add('visible');
+  document.getElementById('ui-layer').classList.add('visible');
+  document.getElementById('connector-svg').style.opacity = '1';
+  startCanvas();
+}, 2100);
+
+/* ── 3D Sphere node network ── */
+function startCanvas() {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const svg = document.getElementById('connector-svg');
+
+  let W, H, cx, cy, R;
+
+  const AC = [198, 97, 63];
+  const BG = '#282a3a';
+
+  const MOUSE_R = 160;
+  const MOUSE_PULL = 38;
+
+  let mouseX = -9999, mouseY = -9999;
+  let smoothMX = -9999, smoothMY = -9999, mouseReady = false;
+
+  // Get card elements
+  const cards = [
+    { el: document.querySelector('.card-trading'), name: 'trading' },
+    { el: document.querySelector('.card-awards'), name: 'awards' },
+    { el: document.querySelector('.card-research'), name: 'research' }
+  ];
+
+  document.addEventListener('mousemove', e => {
+    if (!mouseReady) {
+      mouseReady = true;
+    }
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  const N_LAT = 9;
+  const N_LON = 12;
+
+  let nodes3D = [];
+
+  function buildNodes() {
+    nodes3D = [];
+    for (let li = 0; li < N_LAT; li++) {
+      const lat = -80 + (160 / (N_LAT - 1)) * li;
+      const phi = (90 - lat) * Math.PI / 180;
+
+      for (let j = 0; j < N_LON; j++) {
+        const theta0 = (j / N_LON) * Math.PI * 2;
+
+        nodes3D.push({
+          phi,
+          theta0,
+          latIdx: li,
+          lonIdx: j
+        });
+      }
+    }
+  }
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+
+    cx = W / 2;
+    cy = H / 2;
+
+    R = Math.min(W, H) * 0.22;
+
+    if (smoothMX === -9999) smoothMX = W * 0.15;
+    if (smoothMY === -9999) smoothMY = H * 0.15;
+
+    buildNodes();
+  }
+
+  function projectNode(n, rotX, rotYTotal) {
+
+    const theta = n.theta0 + rotYTotal;
+
+    const sinPhi = Math.sin(n.phi);
+    const cosPhi = Math.cos(n.phi);
+
+    const x3 = R * sinPhi * Math.cos(theta);
+    const y3 = R * cosPhi;
+    const z3 = R * sinPhi * Math.sin(theta);
+
+    const cosX = Math.cos(rotX);
+    const sinX = Math.sin(rotX);
+
+    const y2 = y3 * cosX - z3 * sinX;
+    const z2 = y3 * sinX + z3 * cosX;
+
+    const fov = 4.5;
+    const sc = fov / (fov + z2 / R);
+
+    const depthNorm = (-z2 / R + 1) / 2;
+
+    return {
+      sx: cx + x3 * sc,
+      sy: cy + y2 * sc,
+      z2,
+      depthNorm
+    };
+  }
+
+  let rotY = 0;
+  let t = 0;
+
+  function draw() {
+
+    ctx.clearRect(0,0,W,H);
+
+    ctx.fillStyle = BG;
+    ctx.fillRect(0,0,W,H);
+
+    rotY += 0.0016;
+
+    const targetMX = mouseReady ? mouseX : W * 0.15;
+    const targetMY = mouseReady ? mouseY : H * 0.15;
+
+    smoothMX += (targetMX - smoothMX) * 0.055;
+    smoothMY += (targetMY - smoothMY) * 0.055;
+
+    const mOffX = (smoothMX - cx) / (W * 0.5);
+    const mOffY = (smoothMY - cy) / (H * 0.5);
+
+    const rotX = mOffY * 0.38;
+    const rotYTotal = rotY + mOffX * 0.32;
+
+    const projected = nodes3D.map(n => {
+
+      const p = projectNode(n, rotX, rotYTotal);
+
+      const mdx = p.sx - smoothMX;
+      const mdy = p.sy - smoothMY;
+
+      const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+
+      let sx = p.sx;
+      let sy = p.sy;
+
+      if (mdist < MOUSE_R && mdist > 1 && p.z2 < R * 0.08) {
+
+        const force = (1 - mdist / MOUSE_R) * MOUSE_PULL;
+
+        sx += (-mdx/mdist) * force;
+        sy += (-mdy/mdist) * force;
+      }
+
+      return {
+        ...n,
+        sx,
+        sy,
+        z2: p.z2,
+        depthNorm: p.depthNorm
+      };
+    });
+
+    const grid = Array.from({ length:N_LAT }, (_,li) =>
+      Array.from({ length:N_LON }, (_,ji) =>
+        projected.find(n => n.latIdx===li && n.lonIdx===ji)
+      )
+    );
+
+    const CULL = R * 0.08;
+
+    ctx.lineWidth = 0.8;
+
+    for (let li=0; li<N_LAT; li++) {
+
+      for (let ji=0; ji<N_LON; ji++) {
+
+        const a = grid[li][ji];
+        const b = grid[li][(ji+1)%N_LON];
+
+        if (!a || !b) continue;
+        if (a.z2 > CULL && b.z2 > CULL) continue;
+
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.75;
+
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
+      }
+    }
+
+    for (let ji=0; ji<N_LON; ji++) {
+
+      for (let li=0; li<N_LAT-1; li++) {
+
+        const a = grid[li][ji];
+        const b = grid[li+1][ji];
+
+        if (!a || !b) continue;
+        if (a.z2 > CULL && b.z2 > CULL) continue;
+
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.6;
+
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
+      }
+    }
+
+    const frontNodes = projected
+      .filter(n => n.z2 < CULL + R * 0.15)
+      .sort((a,b)=>b.z2-a.z2);
+
+    frontNodes.forEach(n => {
+
+      const mdx = n.sx - smoothMX;
+      const mdy = n.sy - smoothMY;
+
+      const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+
+      const prox = mdist < MOUSE_R ? (1-mdist/MOUSE_R) : 0;
+
+      const dn = Math.max(0,Math.min(1,n.depthNorm));
+
+      const size  = 1.2 + dn*2.2 + prox*2.5;
+      const alpha = Math.min(1,0.35 + dn*0.65 + prox*0.2);
+
+      ctx.beginPath();
+      ctx.arc(n.sx,n.sy,size,0,Math.PI*2);
+      ctx.fillStyle = `rgba(${AC},${alpha})`;
+      ctx.fill();
+    });
+
+    // Draw back grid lines
+    ctx.lineWidth = 0.8;
+    for (let li=0; li<N_LAT; li++) {
+      for (let ji=0; ji<N_LON; ji++) {
+        const a = grid[li][ji];
+        const b = grid[li][(ji+1)%N_LON];
+        if (!a || !b) continue;
+        if (a.z2 <= CULL || b.z2 <= CULL) continue;
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.5;
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
+      }
+    }
+    for (let ji=0; ji<N_LON; ji++) {
+      for (let li=0; li<N_LAT-1; li++) {
+        const a = grid[li][ji];
+        const b = grid[li+1][ji];
+        if (!a || !b) continue;
+        if (a.z2 <= CULL || b.z2 <= CULL) continue;
+        const alpha = ((a.depthNorm + b.depthNorm)/2) * 0.45;
+        ctx.strokeStyle = `rgba(${AC},${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(a.sx,a.sy);
+        ctx.lineTo(b.sx,b.sy);
+        ctx.stroke();
+      }
+    }
+
+    // Draw back nodes as light outlines
+    const backNodes = projected.filter(n => n.z2 >= CULL + R * 0.15);
+    ctx.lineWidth = 1.2;
+    backNodes.forEach(n => {
+      const size = 1;
+      ctx.beginPath();
+      ctx.arc(n.sx,n.sy,size,0,Math.PI*2);
+      ctx.strokeStyle = `rgba(${AC},0.25)`;
+      ctx.stroke();
+    });
+
+    // Draw connector lines from cards to closest nodes
+    svg.innerHTML = '';
+    cards.forEach(card => {
+      if (!card.el) return;
+      const rect = card.el.getBoundingClientRect();
+      const cardX = rect.left + rect.width / 2;
+      const cardY = rect.top + rect.height / 2;
+
+      // Find closest visible node
+      let closestNode = null;
+      let closestDist = Infinity;
+
+      projected.forEach(n => {
+        if (n.z2 > CULL) return; // Skip back-facing nodes
+        const dx = n.sx - cardX;
+        const dy = n.sy - cardY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestNode = n;
+        }
+      });
+
+      if (closestNode) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cardX);
+        line.setAttribute('y1', cardY);
+        line.setAttribute('x2', closestNode.sx);
+        line.setAttribute('y2', closestNode.sy);
+        line.setAttribute('stroke', `rgba(${AC},0.35)`);
+        line.setAttribute('stroke-width', '1');
+        svg.appendChild(line);
+      }
+    });
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+}
+
+/* ── Sections ── */
+function openSection(name) {
+  document.getElementById('page-' + name).classList.add('open');
+}
+function closeSection(name) {
+  document.getElementById('page-' + name).classList.remove('open');
+}
+</script>
+</body>
+</html>
