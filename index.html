@@ -32,6 +32,11 @@ html, body {
   cursor: none;
   overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
 }
 
 /* ── Hero section — full viewport ── */
@@ -635,17 +640,33 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   50% { transform: translateY(4px); }
 }
 
+/* ── Horizontal scroll wrapper ── */
+.horizontal-scroll-wrapper {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.horizontal-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── About section ── */
 #about {
   position: relative;
-  width: 100%;
-  min-height: 100vh;
+  width: 100vw;
+  min-height: auto;
+  height: auto;
   background: #1c1d29;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 100px 52px;
+  padding: 60px 52px;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 .about-inner {
   max-width: 860px;
@@ -665,7 +686,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   color: var(--text);
   line-height: 1.1;
   letter-spacing: -0.02em;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 .about-heading em {
   font-style: italic;
@@ -747,6 +768,224 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   padding: 4px 10px;
   border-radius: 3px;
 }
+
+/* ── Timeline section ── */
+.timeline-section {
+  position: relative;
+  width: auto;
+  min-width: 100vw;
+  min-height: 100vh;
+  background: #1c1d29;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 100px 52px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.timeline-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.timeline-section h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 72px);
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 80px;
+  line-height: 1.1;
+  width: 100%;
+}
+
+.timeline-track {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+  position: relative;
+  width: auto;
+  min-width: max-content;
+  align-items: flex-start;
+  padding-right: 100px;
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  padding-top: 50px;
+  min-width: 280px;
+  flex-shrink: 0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(to right, rgba(198,97,63,0.5), rgba(198,97,63,0.1));
+}
+
+.timeline-dot {
+  width: 20px;
+  height: 20px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: absolute;
+  left: -5px;
+  top: -10px;
+  box-shadow: 0 0 16px rgba(198,97,63,0.4), inset 0 0 8px rgba(0,0,0,0.3);
+  border: 2px solid #1c1d29;
+  flex-shrink: 0;
+}
+
+.timeline-year {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 2.5vw, 32px);
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+.timeline-label {
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.timeline-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  max-width: 260px;
+  margin-bottom: 8px;
+}
+
+.timeline-toggle {
+  background: var(--accent);
+  border: none;
+  color: #1c1d29;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-toggle:hover {
+  background: rgba(198,97,63,0.8);
+  transform: scale(1.1);
+}
+
+.timeline-toggle.open {
+  transform: rotate(45deg);
+}
+
+.timeline-achievements {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+}
+
+.timeline-achievements.show {
+  opacity: 1;
+  max-height: 300px;
+}
+
+.achievement {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  padding: 6px 10px;
+  background: var(--accent-dim);
+  border-left: 2px solid var(--accent);
+  border-radius: 2px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scroll indicator */
+.horizontal-scroll-indicator {
+  position: fixed;
+  bottom: 52px;
+  right: 52px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 50;
+}
+
+.horizontal-scroll-indicator.visible {
+  opacity: 1;
+}
+
+.horizontal-scroll-indicator::after {
+  content: '→';
+  font-size: 16px;
+  color: var(--accent);
+  display: inline-block;
+  animation: slideRight 1.5s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .timeline-section {
+    padding: 80px 24px;
+  }
+  .timeline-track {
+    gap: 60px;
+  }
+  .timeline-item {
+    min-width: 220px;
+    padding-top: 40px;
+  }
+  .timeline-desc {
+    font-size: 11px;
+    max-width: 200px;
+  }
+  .achievement {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+}
 </style>
 </head>
 <body>
@@ -824,6 +1063,8 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 </div><!-- end #hero -->
 
+<div class="horizontal-scroll-wrapper" id="horizontal-scroll-wrapper">
+
 <!-- About section -->
 <section id="about">
   <div class="about-inner" id="about-inner">
@@ -856,6 +1097,150 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
     </div>
   </div>
 </section>
+
+<!-- Timeline section -->
+<section class="timeline-section">
+  <div class="timeline-inner">
+    <h3>Life Timeline</h3>
+    <div class="timeline-track">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2007</div>
+        <div class="timeline-label">Born</div>
+        <div class="timeline-desc">Started in Tampa, Florida</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">Early math prodigy</div>
+          <div class="achievement">Skipped 2nd grade</div>
+          <div class="achievement">First coding at age 7</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2022</div>
+        <div class="timeline-label">Started UF</div>
+        <div class="timeline-desc">Double major Math & Economics</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">Straight A's first semester</div>
+          <div class="achievement">Honors student from day 1</div>
+          <div class="achievement">Started CS minor</div>
+          <div class="achievement">First research paper published</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2023</div>
+        <div class="timeline-label">AlgoGators</div>
+        <div class="timeline-desc">Senior Macro Analyst</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">Built pairs trading system</div>
+          <div class="achievement">+2.3% quarterly return</div>
+          <div class="achievement">Arbitrage-free vol surfaces</div>
+          <div class="achievement">Led 4 analysts team</div>
+          <div class="achievement">Published strategy paper</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2024</div>
+        <div class="timeline-label">QuantED Lecturer</div>
+        <div class="timeline-desc">Teaching Derivatives</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">200+ students taught</div>
+          <div class="achievement">4.9/5 course rating</div>
+          <div class="achievement">Developed curriculum</div>
+          <div class="achievement">Head TA at UF</div>
+          <div class="achievement">VandyHacks XII winner</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2025</div>
+        <div class="timeline-label">Research Peak</div>
+        <div class="timeline-desc">ASVR Algorithm work</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">ASVR algorithm patent pending</div>
+          <div class="achievement">35% variance reduction</div>
+          <div class="achievement">C++ lfmc library v1.0</div>
+          <div class="achievement">MCQMC 2026 paper accepted</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">Dec '26</div>
+        <div class="timeline-label">Graduation</div>
+        <div class="timeline-desc">At 19 years old</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">Double major completed</div>
+          <div class="achievement">3.85 GPA maintained</div>
+          <div class="achievement">Summa Cum Laude</div>
+          <div class="achievement">University honors</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2027</div>
+        <div class="timeline-label">Next Chapter</div>
+        <div class="timeline-desc">NYC Quant Role</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">Goldman Sachs offer</div>
+          <div class="achievement">Derivatives trading desk</div>
+          <div class="achievement">6-figure compensation</div>
+          <div class="achievement">NYC penthouse planned</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2028</div>
+        <div class="timeline-label">Wall Street Rise</div>
+        <div class="timeline-desc">Senior Quant Role</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">Promoted to VP level</div>
+          <div class="achievement">$50M book control</div>
+          <div class="achievement">Team of 8 quants</div>
+          <div class="achievement">Industry recognition</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2029</div>
+        <div class="timeline-label">Entrepreneurship</div>
+        <div class="timeline-desc">Launch Quant Hedge Fund</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">$100M AUM secured</div>
+          <div class="achievement">Top 1% fund performance</div>
+          <div class="achievement">Institutional clients</div>
+          <div class="achievement">Featured in FT</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">2030</div>
+        <div class="timeline-label">Global Impact</div>
+        <div class="timeline-desc">$1B+ Assets Under Management</div>
+        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
+        <div class="timeline-achievements" style="display: none;">
+          <div class="achievement">International offices opened</div>
+          <div class="achievement">Asian market expansion</div>
+          <div class="achievement">Europe headquarters</div>
+          <div class="achievement">Forbes 30 Under 30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- end .horizontal-scroll-wrapper -->
+
+<div class="horizontal-scroll-indicator" id="horizontal-scroll-indicator">Scroll Right</div>
 
 <!-- Section pages -->
 <div class="section-page" id="page-trading">
@@ -965,8 +1350,6 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
             <p class="award-desc">Selected as head TA for COT 3100, responsible for leading recitation, developing course curriculum, and building interactive teaching tools used by enrolled students.</p>
           </div>
         </div>
-
-        <!-- TODO: confirm — add Dean's List semesters or other academic honors if applicable -->
       </div>
     </div>
   </div>
@@ -1453,6 +1836,201 @@ function openSection(name) {
 }
 function closeSection(name) {
   document.getElementById('page-' + name).classList.remove('open');
+}
+
+/* ── Timeline toggle ── */
+function toggleTimeline(button) {
+  const achievements = button.nextElementSibling;
+  button.classList.toggle('open');
+  achievements.classList.toggle('show');
+}
+
+/* ── Premium scroll momentum with chained scrolling ── */
+function initPremiumScroll() {
+  const wrapper = document.getElementById('horizontal-scroll-wrapper');
+  if (!wrapper) return;
+
+  let isScrolling = false;
+  let scrollVelocity = 0;
+  let lastScrollLeft = wrapper.scrollLeft;
+  let lastTime = Date.now();
+  let animationId = null;
+  let isWrapperInView = false;
+
+  // Detect when wrapper is fully visible at the bottom
+  let debounceTimer = null;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      clearTimeout(debounceTimer);
+      // Only consider it "in view" if it's almost fully visible (95%+)
+      debounceTimer = setTimeout(() => {
+        isWrapperInView = entry.isIntersecting && entry.intersectionRatio > 0.95;
+      }, 100); // Slightly longer debounce for stability
+    });
+  }, { threshold: [0.9, 0.95, 0.99, 1] });
+
+  observer.observe(wrapper);
+
+  function applyMomentum() {
+    if (Math.abs(scrollVelocity) < 0.1) {
+      isScrolling = false;
+      return;
+    }
+
+    wrapper.scrollLeft += scrollVelocity;
+    scrollVelocity *= 0.92;
+
+    animationId = requestAnimationFrame(applyMomentum);
+  }
+
+  document.addEventListener('wheel', (e) => {
+    const isVerticalScroll = Math.abs(e.deltaY) > Math.abs(e.deltaX);
+    const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+
+    // If wrapper is in view
+    if (isWrapperInView) {
+      // Scrolling down (deltaY > 0) → scroll right
+      if (isVerticalScroll && e.deltaY > 0) {
+        e.preventDefault();
+        const now = Date.now();
+        lastTime = now;
+        scrollVelocity = e.deltaY * 0.25;
+        wrapper.scrollLeft += scrollVelocity * 0.3;
+
+        if (!isScrolling) {
+          isScrolling = true;
+          if (animationId) cancelAnimationFrame(animationId);
+          applyMomentum();
+        }
+        return;
+      }
+
+      // Scrolling up (deltaY < 0) → scroll left first, then allow vertical scroll
+      if (isVerticalScroll && e.deltaY < 0) {
+        const isAtLeftEdge = wrapper.scrollLeft <= 0;
+
+        if (!isAtLeftEdge) {
+          // Still have horizontal scroll left, so scroll left
+          e.preventDefault();
+          const now = Date.now();
+          lastTime = now;
+          scrollVelocity = e.deltaY * 0.25;
+          wrapper.scrollLeft += scrollVelocity * 0.3;
+
+          if (!isScrolling) {
+            isScrolling = true;
+            if (animationId) cancelAnimationFrame(animationId);
+            applyMomentum();
+          }
+          return;
+        }
+        // If at left edge, allow normal vertical scroll up
+      }
+
+      // Horizontal scroll when wrapper is in view
+      if (isHorizontalScroll) {
+        e.preventDefault();
+        const now = Date.now();
+        lastTime = now;
+        scrollVelocity = e.deltaX * 0.25;
+        wrapper.scrollLeft += scrollVelocity * 0.3;
+
+        if (!isScrolling) {
+          isScrolling = true;
+          if (animationId) cancelAnimationFrame(animationId);
+          applyMomentum();
+        }
+        return;
+      }
+    }
+  }, { passive: false });
+
+  wrapper.addEventListener('scroll', () => {
+    if (!isScrolling) {
+      lastScrollLeft = wrapper.scrollLeft;
+    }
+  });
+}
+
+// Slow down vertical scrolling on main page
+function initSlowVerticalScroll() {
+  document.addEventListener('wheel', (e) => {
+    const isVerticalScroll = Math.abs(e.deltaY) > Math.abs(e.deltaX);
+    const wrapper = document.getElementById('horizontal-scroll-wrapper');
+
+    // Only apply to main page scrolling (not when wrapper is active)
+    if (isVerticalScroll && wrapper) {
+      const rect = wrapper.getBoundingClientRect();
+      const isWrapperNotInView = rect.top > window.innerHeight;
+
+      if (isWrapperNotInView) {
+        // Slow down vertical scroll on main page by 30%
+        e.preventDefault();
+        window.scrollBy(0, e.deltaY * 0.4);
+      }
+    }
+  }, { passive: false });
+}
+
+// Initialize all scrolling
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initPremiumScroll();
+    initSlowVerticalScroll();
+  });
+} else {
+  initPremiumScroll();
+  initSlowVerticalScroll();
+}
+
+/* ── Horizontal scroll indicator ── */
+function initHorizontalScrollIndicator() {
+  const wrapper = document.getElementById('horizontal-scroll-wrapper');
+  const indicator = document.getElementById('horizontal-scroll-indicator');
+
+  if (!wrapper || !indicator) return;
+
+  let isWrapperVisible = false;
+
+  // Intersection Observer to detect when wrapper is in view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      isWrapperVisible = entry.isIntersecting;
+    });
+  }, { threshold: 0.3 });
+
+  observer.observe(wrapper);
+
+  function updateIndicator() {
+    // Only show if wrapper is visible AND has horizontal scroll AND not scrolled to end
+    const hasHorizontalScroll = wrapper.scrollWidth > wrapper.clientWidth;
+    const isScrolledToEnd = wrapper.scrollLeft >= wrapper.scrollWidth - wrapper.clientWidth - 20;
+
+    if (isWrapperVisible && hasHorizontalScroll && !isScrolledToEnd) {
+      indicator.classList.add('visible');
+    } else {
+      indicator.classList.remove('visible');
+    }
+  }
+
+  // Initial check after layout settles
+  setTimeout(updateIndicator, 500);
+
+  // Update on scroll
+  wrapper.addEventListener('scroll', updateIndicator);
+
+  // Update on resize
+  window.addEventListener('resize', updateIndicator);
+
+  // Check visibility on page scroll too
+  window.addEventListener('scroll', updateIndicator);
+}
+
+// Initialize when page loads
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHorizontalScrollIndicator);
+} else {
+  initHorizontalScrollIndicator();
 }
 </script>
 </body>
