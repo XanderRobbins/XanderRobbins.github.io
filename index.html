@@ -326,38 +326,67 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 }
 .card:hover .card-arrow { opacity: 1; transform: translate(0,0); }
 
-/* ── Mobile: stack at bottom ── */
+/* ── Mobile layout ── */
 @media (max-width: 768px) {
+  /* Cursor: not applicable on touch */
+  #cursor, #cursor-ring { display: none; }
+  body { cursor: auto; }
+
+  /* Hero: use safe viewport height */
+  #hero { height: 100svh; }
+
+  /* Header: compact */
+  .header { padding: 20px 20px; }
+  .name-main { font-size: clamp(24px, 6.5vw, 34px); }
+  .status-block { display: none; }
+  .bottom-bar { display: none; }
+
+  /* Connector SVG: not applicable on mobile */
+  #connector-svg { display: none !important; }
+
+  /* About tab: user just scrolls */
+  .about-tab { display: none; }
+
+  /* Cards: three compact tap targets flush to bottom of hero */
   .cards-container {
     position: absolute;
     inset: auto;
     bottom: 0; left: 0; right: 0;
     display: flex;
+    flex-direction: row;
     align-items: flex-end;
-    justify-content: center;
-    gap: 10px;
-    padding: 0 12px;
+    justify-content: stretch;
+    gap: 6px;
+    padding: 0 10px;
+    pointer-events: all;
   }
   .card {
     position: relative;
-    width: auto;
     flex: 1;
-    max-width: 160px;
-    border-radius: 10px 10px 0 0;
-    border-bottom: none;
-    padding: 16px 14px 22px;
+    width: auto;
+    max-width: none;
     top: auto; left: auto; right: auto;
     transform: none !important;
     inset: auto;
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+    padding: 14px 10px 20px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
   }
   .card-trading, .card-awards, .card-research {
     position: relative;
     top: auto; left: auto; right: auto;
     transform: none;
   }
-  .card:hover { transform: translateY(-10px) !important; }
+  .card:active {
+    background: rgba(40,42,58,0.97);
+    border-color: rgba(198,97,63,0.6);
+  }
   .card-desc { display: none; }
   .card-arrow { display: none; }
+  .card-index { margin-bottom: 4px; font-size: 9px; }
+  .card-title { font-size: 14px; line-height: 1.3; }
 }
 
 /* ── Scanline overlay ── */
@@ -397,6 +426,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   align-items: center;
   justify-content: flex-start;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   opacity: 0;
   visibility: hidden;
@@ -443,9 +473,12 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   border: 1px solid var(--card-border);
   padding: 10px 24px;
   border-radius: 4px;
-  cursor: none;
+  cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
   font-family: 'JetBrains Mono', monospace;
+}
+@media (min-width: 769px) {
+  .back-btn { cursor: none; }
 }
 .back-btn:hover {
   border-color: var(--accent);
@@ -612,10 +645,15 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 }
 
 @media (max-width: 768px) {
-  .section-page { padding: 60px 24px; }
+  .section-page { padding: 48px 20px 80px; }
   .section-inner { max-width: 100%; }
-  .award-item { grid-template-columns: 100px 1fr; gap: 24px; }
-  .section-page h1 { margin-bottom: 40px; }
+  .section-page h1 { font-size: clamp(36px, 9vw, 56px); margin-bottom: 32px; }
+  .award-item { grid-template-columns: 80px 1fr; gap: 16px; padding: 24px 0; }
+  .award-year { font-size: 24px; }
+  .strategy-grid { grid-template-columns: 1fr; gap: 20px; }
+  .strategy-card { padding: 20px; }
+  .research-header { flex-direction: column; gap: 12px; }
+  .research-meta { flex-direction: row; gap: 12px; }
 }
 /* ── Semi-circle scroll tab ── */
 .about-tab {
@@ -770,9 +808,10 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 @media (max-width: 768px) {
   .about-body { grid-template-columns: 1fr; gap: 24px; }
-  #about { padding: 80px 24px; }
-  .about-stats { flex-wrap: wrap; gap: 28px; }
-  .about-tab { width: 130px; height: 130px; bottom: -65px; }
+  #about { padding: 60px 20px; width: 100%; height: auto; min-height: 0; }
+  .about-stats { flex-wrap: wrap; gap: 20px; }
+  .about-divider { display: none; }
+  .stat { min-width: 80px; }
 }
 
 .strategy-tags {
@@ -990,24 +1029,61 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 }
 
 @media (max-width: 768px) {
+  /* Horizontal scroll wrapper → normal vertical flow */
+  .horizontal-scroll-wrapper {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+  .horizontal-scroll-indicator { display: none; }
+
+  /* Vertical timeline */
   .timeline-section {
-    padding: 80px 24px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    padding: 60px 24px 80px;
+    overflow: visible;
+  }
+  .timeline-section h3 {
+    font-size: clamp(28px, 8vw, 48px);
+    margin-bottom: 48px;
   }
   .timeline-track {
-    gap: 60px;
+    flex-direction: column;
+    gap: 0;
+    min-width: 0;
+    width: 100%;
+    padding-right: 0;
+    align-items: flex-start;
   }
   .timeline-item {
-    min-width: 220px;
-    padding-top: 40px;
+    min-width: 0;
+    width: 100%;
+    padding-top: 0;
+    padding-left: 24px;
+    padding-bottom: 40px;
+    border-left: 2px solid rgba(198,97,63,0.3);
   }
-  .timeline-desc {
-    font-size: 11px;
-    max-width: 200px;
+  .timeline-item:last-child {
+    border-left-color: transparent;
+    padding-bottom: 0;
   }
-  .achievement {
-    font-size: 10px;
-    padding: 5px 8px;
+  /* Hide the horizontal bar */
+  .timeline-item::before { display: none; }
+  /* Reposition dot to sit on the left border */
+  .timeline-dot {
+    left: -9px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
   }
+  .timeline-year { font-size: 20px; }
+  .timeline-desc { font-size: 12px; max-width: 100%; }
+  .achievement { font-size: 10px; padding: 5px 8px; }
 }
 </style>
 </head>
@@ -1398,22 +1474,27 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 </div>
 
 <script>
-/* ── Cursor ── */
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-let mx = -100, my = -100, rx = -100, ry = -100;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-function animCursor() {
-  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
-  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-  requestAnimationFrame(animCursor);
+/* ── Mobile detection ── */
+function isMobile() { return window.innerWidth <= 768; }
+
+/* ── Cursor (desktop only) ── */
+if (!isMobile()) {
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('.card, .back-btn, button, .about-tab').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
 }
-animCursor();
-document.querySelectorAll('.card, .back-btn, button, .about-tab').forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-});
 
 /* ── About section scroll reveal ── */
 const aboutInner = document.getElementById('about-inner');
@@ -1433,7 +1514,9 @@ function updateConnectorVisibility() {
   connSvg.style.pointerEvents = 'none';
   document.getElementById('canvas-layer').style.opacity = pastHero ? '0' : '1';
 }
-window.addEventListener('scroll', updateConnectorVisibility, { passive: true });
+if (!isMobile()) {
+  window.addEventListener('scroll', updateConnectorVisibility, { passive: true });
+}
 
 /* ── Sphere assembly intro ── */
 (function() {
@@ -1448,15 +1531,17 @@ window.addEventListener('scroll', updateConnectorVisibility, { passive: true });
 
   startCanvas();
 
-  // Connector lines fade in after sphere is assembled
-  setTimeout(() => {
-    document.getElementById('connector-svg').style.opacity = '1';
-  }, 2800);
+  // Connector lines fade in after sphere is assembled (desktop only)
+  if (!isMobile()) {
+    setTimeout(() => {
+      document.getElementById('connector-svg').style.opacity = '1';
+    }, 2100);
+  }
 
-  // UI fades in after assembly completes (~2.2s assembly + small buffer)
+  // UI fades in after assembly completes
   setTimeout(() => {
     document.getElementById('ui-layer').classList.add('visible');
-  }, 2800);
+  }, 2100);
 }());
 
 /* ── 3D Sphere node network ── */
@@ -1523,12 +1608,12 @@ function startCanvas() {
     H = canvas.height = window.innerHeight;
 
     cx = W / 2;
-    cy = H / 2;
+    cy = isMobile() ? H * 0.33 : H / 2;
 
     R = Math.min(W, H) * 0.26;
 
-    if (smoothMX === -9999) smoothMX = W * 0.15;
-    if (smoothMY === -9999) smoothMY = H * 0.15;
+    if (smoothMX === -9999) smoothMX = isMobile() ? cx : W * 0.15;
+    if (smoothMY === -9999) smoothMY = isMobile() ? cy : H * 0.15;
 
     buildNodes();
   }
@@ -1582,11 +1667,11 @@ function startCanvas() {
     R = Math.min(W, H) * 0.26;
 
     // Rotation ramps up in the final quarter of assembly
-    const rotRamp = assemblyP < 0.75 ? 0 : ((assemblyP - 0.75) / 0.25);
+    const rotRamp = assemblyP < 0.85 ? 0 : ((assemblyP - 0.85) / 0.15);
     rotY += 0.00176 * rotRamp;
 
-    const targetMX = mouseReady ? mouseX : W * 0.15;
-    const targetMY = mouseReady ? mouseY : H * 0.15;
+    const targetMX = mouseReady ? mouseX : (isMobile() ? cx : W * 0.15);
+    const targetMY = mouseReady ? mouseY : (isMobile() ? cy : H * 0.15);
 
     smoothMX += (targetMX - smoothMX) * 0.055;
     smoothMY += (targetMY - smoothMY) * 0.055;
@@ -1622,7 +1707,7 @@ function startCanvas() {
       const mdy = sy - smoothMY;
       const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
 
-      if (assemblyP >= 1 && mdist < MOUSE_R && mdist > 1 && p.z2 < R * 0.08) {
+      if (!isMobile() && assemblyP >= 1 && mdist < MOUSE_R && mdist > 1 && p.z2 < R * 0.08) {
         const force = (1 - mdist / MOUSE_R) * MOUSE_PULL;
         sx += (-mdx/mdist) * force;
         sy += (-mdy/mdist) * force;
@@ -1755,40 +1840,42 @@ function startCanvas() {
       ctx.stroke();
     });
 
-    // Draw connector lines from cards to closest nodes
-    svg.innerHTML = '';
-    cards.forEach(card => {
-      if (!card.el) return;
-      const rect = card.el.getBoundingClientRect();
-      const cardX = rect.left + rect.width / 2;
-      const cardY = rect.top + rect.height / 2;
+    // Draw connector lines from cards to closest nodes (desktop only)
+    if (!isMobile()) {
+      svg.innerHTML = '';
+      cards.forEach(card => {
+        if (!card.el) return;
+        const rect = card.el.getBoundingClientRect();
+        const cardX = rect.left + rect.width / 2;
+        const cardY = rect.top + rect.height / 2;
 
-      // Find closest visible node
-      let closestNode = null;
-      let closestDist = Infinity;
+        // Find closest visible node
+        let closestNode = null;
+        let closestDist = Infinity;
 
-      projected.forEach(n => {
-        if (n.z2 > CULL) return; // Skip back-facing nodes
-        const dx = n.sx - cardX;
-        const dy = n.sy - cardY;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closestNode = n;
+        projected.forEach(n => {
+          if (n.z2 > CULL) return; // Skip back-facing nodes
+          const dx = n.sx - cardX;
+          const dy = n.sy - cardY;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestNode = n;
+          }
+        });
+
+        if (closestNode) {
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', cardX);
+          line.setAttribute('y1', cardY);
+          line.setAttribute('x2', closestNode.sx);
+          line.setAttribute('y2', closestNode.sy);
+          line.setAttribute('stroke', `rgba(${AC},0.35)`);
+          line.setAttribute('stroke-width', '1');
+          svg.appendChild(line);
         }
       });
-
-      if (closestNode) {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', cardX);
-        line.setAttribute('y1', cardY);
-        line.setAttribute('x2', closestNode.sx);
-        line.setAttribute('y2', closestNode.sy);
-        line.setAttribute('stroke', `rgba(${AC},0.35)`);
-        line.setAttribute('stroke-width', '1');
-        svg.appendChild(line);
-      }
-    });
+    }
 
     t++;
     requestAnimationFrame(draw);
@@ -1802,13 +1889,13 @@ function startCanvas() {
 /* ── Sections ── */
 function openSection(name) {
   document.getElementById('page-' + name).classList.add('open');
-  document.body.style.overflowY = 'hidden';
-  document.documentElement.style.overflowY = 'hidden';
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
 }
 function closeSection(name) {
   document.getElementById('page-' + name).classList.remove('open');
-  document.body.style.overflowY = '';
-  document.documentElement.style.overflowY = '';
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
 }
 
 /* ── Timeline toggle ── */
@@ -1947,15 +2034,17 @@ function initSlowVerticalScroll() {
   }, { passive: false });
 }
 
-// Initialize all scrolling
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+// Initialize all scrolling (desktop only — mobile uses native vertical scroll)
+if (!isMobile()) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initPremiumScroll();
+      initSlowVerticalScroll();
+    });
+  } else {
     initPremiumScroll();
     initSlowVerticalScroll();
-  });
-} else {
-  initPremiumScroll();
-  initSlowVerticalScroll();
+  }
 }
 
 /* ── Horizontal scroll indicator ── */
@@ -2001,11 +2090,13 @@ function initHorizontalScrollIndicator() {
   window.addEventListener('scroll', updateIndicator);
 }
 
-// Initialize when page loads
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initHorizontalScrollIndicator);
-} else {
-  initHorizontalScrollIndicator();
+// Initialize when page loads (desktop only)
+if (!isMobile()) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHorizontalScrollIndicator);
+  } else {
+    initHorizontalScrollIndicator();
+  }
 }
 </script>
 </body>
