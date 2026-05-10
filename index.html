@@ -515,7 +515,11 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   color: var(--accent);
 }
 @media (min-width: 769px) {
-  .close-btn { cursor: none; }
+  .close-btn {
+    cursor: none;
+    top: 80px;
+    right: max(40px, calc((100vw - 1080px) / 2));
+  }
 }
 .back-btn:hover {
   border-color: var(--accent);
