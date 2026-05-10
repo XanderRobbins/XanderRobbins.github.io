@@ -665,7 +665,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 /* ── Semi-circle scroll tab ── */
 .about-tab {
   position: absolute;
-  bottom: -80px;
+  bottom: calc(-80px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   width: 160px;
@@ -690,7 +690,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 .about-tab:hover {
   background: rgba(32,33,47,0.95);
   border-color: rgba(198,97,63,0.55);
-  transform: translateX(-50%) translateY(-6px);
+  transform: translateX(-50%) translateY(calc(-6px - env(safe-area-inset-bottom, 0px)));
 }
 .about-tab-label {
   font-size: 12px;
