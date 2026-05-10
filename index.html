@@ -487,6 +487,36 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 @media (min-width: 769px) {
   .back-btn { cursor: none; }
 }
+
+.close-btn {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 210;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(28,29,41,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+}
+.close-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+@media (min-width: 769px) {
+  .close-btn { cursor: none; }
+}
 .back-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
@@ -1280,6 +1310,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 <!-- Section pages -->
 <div class="section-page" id="page-trading">
+  <button class="close-btn" onclick="closeSection('trading')">✕</button>
   <div class="section-inner">
     <p class="section-eyebrow">Quantitative Finance</p>
     <h1>Trading Strategies</h1>
@@ -1340,6 +1371,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 </div>
 
 <div class="section-page" id="page-awards">
+  <button class="close-btn" onclick="closeSection('awards')">✕</button>
   <div class="section-inner">
     <p class="section-eyebrow">Recognition & Honors</p>
     <h1>Accomplishments</h1>
@@ -1404,6 +1436,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 </div>
 
 <div class="section-page" id="page-research">
+  <button class="close-btn" onclick="closeSection('research')">✕</button>
   <div class="section-inner">
     <p class="section-eyebrow">Academic & Computational</p>
     <h1>Research</h1>
@@ -1497,7 +1530,7 @@ if (!isMobile()) {
     requestAnimationFrame(animCursor);
   }
   animCursor();
-  document.querySelectorAll('.card, .back-btn, button, .about-tab').forEach(el => {
+  document.querySelectorAll('.card, .back-btn, .close-btn, button, .about-tab').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
   });
