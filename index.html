@@ -135,7 +135,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 }
 .term-body {
   padding: 24px 28px 28px;
-  min-height: 280px;
+  min-height: 360px;
   font-size: 13px;
   line-height: 1.75;
   color: rgba(232,221,212,0.85);
@@ -154,6 +154,28 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   animation: blink 1s step-end infinite;
 }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── Intro center (kept for JS targeting) ── */
+#intro-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.glow-core {
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  opacity: 0;
+}
+.glow-core.burst {
+  animation: coreBurst 0.4s ease-out forwards !important;
+}
+@keyframes coreBurst {
+  0%   { transform: scale(1); opacity: 0; }
+  100% { transform: scale(0); opacity: 0; }
+}
 
 /* ── Canvas ── */
 #c { width: 100%; height: 100%; display: block; }
@@ -375,6 +397,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   align-items: center;
   justify-content: flex-start;
   overflow-y: auto;
+  overscroll-behavior: contain;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s, visibility 0.6s;
@@ -998,14 +1021,8 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
 <!-- Terminal intro -->
 <div id="terminal-layer">
-  <div id="terminal">
-    <div class="term-titlebar">
-      <div class="term-dot r"></div>
-      <div class="term-dot y"></div>
-      <div class="term-dot g"></div>
-      <span class="term-title">claude — xander@portfolio ~ </span>
-    </div>
-    <div class="term-body" id="term-body"></div>
+  <div id="intro-center">
+    <div class="glow-core"></div>
   </div>
 </div>
 
@@ -1015,7 +1032,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 </div>
 
 <!-- Connector lines SVG -->
-<svg id="connector-svg" style="opacity:0;transition:opacity 1s ease 1s;pointer-events:none;"></svg>
+<svg id="connector-svg" style="opacity:0;transition:opacity 1.2s ease;pointer-events:none;"></svg>
 
 <!-- Main UI -->
 <div id="ui-layer">
@@ -1024,24 +1041,19 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
       <div class="name-main">Xander Robbins</div>
       <div class="name-sub">Quant Finance · UF · AlgoGators</div>
     </div>
-    <div class="status-block">
-      <div><span class="status-dot"></span>Available Dec 2026</div>
-      <div>UF - Class of 2026</div>
-      <div style="margin-top:2px;color:rgba(198,97,63,0.7);font-size:13px">xanderrobbins10@gmail.com</div>
-    </div>
   </div>
 
   <div class="cards-container">
     <div class="card card-trading" onclick="openSection('trading')">
       <div class="card-index">01 ——</div>
       <div class="card-title">Trading<br>Strategies</div>
-      <div class="card-desc">Pairs trading systems, volatility surfaces, arbitrage models built at AlgoGators.</div>
+      <div class="card-desc">Monte Carlo Pricing, volatility surfaces, arbitrage models built at AlgoGators.</div>
       <div class="card-arrow">↗</div>
     </div>
 
     <div class="card card-awards" onclick="openSection('awards')">
       <div class="card-index">02 ——</div>
-      <div class="card-title">Awards &amp;<br>Recognition</div>
+      <div class="card-title">Accomplishments</div>
       <div class="card-desc">Hackathons, academic honors, and competitive achievements across math &amp; finance.</div>
       <div class="card-arrow">↗</div>
     </div>
@@ -1049,7 +1061,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
     <div class="card card-research" onclick="openSection('research')">
       <div class="card-index">03 ——</div>
       <div class="card-title">Research</div>
-      <div class="card-desc">Monte Carlo options pricing, variance reduction, ASVR algorithm — targeting MCQMC 2026.</div>
+      <div class="card-desc">Monte Carlo options pricing, variance reduction, ASVR algorithms</div>
       <div class="card-arrow">↗</div>
     </div>
   </div>
@@ -1072,22 +1084,27 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
     <h2 class="about-heading">Quantitative mind,<br><em>built for markets.</em></h2>
     <div class="about-body">
       <p class="about-para">I'm a double major in Mathematics and Economics with a minor in Computer Science at the University of Florida, graduating December 2026 @ 19 years old. I've been on an accelerated timeline after exhausting the available upper-division coursework. My focus sits at the intersection of financial theory and computational methods.</p>
-      <p class="about-para">At AlgoGators — The only student-run quant fund in the US — I serve as Senior Macro Analyst, building production trading systems including a Universal Pairs Trading System and arbitrage-free volatility surfaces. I also teach as a Senior Lecturer at QuantED, where I lecture over Options Futures and Other Derivatives, I simultanously work for UF as head TA for Discrete Structures.</p>
+      <p class="about-para">At AlgoGators — The only student-run quant fund in the US — I serve as the head of Research, building production trading systems including a Universal Pairs Trading System and arbitrage-free volatility surfaces. I also teach as a Senior Lecturer at QuantED, where I lecture over Options Futures and Other Derivatives, I simultanously work for UF as head TA for Discrete Structures.</p>
     </div>
     <div class="about-stats">
       <div class="stat">
-        <span class="stat-num">3.54</span>
+        <span class="stat-num">3.6</span>
         <span class="stat-label">Upper-div GPA</span>
       </div>
       <div class="about-divider"></div>
       <div class="stat">
-        <span class="stat-num">3.85</span>
-        <span class="stat-label">Econ GPA</span>
+        <span class="stat-num">3.9</span>
+        <span class="stat-label">Econ + CS GPA</span>
       </div>
       <div class="about-divider"></div>
       <div class="stat">
         <span class="stat-num">Dec '26</span>
         <span class="stat-label">Graduating</span>
+      </div>
+      <div class="about-divider"></div>
+      <div class="stat">
+        <span class="stat-num">UF</span>
+        <span class="stat-label">University</span>
       </div>
       <div class="about-divider"></div>
       <div class="stat">
@@ -1105,23 +1122,11 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
     <div class="timeline-track">
       <div class="timeline-item">
         <div class="timeline-dot"></div>
-        <div class="timeline-year">2007</div>
-        <div class="timeline-label">Born</div>
-        <div class="timeline-desc">Started in Tampa, Florida</div>
-        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
-          <div class="achievement">Early math prodigy</div>
-          <div class="achievement">Skipped 2nd grade</div>
-          <div class="achievement">First coding at age 7</div>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">2022</div>
+        <div class="timeline-year">August 2024</div>
         <div class="timeline-label">Started UF</div>
         <div class="timeline-desc">Double major Math & Economics</div>
         <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
+        <div class="timeline-achievements">
           <div class="achievement">Straight A's first semester</div>
           <div class="achievement">Honors student from day 1</div>
           <div class="achievement">Started CS minor</div>
@@ -1130,11 +1135,11 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
       </div>
       <div class="timeline-item">
         <div class="timeline-dot"></div>
-        <div class="timeline-year">2023</div>
+        <div class="timeline-year">January 2025</div>
         <div class="timeline-label">AlgoGators</div>
         <div class="timeline-desc">Senior Macro Analyst</div>
         <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
+        <div class="timeline-achievements">
           <div class="achievement">Built pairs trading system</div>
           <div class="achievement">+2.3% quarterly return</div>
           <div class="achievement">Arbitrage-free vol surfaces</div>
@@ -1144,11 +1149,11 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
       </div>
       <div class="timeline-item">
         <div class="timeline-dot"></div>
-        <div class="timeline-year">2024</div>
+        <div class="timeline-year">2026</div>
         <div class="timeline-label">QuantED Lecturer</div>
         <div class="timeline-desc">Teaching Derivatives</div>
         <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
+        <div class="timeline-achievements">
           <div class="achievement">200+ students taught</div>
           <div class="achievement">4.9/5 course rating</div>
           <div class="achievement">Developed curriculum</div>
@@ -1158,11 +1163,11 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
       </div>
       <div class="timeline-item">
         <div class="timeline-dot"></div>
-        <div class="timeline-year">2025</div>
-        <div class="timeline-label">Research Peak</div>
+        <div class="timeline-year">2026</div>
+        <div class="timeline-label">Head of Quant Research</div>
         <div class="timeline-desc">ASVR Algorithm work</div>
         <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
+        <div class="timeline-achievements">
           <div class="achievement">ASVR algorithm patent pending</div>
           <div class="achievement">35% variance reduction</div>
           <div class="achievement">C++ lfmc library v1.0</div>
@@ -1175,63 +1180,11 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
         <div class="timeline-label">Graduation</div>
         <div class="timeline-desc">At 19 years old</div>
         <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
+        <div class="timeline-achievements">
           <div class="achievement">Double major completed</div>
           <div class="achievement">3.85 GPA maintained</div>
           <div class="achievement">Summa Cum Laude</div>
           <div class="achievement">University honors</div>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">2027</div>
-        <div class="timeline-label">Next Chapter</div>
-        <div class="timeline-desc">NYC Quant Role</div>
-        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
-          <div class="achievement">Goldman Sachs offer</div>
-          <div class="achievement">Derivatives trading desk</div>
-          <div class="achievement">6-figure compensation</div>
-          <div class="achievement">NYC penthouse planned</div>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">2028</div>
-        <div class="timeline-label">Wall Street Rise</div>
-        <div class="timeline-desc">Senior Quant Role</div>
-        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
-          <div class="achievement">Promoted to VP level</div>
-          <div class="achievement">$50M book control</div>
-          <div class="achievement">Team of 8 quants</div>
-          <div class="achievement">Industry recognition</div>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">2029</div>
-        <div class="timeline-label">Entrepreneurship</div>
-        <div class="timeline-desc">Launch Quant Hedge Fund</div>
-        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
-          <div class="achievement">$100M AUM secured</div>
-          <div class="achievement">Top 1% fund performance</div>
-          <div class="achievement">Institutional clients</div>
-          <div class="achievement">Featured in FT</div>
-        </div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-year">2030</div>
-        <div class="timeline-label">Global Impact</div>
-        <div class="timeline-desc">$1B+ Assets Under Management</div>
-        <button class="timeline-toggle" onclick="toggleTimeline(this)">+</button>
-        <div class="timeline-achievements" style="display: none;">
-          <div class="achievement">International offices opened</div>
-          <div class="achievement">Asian market expansion</div>
-          <div class="achievement">Europe headquarters</div>
-          <div class="achievement">Forbes 30 Under 30</div>
         </div>
       </div>
     </div>
@@ -1306,48 +1259,59 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 <div class="section-page" id="page-awards">
   <div class="section-inner">
     <p class="section-eyebrow">Recognition & Honors</p>
-    <h1>Awards</h1>
+    <h1>Accomplishments</h1>
     <div class="section-content">
       <div class="awards-list">
         <div class="award-item">
-          <div class="award-year">2024</div>
+          <div class="award-year">2026</div>
           <div class="award-body">
-            <h3>VandyHacks XII — QuantQuest</h3>
-            <p class="award-org">VandyHacks — Vanderbilt University</p>
-            <p class="award-desc">Built QuantQuest, a Canvas LMS gamification platform integrating with the Canvas API to add XP, achievements, and progress tracking for students. Developed in TypeScript over 36 hours.</p>
+            <h3>Head of Quantitative Research — AlgoGators</h3>
+            <p class="award-org">AlgoGators Investment Fund — University of Florida</p>
+            <p class="award-desc">Elected as Head of Quantitative Research at AlgoGators, the only student-run quantitative investment fund in the US. Responsible for production trading systems and macro strategy research. manage 23 Quantitative Analysts.</p>
           </div>
         </div>
 
         <div class="award-divider"></div>
 
         <div class="award-item">
-          <div class="award-year">2024</div>
+          <div class="award-year">2026</div>
+          <div class="award-body">
+            <h3>Head Teaching Assistant — Discrete Structures (COT 3100)</h3>
+            <p class="award-org">University of Florida — Department of Computer Science</p>
+            <p class="award-desc">Selected as head TA for COT 3100, responsible for creating course content, developing course curriculum, and building interactive teaching tools used by enrolled students. Lectured on discrete mathematics and algorithm design 5 times a semester to over 100+ students</p>
+          </div>
+        </div>
+
+        <div class="award-divider"></div>
+
+        <div class="award-item">
+          <div class="award-year">2026</div>
+          <div class="award-body">
+            <h3>VandyHacks XII — QuantQuest</h3>
+            <p class="award-org">VandyHacks — Vanderbilt University</p>
+            <p class="award-desc">Built QuantQuest, a gamified investing app that helps college students learn how to invest. Users learn to build portfolios with live market data, earning XP and achievements while learning institutional-grade investing strategies. </p>
+          </div>
+        </div>
+
+        <div class="award-divider"></div>
+
+        <div class="award-item">
+          <div class="award-year">2025</div>
+          <div class="award-body">
+            <h3>Senior Lecturer — QuantED</h3>
+            <p class="award-org">QuantED — University of Florida</p>
+            <p class="award-desc">Present on Options, Futures, and Other Derivatives by John C. Hull, Monte Carlo Simulations, and Markov Chains. Teach basic Algorithmic Trading ideas, how to build strategies, and finding Arbitrage Opportunities. </p>
+          </div>
+        </div>
+
+        <div class="award-divider"></div>
+
+        <div class="award-item">
+          <div class="award-year">2025</div>
           <div class="award-body">
             <h3>Senior Macro Analyst — AlgoGators</h3>
             <p class="award-org">AlgoGators Investment Fund — University of Florida</p>
             <p class="award-desc">Promoted to Senior Macro Analyst at AlgoGators, the only student-run quantitative investment fund in the US. Responsible for production trading systems and macro strategy research.</p>
-          </div>
-        </div>
-
-        <div class="award-divider"></div>
-
-        <div class="award-item">
-          <div class="award-year">2024</div>
-          <div class="award-body">
-            <h3>Senior Lecturer — Options, Futures & Other Derivatives</h3>
-            <p class="award-org">QuantED</p>
-            <p class="award-desc">Appointed Senior Lecturer at QuantED, teaching Options, Futures and Other Derivatives to students pursuing quantitative finance careers.</p>
-          </div>
-        </div>
-
-        <div class="award-divider"></div>
-
-        <div class="award-item">
-          <div class="award-year">2023</div>
-          <div class="award-body">
-            <h3>Head Teaching Assistant — Discrete Structures (COT 3100)</h3>
-            <p class="award-org">University of Florida — Department of Computer Science</p>
-            <p class="award-desc">Selected as head TA for COT 3100, responsible for leading recitation, developing course curriculum, and building interactive teaching tools used by enrolled students.</p>
           </div>
         </div>
       </div>
@@ -1471,48 +1435,29 @@ function updateConnectorVisibility() {
 }
 window.addEventListener('scroll', updateConnectorVisibility, { passive: true });
 
-/* ── Terminal typewriter ── */
-const lines = [
-  { text: '$ claude --init portfolio', cls: 'cmd', delay: 0 },
-  { text: '> Initializing session...', cls: 'out', delay: 160 },
-  { text: '> Loading subject: Xander Robbins', cls: 'out', delay: 320 },
-  { text: '> Degrees: Mathematics + Economics + Computer Science', cls: 'out', delay: 480 },
-  { text: '', cls: 'dim', delay: 790 },
-  { text: '$ ls ./projects', cls: 'cmd', delay: 950 },
-  { text: '  pairs_trading/   vol_surface/   monte_carlo_pricer/', cls: 'out', delay: 1180 },
-  { text: '', cls: 'dim', delay: 1260 },
-  { text: '$ ./launch --site', cls: 'cmd', delay: 1300 },
-  { text: '> Rendering portfolio...', cls: 'highlight', delay: 1420 },
-];
+/* ── Sphere assembly intro ── */
+(function() {
+  // Skip straight to sphere — nodes assemble from random positions into sphere shape
+  const tl = document.getElementById('terminal-layer');
+  tl.style.transition = 'none';
+  tl.classList.add('hidden');
 
-const body = document.getElementById('term-body');
-let caretEl = null;
+  const cl = document.getElementById('canvas-layer');
+  cl.style.transition = 'opacity 0.6s ease';
+  cl.classList.add('visible');
 
-function addLine(line, idx) {
-  setTimeout(() => {
-    if (caretEl) caretEl.remove();
-    const span = document.createElement('span');
-    span.className = 'term-line ' + line.cls;
-    span.textContent = line.text;
-    if (idx === lines.length - 1) {
-      caretEl = document.createElement('span');
-      caretEl.className = 'caret';
-      span.appendChild(caretEl);
-    }
-    body.appendChild(span);
-  }, line.delay);
-}
-
-lines.forEach((l, i) => addLine(l, i));
-
-/* transition to main site */
-setTimeout(() => {
-  document.getElementById('terminal-layer').classList.add('hidden');
-  document.getElementById('canvas-layer').classList.add('visible');
-  document.getElementById('ui-layer').classList.add('visible');
-  document.getElementById('connector-svg').style.opacity = '1';
   startCanvas();
-}, 2100);
+
+  // Connector lines fade in after sphere is assembled
+  setTimeout(() => {
+    document.getElementById('connector-svg').style.opacity = '1';
+  }, 2800);
+
+  // UI fades in after assembly completes (~2.2s assembly + small buffer)
+  setTimeout(() => {
+    document.getElementById('ui-layer').classList.add('visible');
+  }, 2800);
+}());
 
 /* ── 3D Sphere node network ── */
 function startCanvas() {
@@ -1564,7 +1509,10 @@ function startCanvas() {
           phi,
           theta0,
           latIdx: li,
-          lonIdx: j
+          lonIdx: j,
+          px: Math.random() * (W || window.innerWidth),
+          py: Math.random() * (H || window.innerHeight),
+          stagger: Math.random() * 0.35
         });
       }
     }
@@ -1577,7 +1525,7 @@ function startCanvas() {
     cx = W / 2;
     cy = H / 2;
 
-    R = Math.min(W, H) * 0.22;
+    R = Math.min(W, H) * 0.26;
 
     if (smoothMX === -9999) smoothMX = W * 0.15;
     if (smoothMY === -9999) smoothMY = H * 0.15;
@@ -1617,15 +1565,25 @@ function startCanvas() {
 
   let rotY = 0;
   let t = 0;
+  let assemblyStart = null;
+  const ASSEMBLY_MS = 2200;
+  function easeOutCubic(x) { return 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3); }
 
-  function draw() {
+  function draw(ts) {
 
     ctx.clearRect(0,0,W,H);
 
     ctx.fillStyle = BG;
     ctx.fillRect(0,0,W,H);
 
-    rotY += 0.0016;
+    // Assembly: nodes converge from random screen positions into sphere
+    if (assemblyStart === null) assemblyStart = ts;
+    const assemblyP = Math.min(1, (ts - assemblyStart) / ASSEMBLY_MS);
+    R = Math.min(W, H) * 0.26;
+
+    // Rotation ramps up in the final quarter of assembly
+    const rotRamp = assemblyP < 0.75 ? 0 : ((assemblyP - 0.75) / 0.25);
+    rotY += 0.00176 * rotRamp;
 
     const targetMX = mouseReady ? mouseX : W * 0.15;
     const targetMY = mouseReady ? mouseY : H * 0.15;
@@ -1643,18 +1601,29 @@ function startCanvas() {
 
       const p = projectNode(n, rotX, rotYTotal);
 
-      const mdx = p.sx - smoothMX;
-      const mdy = p.sy - smoothMY;
+      let sx, sy;
 
+      if (assemblyP < 1) {
+        // Lerp node from random screen pos toward its sphere position
+        const nodeP = Math.max(0, (assemblyP - n.stagger) / (1 - n.stagger + 0.001));
+        const lerpT = easeOutCubic(nodeP) * 0.14;
+        n.px += (p.sx - n.px) * lerpT;
+        n.py += (p.sy - n.py) * lerpT;
+        sx = n.px;
+        sy = n.py;
+      } else {
+        n.px = p.sx;
+        n.py = p.sy;
+        sx = p.sx;
+        sy = p.sy;
+      }
+
+      const mdx = sx - smoothMX;
+      const mdy = sy - smoothMY;
       const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
 
-      let sx = p.sx;
-      let sy = p.sy;
-
-      if (mdist < MOUSE_R && mdist > 1 && p.z2 < R * 0.08) {
-
+      if (assemblyP >= 1 && mdist < MOUSE_R && mdist > 1 && p.z2 < R * 0.08) {
         const force = (1 - mdist / MOUSE_R) * MOUSE_PULL;
-
         sx += (-mdx/mdist) * force;
         sy += (-mdy/mdist) * force;
       }
@@ -1827,15 +1796,19 @@ function startCanvas() {
 
   resize();
   window.addEventListener('resize', resize);
-  draw();
+  requestAnimationFrame(draw);
 }
 
 /* ── Sections ── */
 function openSection(name) {
   document.getElementById('page-' + name).classList.add('open');
+  document.body.style.overflowY = 'hidden';
+  document.documentElement.style.overflowY = 'hidden';
 }
 function closeSection(name) {
   document.getElementById('page-' + name).classList.remove('open');
+  document.body.style.overflowY = '';
+  document.documentElement.style.overflowY = '';
 }
 
 /* ── Timeline toggle ── */
@@ -1884,6 +1857,7 @@ function initPremiumScroll() {
   }
 
   document.addEventListener('wheel', (e) => {
+    if (document.querySelector('.section-page.open')) return;
     const isVerticalScroll = Math.abs(e.deltaY) > Math.abs(e.deltaX);
     const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY);
 
@@ -1955,6 +1929,7 @@ function initPremiumScroll() {
 // Slow down vertical scrolling on main page
 function initSlowVerticalScroll() {
   document.addEventListener('wheel', (e) => {
+    if (document.querySelector('.section-page.open')) return;
     const isVerticalScroll = Math.abs(e.deltaY) > Math.abs(e.deltaX);
     const wrapper = document.getElementById('horizontal-scroll-wrapper');
 
