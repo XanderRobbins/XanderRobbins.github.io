@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#282a3a">
+<title>HarvestSignal — Satellite-Driven Ag Futures — Xander Robbins</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+  --green: #4ade80;
+  --blue: #60a5fa;
+  --red: #f87171;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: var(--bg); font-family: 'JetBrains Mono', monospace;
+  color: var(--text); overflow-x: hidden; scrollbar-width: none; cursor: none;
+}
+body::-webkit-scrollbar { display: none; }
+
+#cursor {
+  position: fixed; width: 12px; height: 12px; background: #8b4620;
+  border-radius: 50%; pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s;
+  mix-blend-mode: screen; box-shadow: 0 0 12px rgba(139,70,32,0.6);
+}
+#cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(139,70,32,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998; transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
+}
+.scanlines {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 24px 52px; display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(40,42,58,0.97) 0%, transparent 100%);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.nav-site { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+.nav-back {
+  font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim); text-transform: uppercase;
+  background: none; border: 1px solid var(--card-border); padding: 8px 20px; border-radius: 4px;
+  cursor: none; transition: border-color 0.2s, color 0.2s; font-family: 'JetBrains Mono', monospace; text-decoration: none;
+}
+.nav-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  padding: 140px 52px 80px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 40%, rgba(96,165,250,0.06) 0%, transparent 55%),
+              radial-gradient(ellipse at 15% 70%, rgba(74,222,128,0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.025;
+  background-image: linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 24px; opacity: 0.8;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5; }
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(52px, 8vw, 100px);
+  color: var(--text); letter-spacing: -0.03em; line-height: 0.92; margin-bottom: 12px;
+}
+.hero-subtitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(18px, 2.5vw, 36px);
+  color: var(--accent); letter-spacing: -0.01em; font-style: italic; margin-bottom: 36px;
+}
+.hero-desc {
+  max-width: 600px; font-size: 13px; color: var(--text-dim);
+  line-height: 1.95; letter-spacing: 0.02em; margin-bottom: 56px;
+}
+.stats-bar {
+  display: flex; gap: 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; max-width: 680px;
+  background: rgba(22,24,33,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.stat-item { flex: 1; padding: 20px 24px; border-right: 1px solid var(--card-border); transition: background 0.25s; }
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: rgba(198,97,63,0.06); }
+.stat-label { font-size: 9px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; opacity: 0.7; }
+.stat-value { font-family: 'DM Serif Display', serif; font-size: clamp(18px, 2.5vw, 30px); color: var(--text); letter-spacing: -0.02em; }
+.stat-value.pos { color: var(--green); }
+.stat-value.neg { color: var(--red); }
+.stat-note { font-size: 9px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.04em; }
+
+/* ── Layout ── */
+.page-wrap { max-width: 1100px; margin: 0 auto; }
+.section { padding: 96px 52px; }
+.section-divider { height: 1px; background: rgba(198,97,63,0.1); margin: 0 52px; }
+.eyebrow { font-size: 10px; letter-spacing: 0.22em; color: var(--accent); text-transform: uppercase; margin-bottom: 18px; opacity: 0.7; }
+.section-h { font-family: 'DM Serif Display', serif; font-size: clamp(36px,5vw,60px); color: var(--text); letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 44px; }
+.prose { font-size: 13px; color: var(--text-dim); line-height: 1.95; letter-spacing: 0.02em; max-width: 700px; }
+.prose + .prose { margin-top: 20px; }
+
+/* ── Data source cards ── */
+.source-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 44px; }
+.source-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 28px 24px; transition: border-color 0.28s, background 0.28s, transform 0.28s;
+}
+.source-card:hover { border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1); transform: translateY(-3px); }
+.source-icon { font-size: 22px; margin-bottom: 14px; }
+.source-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); margin-bottom: 8px; }
+.source-ticker { font-size: 10px; letter-spacing: 0.14em; color: var(--accent); opacity: 0.7; margin-bottom: 10px; text-transform: uppercase; }
+.source-desc { font-size: 11px; color: var(--text-dim); line-height: 1.7; }
+
+/* ── Feature grid ── */
+.feature-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin-top: 44px; }
+.feature-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 26px 24px; transition: border-color 0.28s, background 0.28s;
+}
+.feature-card:hover { border-color: rgba(198,97,63,0.5); background: rgba(40,42,58,1); }
+.feature-num { font-size: 9px; letter-spacing: 0.2em; color: var(--accent); opacity: 0.55; margin-bottom: 12px; }
+.feature-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--text); margin-bottom: 10px; }
+.feature-desc { font-size: 11px; color: var(--text-dim); line-height: 1.75; }
+
+/* ── Region map ── */
+.region-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin: 40px 0; }
+.region-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 6px;
+  padding: 20px 16px; text-align: center; transition: border-color 0.25s;
+}
+.region-card:hover { border-color: rgba(198,97,63,0.5); }
+.region-name { font-size: 11px; color: var(--text); letter-spacing: 0.06em; margin-bottom: 8px; font-weight: 500; }
+.region-weight {
+  font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--accent); letter-spacing: -0.02em;
+}
+.region-label { font-size: 9px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+
+/* ── Threshold table ── */
+.threshold-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 36px 0; }
+.thresh-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 22px 20px;
+}
+.thresh-label { font-size: 9px; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; opacity: 0.7; }
+.thresh-value { font-family: 'DM Serif Display', serif; font-size: clamp(24px,3vw,38px); color: var(--text); letter-spacing: -0.02em; }
+.thresh-detail { font-size: 11px; color: var(--text-muted); margin-top: 5px; line-height: 1.5; }
+
+/* ── Math blocks ── */
+.math-block {
+  background: rgba(22,24,33,0.9); border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent); border-radius: 4px;
+  padding: 22px 28px; margin: 24px 0;
+  font-size: 12px; color: var(--text); line-height: 2.1; letter-spacing: 0.03em;
+}
+.math-label { font-size: 9px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; display: block; }
+
+/* ── Pipeline ── */
+.pipeline {
+  display: flex; align-items: stretch; gap: 0; margin: 44px 0;
+  border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden;
+}
+.pipe-step { flex: 1; padding: 20px 14px; border-right: 1px solid var(--card-border); background: var(--card-bg); transition: background 0.2s; position: relative; }
+.pipe-step:last-child { border-right: none; }
+.pipe-step:hover { background: rgba(40,42,58,1); }
+.pipe-step::after { content: '→'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); color: var(--accent); opacity: 0.3; font-size: 14px; z-index: 1; pointer-events: none; }
+.pipe-step:last-child::after { display: none; }
+.pipe-num { font-size: 9px; letter-spacing: 0.18em; color: var(--accent); opacity: 0.55; margin-bottom: 8px; }
+.pipe-name { font-size: 11px; color: var(--text); font-weight: 500; margin-bottom: 6px; letter-spacing: 0.02em; }
+.pipe-detail { font-size: 10px; color: var(--text-dim); line-height: 1.65; }
+
+/* ── Performance ── */
+.perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 44px 0; }
+.perf-block { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 32px; }
+.perf-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 24px; }
+.metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid rgba(198,97,63,0.08); }
+.metric-row:last-child { border-bottom: none; }
+.metric-name { font-size: 11px; color: var(--text-dim); letter-spacing: 0.04em; }
+.metric-val { font-size: 13px; color: var(--text); font-weight: 500; }
+.metric-val.good { color: var(--green); }
+.metric-val.bad { color: var(--red); }
+.metric-val.accent { color: var(--accent); }
+
+/* ── Roadmap ── */
+.roadmap { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 44px; }
+.roadmap-item {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 22px 18px; transition: border-color 0.28s, transform 0.28s;
+}
+.roadmap-item:hover { border-color: rgba(198,97,63,0.5); transform: translateY(-3px); }
+.roadmap-phase { font-size: 9px; letter-spacing: 0.2em; color: var(--accent); opacity: 0.6; margin-bottom: 12px; }
+.roadmap-title { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--text); margin-bottom: 8px; }
+.roadmap-desc { font-size: 10px; color: var(--text-dim); line-height: 1.7; }
+
+/* ── Footnote ── */
+.footnote { font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em; margin-top: 16px; line-height: 1.7; }
+
+.footer { padding: 56px 52px; border-top: 1px solid rgba(198,97,63,0.1); }
+.footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.footer-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 6px; }
+.footer-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+  .nav { padding: 14px 20px; }
+  .hero { padding: 90px 20px 60px; }
+  .section { padding: 60px 20px; }
+  .section-divider { margin: 0 20px; }
+  .source-grid { grid-template-columns: 1fr; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .region-grid { grid-template-columns: repeat(2,1fr); }
+  .threshold-grid { grid-template-columns: 1fr; }
+  .perf-grid { grid-template-columns: 1fr; }
+  .roadmap { grid-template-columns: repeat(2,1fr); }
+  .pipeline { flex-direction: column; }
+  .pipe-step::after { content: '↓'; right: auto; left: 50%; top: auto; bottom: -12px; transform: translateX(-50%); }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { min-width: 45%; border-bottom: 1px solid var(--card-border); }
+  .footer { padding: 40px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-site">Xander Robbins</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-eyebrow">Satellite-Driven Strategy — AlgoGators Quant Fund</div>
+  <h1 class="hero-title">Harvest<br>Signal</h1>
+  <div class="hero-subtitle">Climate Intelligence → Ag Futures</div>
+  <p class="hero-desc">
+    A systematic trading strategy for agricultural commodity futures, driven by satellite-derived climate data from NASA's POWER project. Ridge regression models translate production-weighted weather stress into directional signals in corn and soybean markets — capturing dislocations that fundamentals-driven traders are slow to price.
+  </p>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-label">Ann. Return</div>
+      <div class="stat-value pos">15–20%</div>
+      <div class="stat-note">Backtest est.</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Sharpe Ratio</div>
+      <div class="stat-value pos">1.2–1.8</div>
+      <div class="stat-note">Backtest est.</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Win Rate</div>
+      <div class="stat-value">54–58%</div>
+      <div class="stat-note">Backtest est.</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Max Drawdown</div>
+      <div class="stat-value neg">−30–40%</div>
+      <div class="stat-note">Backtest est.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── 01 Overview ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">01 — Strategy</div>
+  <h2 class="section-h">Core Thesis</h2>
+  <p class="prose">
+    Agricultural commodity prices are fundamentally determined by supply — and supply is fundamentally determined by weather. Droughts, heat waves, and cold snaps materially impact crop yields, but these signals are often underpriced during the growing season because most market participants rely on backward-looking reports: USDA crop condition data, export inspections, inventory estimates. By the time consensus catches up, the dislocation has already closed.
+  </p>
+  <p class="prose">
+    HarvestSignal takes a different path. NASA's POWER project provides validated satellite-derived climate data at daily resolution for any point on Earth, available with only a 1–2 day lag. By quantifying heat, cold, and drought stress across the major US corn belt regions — production-weighted by actual harvest volumes — and training Ridge regression models on the historical relationship between these stresses and 10-day forward futures returns, the system attempts to systematically front-run the consensus repricing.
+  </p>
+  <p class="prose">
+    The model is intentionally parsimonious. Complex architectures overfit severely given 15–20 growing seasons of data. Ridge regression's L2 regularization provides the right bias-variance tradeoff and produces interpretable coefficients that can be examined and challenged — critical for a strategy that needs to be trusted in production.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 02 Data Infrastructure ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">02 — Data Infrastructure</div>
+  <h2 class="section-h">Three Data<br>Sources</h2>
+  <p class="prose">
+    The system is built on freely available, high-quality data sources. No proprietary data feeds, no expensive weather subscriptions. The caching layer ensures NASA POWER's rate limits are respected intelligently.
+  </p>
+  <div class="source-grid">
+    <div class="source-card">
+      <div class="source-icon">🛰</div>
+      <div class="source-name">NASA POWER</div>
+      <div class="source-ticker">power.larc.nasa.gov</div>
+      <div class="source-desc">Satellite-derived daily climate data at 0.5° × 0.5° global resolution. Available from 1981 to near real-time (1–2 day lag). Provides max/min temperature, precipitation, solar radiation, and humidity. Validated and gap-filled by NASA Langley Research Center.</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">📈</div>
+      <div class="source-name">Yahoo Finance</div>
+      <div class="source-ticker">ZC=F · ZS=F · ZW=F</div>
+      <div class="source-desc">Continuous front-month futures pricing via the yfinance Python library. No API costs, no roll-adjustment complexity. Corn (ZC=F) is the Phase 1 focus; soybeans (ZS=F), wheat (ZW=F), and cotton are in the expansion roadmap.</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">📋</div>
+      <div class="source-name">CFTC CoT</div>
+      <div class="source-ticker">Weekly positioning data</div>
+      <div class="source-desc">CFTC Commitments of Traders reports provide weekly positioning context for managed money, commercials, and small speculators. Used as a sentiment overlay and regime filter — helping avoid entries when positioning is structurally unfavorable.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 03 Corn Belt Regions ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">03 — Production Weighting</div>
+  <h2 class="section-h">Corn Belt<br>Coverage</h2>
+  <p class="prose">
+    Climate data is not simply averaged across the US. Each production region is weighted by its actual contribution to national corn output. This ensures that a drought in Iowa — which produces 35% of US corn — has proportionally more impact on the composite stress signal than the same drought in Indiana.
+  </p>
+  <div class="region-grid">
+    <div class="region-card">
+      <div class="region-name">Iowa</div>
+      <div class="region-weight">35%</div>
+      <div class="region-label">42.0°N 93.5°W</div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">Illinois</div>
+      <div class="region-weight">30%</div>
+      <div class="region-label">40.0°N 89.0°W</div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">Nebraska</div>
+      <div class="region-weight">20%</div>
+      <div class="region-label">41.5°N 99.8°W</div>
+    </div>
+    <div class="region-card">
+      <div class="region-name">Indiana</div>
+      <div class="region-weight">15%</div>
+      <div class="region-label">40.3°N 86.1°W</div>
+    </div>
+  </div>
+  <p class="prose">
+    The soybeans expansion uses a similar framework — Iowa (30%), Illinois (30%), Minnesota (20%), Indiana (20%) — reflecting the slight northward shift in peak soybean production relative to corn.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 04 Stress Indicators ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">04 — Feature Engineering</div>
+  <h2 class="section-h">Weather Stress<br>Indicators</h2>
+  <p class="prose">
+    Three distinct forms of crop stress are quantified. Each is computed as a binary daily indicator (stress / no stress) and then aggregated into rolling 7-day, 14-day, and 30-day cumulative windows — capturing both the intensity and duration of adverse conditions.
+  </p>
+  <div class="threshold-grid">
+    <div class="thresh-card">
+      <div class="thresh-label">Heat Stress Threshold</div>
+      <div class="thresh-value">&gt; 32°C</div>
+      <div class="thresh-detail">Max daily temperature above 32°C. Pollen viability collapses above this level during pollination, directly reducing kernel set. Z-score normalized against 30-year historical baseline.</div>
+    </div>
+    <div class="thresh-card">
+      <div class="thresh-label">Cold Stress Threshold</div>
+      <div class="thresh-value">&lt; 10°C</div>
+      <div class="thresh-detail">Min daily temperature below 10°C. Delays stand establishment in early season, reduces final yield potential. Particularly damaging before V6 leaf stage.</div>
+    </div>
+    <div class="thresh-card">
+      <div class="thresh-label">Drought Stress Threshold</div>
+      <div class="thresh-value">&lt; 25mm</div>
+      <div class="thresh-detail">7-day cumulative precipitation below 25mm/week. Water deficit during vegetative growth and grain fill is the single most damaging yield risk. Critical during July pollination window.</div>
+    </div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-num">01 ——</div>
+      <div class="feature-name">Seasonal Deviation (Z-Score)</div>
+      <div class="feature-desc">Each climate variable is z-score normalized against its historical baseline for that calendar day and location. This removes the seasonal cycle entirely, isolating genuine anomalies from normal warm summers or dry spells.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">02 ——</div>
+      <div class="feature-name">Multi-Window Aggregation</div>
+      <div class="feature-desc">Rolling 7-day, 14-day, and 30-day cumulative sums of each stress indicator. Short windows capture acute shocks; longer windows identify sustained stress periods that have a disproportionate impact on final yields.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">03 ——</div>
+      <div class="feature-name">Production Weighting</div>
+      <div class="feature-desc">Regional stress indicators are combined using production volume weights before entering the model. Iowa's drought matters more than Indiana's drought — the weighting scheme reflects this precisely.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">04 ——</div>
+      <div class="feature-name">Growing Season Gating</div>
+      <div class="feature-desc">Trading is restricted to the corn growing season (April–September). Out-of-season weather has negligible impact on futures prices. The gate prevents the model from trading on signals that have no fundamental anchor.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">05 ——</div>
+      <div class="feature-name">PCA Dimensionality Reduction</div>
+      <div class="feature-desc">After standard scaling, PCA retains 95% of variance across the stress feature set. This eliminates redundant features (correlated stress indicators across adjacent time windows), stabilizing Ridge regression coefficient estimates.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">06 ——</div>
+      <div class="feature-name">Feature Selection Gate</div>
+      <div class="feature-desc">Variance-based filtering limits each model to its 15 most informative features. Reduces noise contribution and speeds up monthly retraining cycles without sacrificing predictive power on the core stress signals.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 05 Model ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">05 — Prediction Model</div>
+  <h2 class="section-h">Rolling Ridge<br>Regression</h2>
+  <p class="prose">
+    A Ridge regression model predicts 10-day forward futures returns as a linear function of the current weather stress feature vector. Models are retrained monthly on a rolling 3-year window to allow the weather-price relationship to evolve with shifting market structure, without overfitting to distant historical data.
+  </p>
+
+  <div class="math-block">
+    <span class="math-label">Prediction Model</span>
+    Ŷ_t = β₀ + β₁·HeatStress_7d + β₂·HeatStress_14d + β₃·HeatStress_30d<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ β₄·ColdStress_7d + β₅·ColdStress_14d + ...<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ β_n·DroughtStress_30d + ε<br><br>
+    Where Ŷ_t is the predicted 10-day forward return on ZC=F.<br>
+    All features are production-weighted across the 4 corn belt regions and z-score normalized.
+  </div>
+
+  <div class="math-block">
+    <span class="math-label">L2 Regularization (Ridge)</span>
+    min &nbsp;&nbsp;‖y − Xβ‖² + α‖β‖²<br><br>
+    The regularization term α‖β‖² penalizes large coefficients, preventing overfitting<br>
+    on the limited sample of 15–20 growing seasons. α = 1.0 (default), tuned via<br>
+    time-series cross-validation on the training window.
+  </div>
+
+  <div class="math-block">
+    <span class="math-label">Walk-Forward Protocol</span>
+    For each date t in the backtest:<br>
+    &nbsp;&nbsp;1. Use only data available through t−1 (strict point-in-time)<br>
+    &nbsp;&nbsp;2. Train Ridge model on the most recent 3 years of growing-season data<br>
+    &nbsp;&nbsp;3. Apply PCA (95% variance) + feature selection to training features<br>
+    &nbsp;&nbsp;4. Generate prediction Ŷ_t for the next 10 trading days<br>
+    &nbsp;&nbsp;5. Convert to directional signal: sign(Ŷ_t) if |Ŷ_t| &gt; min_signal_strength<br>
+    &nbsp;&nbsp;6. Size position via volatility normalization (target 12% annual vol)<br>
+    &nbsp;&nbsp;7. Mark-to-market at close, charge 10 bps transaction cost on entry/exit
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 06 Pipeline ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">06 — Signal Pipeline</div>
+  <h2 class="section-h">Six-Stage<br>Signal Pipeline</h2>
+  <p class="prose">
+    Raw satellite data enters one end; a sized futures position comes out the other. Each stage has a single responsibility, making the system easy to audit, debug, and extend to new commodities.
+  </p>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-name">Climate Fetch</div>
+      <div class="pipe-detail">NASA POWER API pulls daily temp/precip for each region. Smart cache layer avoids redundant calls.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-name">Stress Compute</div>
+      <div class="pipe-detail">Binary heat/cold/drought indicators. Rolling 7d/14d/30d cumulative aggregation. Z-score normalization against historical baseline.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-name">Region Aggregate</div>
+      <div class="pipe-detail">Production-weight each region's stress into composite corn belt indicators. Iowa 35%, Illinois 30%, Nebraska 20%, Indiana 15%.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-name">Model Predict</div>
+      <div class="pipe-detail">PCA → Ridge regression → predicted 10-day return. Models retrained monthly on 3-year rolling window.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-name">Season Gate</div>
+      <div class="pipe-detail">Signal only active during April–September growing season. Out-of-season output forced to zero regardless of model prediction.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">06</div>
+      <div class="pipe-name">Size &amp; Execute</div>
+      <div class="pipe-detail">Volatility-normalized position sizing. 5% fixed base size. Max 20% single position. 10 bps/side transaction cost applied.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 07 Performance ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">07 — Performance</div>
+  <h2 class="section-h">Backtest<br>Estimates</h2>
+  <p class="prose">
+    Based on walk-forward simulation from 2010–2023 on corn futures (ZC=F), with 10 bps/trade transaction costs, 5% base position sizing, monthly model retraining, and growing season restriction. All figures are estimates from the backtest framework — live results are pending Phase 4 deployment.
+  </p>
+
+  <div class="perf-grid">
+    <div class="perf-block">
+      <div class="perf-title">Return Metrics</div>
+      <div class="metric-row">
+        <span class="metric-name">Annualized Return</span>
+        <span class="metric-val good">15–20%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Sharpe Ratio</span>
+        <span class="metric-val good">1.2–1.8</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Sortino Ratio</span>
+        <span class="metric-val accent">1.5–2.2</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Calmar Ratio</span>
+        <span class="metric-val accent">0.4–0.6</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Max Drawdown</span>
+        <span class="metric-val bad">−30% to −40%</span>
+      </div>
+    </div>
+    <div class="perf-block">
+      <div class="perf-title">Trading Statistics</div>
+      <div class="metric-row">
+        <span class="metric-name">Win Rate</span>
+        <span class="metric-val">54–58%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Profit Factor</span>
+        <span class="metric-val good">1.4–1.8×</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Transaction Costs</span>
+        <span class="metric-val accent">10 bps/side</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Initial Capital</span>
+        <span class="metric-val">$1,000,000</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Prediction Horizon</span>
+        <span class="metric-val">10 trading days</span>
+      </div>
+    </div>
+  </div>
+  <p class="footnote">★ The elevated drawdown profile (-30% to -40%) is characteristic of weather-driven dislocation strategies. Severe droughts can persist for an entire growing season, creating extended adverse periods before mean reversion reasserts. This makes the strategy unsuitable for low-volatility mandates but potentially compelling for absolute return allocators with appropriate risk tolerance and long time horizons. The Sharpe ratio of 1.2–1.8 indicates strong risk-adjusted returns despite the high drawdowns, reflecting a high-volatility, high-return profile.</p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 08 Limitations ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">08 — Risk Factors</div>
+  <h2 class="section-h">Known<br>Limitations</h2>
+  <p class="prose">
+    Rigorous quantitative strategy development requires honest accounting of model risks. Four risks are material for this strategy.
+  </p>
+
+  <div class="feature-grid" style="margin-top: 36px;">
+    <div class="feature-card">
+      <div class="feature-num">Model Risk</div>
+      <div class="feature-name">Relationship Stationarity</div>
+      <div class="feature-desc">The strategy assumes the weather-price relationship is stationary. Climate change, advances in drought-resistant seed genetics, and shifting global trade patterns may gradually erode historical coefficients. Monthly retraining helps, but structural breaks can cause sustained underperformance before detection.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">Execution Risk</div>
+      <div class="feature-name">Slippage at Extremes</div>
+      <div class="feature-desc">Weather signals are strongest during volatile conditions — droughts, heat waves — precisely when futures bid-ask spreads widen. The 10 bps cost assumption may prove optimistic at scale. Real-world slippage could meaningfully erode the edge, particularly for larger position sizes.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">Data Risk</div>
+      <div class="feature-name">NASA POWER Gaps</div>
+      <div class="feature-desc">NASA POWER data occasionally contains gaps or anomalies, particularly for the most recent dates. Validation checks are implemented in data_validator.py but cannot eliminate all quality issues. The cache layer also risks serving stale data if invalidation logic fails.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-num">Regime Risk</div>
+      <div class="feature-name">Orthogonal Macro Shocks</div>
+      <div class="feature-desc">When commodity markets are dominated by factors orthogonal to weather — USD strength, Chinese demand shocks, policy interventions, export sanctions — weather signals fail systematically. No regime filter is currently implemented; the strategy will continue trading through unfavorable macro environments.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 09 Roadmap ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">09 — Roadmap</div>
+  <h2 class="section-h">Expansion<br>Phases</h2>
+  <p class="prose">
+    Phase 1 (corn, US) is the production baseline. Each subsequent phase extends the edge into new markets, models, and execution venues.
+  </p>
+  <div class="roadmap">
+    <div class="roadmap-item">
+      <div class="roadmap-phase">Phase 1 — Current</div>
+      <div class="roadmap-title">Corn, US Corn Belt</div>
+      <div class="roadmap-desc">Rolling Ridge regression on heat, cold, drought stress. ZC=F continuous front-month. Monthly retraining, growing season only.</div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-phase">Phase 2 — Expansion</div>
+      <div class="roadmap-title">Multi-Commodity</div>
+      <div class="roadmap-desc">Extend to soybeans, wheat, cotton, and coffee with commodity-specific thresholds, regional weights, and growing season calendars already defined in config.</div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-phase">Phase 3 — Modeling</div>
+      <div class="roadmap-title">Ensemble + XGBoost</div>
+      <div class="roadmap-desc">Explore gradient boosting and ensemble methods once the multi-commodity dataset is large enough to support deeper architectures without overfitting. XGBoost model skeleton already implemented.</div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-phase">Phase 4 — Live</div>
+      <div class="roadmap-title">IB API Deployment</div>
+      <div class="roadmap-desc">Live trading via Interactive Brokers API with real-time data pipelines, position monitoring, and automated daily execution. Options strategies exploring implied vol regime forecasting.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Xander Robbins</div>
+      <div class="footer-sub">Quantitative Finance · University of Florida · AlgoGators</div>
+    </div>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+if (window.innerWidth > 768) {
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, .source-card, .feature-card, .thresh-card, .region-card, .roadmap-item, .pipe-step, .stat-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '6px'; cur.style.height = '6px';
+      ring.style.width = '48px'; ring.style.height = '48px';
+      ring.style.borderColor = 'var(--accent)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(139,70,32,0.5)';
+    });
+  });
+}
+
+const revealEls = document.querySelectorAll(
+  '.source-card, .feature-card, .thresh-card, .region-card, .roadmap-item, .perf-block, .pipe-step, .math-block'
+);
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; }
+  });
+}, { threshold: 0.07 });
+revealEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = `opacity 0.65s ease ${(i % 4) * 0.07}s, transform 0.65s ease ${(i % 4) * 0.07}s`;
+  obs.observe(el);
+});
+</script>
+</body>
+</html>

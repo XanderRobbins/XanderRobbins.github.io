@@ -696,6 +696,41 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   .research-header { flex-direction: column; gap: 12px; }
   .research-meta { flex-direction: row; gap: 12px; }
 }
+
+/* ── Clickable strategy card ── */
+.strategy-card--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: none;
+  position: relative;
+}
+@media (max-width: 768px) {
+  .strategy-card--link { cursor: pointer; }
+}
+
+.strategy-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(198,97,63,0.15);
+  flex-wrap: wrap;
+}
+.strategy-link-cta {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.22s, transform 0.22s;
+}
+.strategy-card--link:hover .strategy-link-cta {
+  opacity: 1;
+  transform: translateX(0);
+}
 /* ── Semi-circle scroll tab ── */
 .about-tab {
   position: absolute;
@@ -1328,18 +1363,36 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
     <h1>Trading Strategies</h1>
     <div class="section-content">
       <div class="strategy-grid">
-        <div class="strategy-card">
+        <a href="pairs-trading.html" class="strategy-card strategy-card--link">
           <div class="strategy-header">
             <h3>Universal Pairs Trading System</h3>
             <span class="strategy-type">Mean Reversion</span>
           </div>
           <p class="strategy-desc">Production cointegration-based pairs trading system built at AlgoGators. Uses Engle-Granger and Johansen cointegration tests to identify statistically significant pairs, with dynamic z-score entry/exit signals and Kelly criterion position sizing.</p>
-          <div class="strategy-tags">
-            <span class="stag">Cointegration</span>
-            <span class="stag">Z-Score Signals</span>
-            <span class="stag">Kelly Sizing</span>
+          <div class="strategy-footer">
+            <div class="strategy-tags" style="border-top:none; padding-top:0;">
+              <span class="stag">Cointegration</span>
+              <span class="stag">Z-Score Signals</span>
+              <span class="stag">Kelly Sizing</span>
+            </div>
+            <span class="strategy-link-cta">View Analysis ↗</span>
           </div>
-        </div>
+        </a>
+        <a href="harvestsignal.html" class="strategy-card strategy-card--link">
+          <div class="strategy-header">
+            <h3>HarvestSignal</h3>
+            <span class="strategy-type">Satellite ML</span>
+          </div>
+          <p class="strategy-desc">NASA POWER satellite climate data drives Ridge regression signals in agricultural commodity futures. Quantifies heat, cold, and drought stress across production-weighted regions to forecast 10-day forward returns in corn and soybean markets.</p>
+          <div class="strategy-footer">
+            <div class="strategy-tags" style="border-top:none; padding-top:0;">
+              <span class="stag">NASA POWER</span>
+              <span class="stag">Ridge Regression</span>
+              <span class="stag">Weather Stress</span>
+            </div>
+            <span class="strategy-link-cta">View Analysis ↗</span>
+          </div>
+        </a>
         <div class="strategy-card">
           <div class="strategy-header">
             <h3>Arbitrage-Free Volatility Surface</h3>
@@ -1542,7 +1595,7 @@ if (!isMobile()) {
     requestAnimationFrame(animCursor);
   }
   animCursor();
-  document.querySelectorAll('.card, .back-btn, .close-btn, button, .about-tab').forEach(el => {
+  document.querySelectorAll('.card, .back-btn, .close-btn, button, .about-tab, .strategy-card--link').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
   });

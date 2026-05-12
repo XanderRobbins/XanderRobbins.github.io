@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#282a3a">
+<title>BZ-CL Brent/WTI Pairs Trade — Xander Robbins</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  cursor: none;
+}
+body::-webkit-scrollbar { display: none; }
+
+#cursor {
+  position: fixed; width: 12px; height: 12px;
+  background: #8b4620; border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 12px rgba(139,70,32,0.6);
+}
+#cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(139,70,32,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
+}
+
+.scanlines {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 24px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(40,42,58,0.97) 0%, transparent 100%);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.nav-site {
+  font-family: 'DM Serif Display', serif; font-size: 20px;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-back {
+  font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim);
+  text-transform: uppercase; background: none;
+  border: 1px solid var(--card-border); padding: 8px 20px; border-radius: 4px;
+  cursor: none; transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+}
+.nav-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; padding: 140px 52px 80px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 15% 55%, rgba(198,97,63,0.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+  background-image: linear-gradient(var(--accent) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 24px; opacity: 0.8;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before {
+  content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(72px, 12vw, 140px);
+  color: var(--text); letter-spacing: -0.04em; line-height: 0.9; margin-bottom: 12px;
+}
+.hero-subtitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3.5vw, 44px);
+  color: var(--accent); letter-spacing: -0.01em; font-style: italic; margin-bottom: 36px;
+}
+.hero-desc {
+  max-width: 580px; font-size: 13px; color: var(--text-dim);
+  line-height: 1.9; letter-spacing: 0.02em; margin-bottom: 56px;
+}
+
+.stats-bar {
+  display: flex; gap: 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; max-width: 680px;
+  background: rgba(22,24,33,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.stat-item {
+  flex: 1; padding: 20px 24px; border-right: 1px solid var(--card-border);
+  transition: background 0.25s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: rgba(198,97,63,0.06); }
+.stat-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;
+}
+.stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3vw, 36px); color: var(--text); letter-spacing: -0.02em;
+}
+.stat-value.pos { color: #4ade80; }
+.stat-value.neg { color: #f87171; }
+
+/* ── Sections ── */
+.page-wrap { max-width: 1100px; margin: 0 auto; }
+
+.section { padding: 96px 52px; }
+.section-divider { height: 1px; background: rgba(198,97,63,0.1); margin: 0 52px; }
+
+.eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 18px; opacity: 0.7;
+}
+.section-h {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 60px); color: var(--text);
+  letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 44px;
+}
+.prose {
+  font-size: 13px; color: var(--text-dim); line-height: 1.95;
+  letter-spacing: 0.02em; max-width: 700px;
+}
+.prose + .prose { margin-top: 20px; }
+
+/* ── Architecture grid ── */
+.arch-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 48px;
+}
+.arch-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 24px 20px; transition: border-color 0.28s, background 0.28s, transform 0.28s;
+}
+.arch-card:hover { border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1); transform: translateY(-3px); }
+.arch-num { font-size: 9px; letter-spacing: 0.2em; color: var(--accent); opacity: 0.55; margin-bottom: 14px; }
+.arch-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); margin-bottom: 10px; }
+.arch-desc { font-size: 11px; color: var(--text-dim); line-height: 1.75; }
+
+/* ── Math blocks ── */
+.math-block {
+  background: rgba(22,24,33,0.9); border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent); border-radius: 4px;
+  padding: 22px 28px; margin: 24px 0;
+  font-size: 12px; color: var(--text); line-height: 2.1; letter-spacing: 0.03em;
+}
+.math-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; display: block;
+}
+
+/* ── Coint stats ── */
+.coint-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin: 40px 0; }
+.coint-stat {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 28px; transition: border-color 0.25s;
+}
+.coint-stat:hover { border-color: rgba(198,97,63,0.5); }
+.coint-stat-label {
+  font-size: 9px; letter-spacing: 0.18em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 10px; opacity: 0.7;
+}
+.coint-stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px, 3.5vw, 44px); color: var(--text); letter-spacing: -0.02em;
+}
+.coint-stat-detail { font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
+/* ── Signal pipeline ── */
+.pipeline {
+  display: flex; align-items: stretch; gap: 0; margin: 44px 0;
+  border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden;
+}
+.pipe-step {
+  flex: 1; padding: 20px 16px;
+  border-right: 1px solid var(--card-border);
+  background: var(--card-bg); transition: background 0.2s;
+  position: relative;
+}
+.pipe-step:last-child { border-right: none; }
+.pipe-step:hover { background: rgba(40,42,58,1); }
+.pipe-step::after {
+  content: '→'; position: absolute; right: -10px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent); opacity: 0.35; font-size: 14px;
+  z-index: 1; pointer-events: none;
+}
+.pipe-step:last-child::after { display: none; }
+.pipe-num { font-size: 9px; letter-spacing: 0.18em; color: var(--accent); opacity: 0.55; margin-bottom: 8px; }
+.pipe-name { font-size: 11px; color: var(--text); font-weight: 500; margin-bottom: 6px; letter-spacing: 0.03em; }
+.pipe-detail { font-size: 10px; color: var(--text-dim); line-height: 1.65; }
+
+/* ── Performance ── */
+.perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 44px 0; }
+.perf-block {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 32px;
+}
+.perf-title {
+  font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 24px;
+}
+.metric-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 0; border-bottom: 1px solid rgba(198,97,63,0.08);
+}
+.metric-row:last-child { border-bottom: none; }
+.metric-name { font-size: 11px; color: var(--text-dim); letter-spacing: 0.04em; }
+.metric-val { font-size: 13px; color: var(--text); font-weight: 500; }
+.metric-val.good { color: #4ade80; }
+.metric-val.bad { color: #f87171; }
+.metric-val.accent { color: var(--accent); }
+
+/* Win-rate bar */
+.win-bar-wrap { margin: 32px 0; }
+.win-bar-header {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; color: var(--text-dim); letter-spacing: 0.06em; margin-bottom: 10px;
+}
+.win-bar-track {
+  height: 5px; background: rgba(198,97,63,0.12); border-radius: 3px; overflow: hidden;
+}
+.win-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--accent) 0%, #4ade80 100%);
+  border-radius: 3px; width: 0%; transition: width 1.4s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* Chart wrapper */
+.chart-wrap {
+  margin: 32px 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; background: rgba(22,24,33,0.5);
+}
+.chart-label {
+  padding: 12px 20px; font-size: 10px; letter-spacing: 0.14em; color: var(--text-dim);
+  text-transform: uppercase; border-bottom: 1px solid var(--card-border);
+  display: flex; align-items: center; gap: 8px;
+}
+.chart-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.7; flex-shrink: 0; }
+.chart-img { width: 100%; display: block; }
+
+/* Trade table */
+.table-wrap { overflow-x: auto; margin-top: 36px; }
+.trade-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.trade-table th {
+  text-align: left; font-size: 9px; letter-spacing: 0.15em; color: var(--accent);
+  text-transform: uppercase; padding: 12px 14px; border-bottom: 1px solid var(--card-border); opacity: 0.7;
+}
+.trade-table td {
+  padding: 11px 14px; border-bottom: 1px solid rgba(198,97,63,0.07); color: var(--text-dim);
+  transition: color 0.15s;
+}
+.trade-table tr:hover td { color: var(--text); background: rgba(198,97,63,0.03); }
+.trade-table tr.flagship td { background: rgba(198,97,63,0.04); }
+
+.badge {
+  font-size: 9px; letter-spacing: 0.1em; padding: 3px 8px;
+  border-radius: 2px; text-transform: uppercase; font-weight: 500;
+}
+.badge.win { background: rgba(74,222,128,0.12); color: #4ade80; }
+.badge.loss { background: rgba(248,113,113,0.12); color: #f87171; }
+.badge.long { background: rgba(96,165,250,0.12); color: #60a5fa; }
+.badge.short { background: rgba(198,97,63,0.15); color: var(--accent); }
+
+/* Universe table */
+.uni-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 36px; }
+.uni-table th {
+  text-align: left; font-size: 9px; letter-spacing: 0.15em; color: var(--accent);
+  text-transform: uppercase; padding: 12px 14px; border-bottom: 1px solid var(--card-border); opacity: 0.7;
+}
+.uni-table td { padding: 11px 14px; border-bottom: 1px solid rgba(198,97,63,0.07); color: var(--text-dim); }
+.uni-table tr:hover td { color: var(--text); background: rgba(198,97,63,0.03); }
+.uni-table tr.flagship td { color: var(--text); }
+
+/* Footnote */
+.footnote {
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em;
+  margin-top: 16px; line-height: 1.7;
+}
+
+/* Footer */
+.footer {
+  padding: 56px 52px; border-top: 1px solid rgba(198,97,63,0.1);
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.footer-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 6px; }
+.footer-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+  .nav { padding: 14px 20px; }
+  .hero { padding: 90px 20px 60px; }
+  .section { padding: 60px 20px; }
+  .section-divider { margin: 0 20px; }
+  .arch-grid { grid-template-columns: 1fr 1fr; }
+  .coint-stats { grid-template-columns: 1fr; }
+  .perf-grid { grid-template-columns: 1fr; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { min-width: 45%; border-bottom: 1px solid var(--card-border); }
+  .pipeline { flex-direction: column; }
+  .pipe-step::after { content: '↓'; right: auto; left: 50%; top: auto; bottom: -12px; transform: translateX(-50%); }
+  .footer { padding: 40px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-site">Xander Robbins</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-eyebrow">Flagship Strategy — AlgoGators Quant Fund</div>
+  <h1 class="hero-title">BZ-CL</h1>
+  <div class="hero-subtitle">Brent / WTI Crude Pairs Trade</div>
+  <p class="hero-desc">
+    A production mean-reversion strategy built on the structural cointegration between ICE Brent (BZ=F) and NYMEX WTI (CL=F). Live-traded at AlgoGators — the only student-run quantitative investment fund in the US. Tested on 11 years of daily futures data with full transaction cost modeling.
+  </p>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-label">Win Rate</div>
+      <div class="stat-value pos">89.3%</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Profit Factor</div>
+      <div class="stat-value pos">4.91×</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Max Drawdown</div>
+      <div class="stat-value neg">−10.9%</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Total Trades</div>
+      <div class="stat-value">28</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── 01 System Overview ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">01 — System</div>
+  <h2 class="section-h">Universal Pairs<br>Trading System</h2>
+  <p class="prose">
+    The Universal Pairs Trading System is a production-grade algorithmic framework built to identify, test, and trade statistically cointegrated asset pairs across any asset class — energy futures, agricultural spreads, metals, and international equities. It runs a full statistical pipeline from cointegration testing through signal generation, Kelly-based position sizing, and ATR-anchored risk management.
+  </p>
+  <p class="prose">
+    BZ-CL — Brent vs WTI crude — is the flagship pair. Out of 15+ pairs systematically screened, it delivers the strongest risk-adjusted profile: a 14–28 day half-life, confirmed cointegration at p = 0.0025, and 39% rolling cointegration frequency across 252-day windows.
+  </p>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-num">01 ——</div>
+      <div class="arch-name">Pair Selection</div>
+      <div class="arch-desc">Engle-Granger + Johansen cointegration tests. ADF stationarity on spread residuals. Ornstein-Uhlenbeck half-life estimation. Min/max half-life gates (5–90 days).</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-num">02 ——</div>
+      <div class="arch-name">Signal Engine</div>
+      <div class="arch-desc">Rolling 30-day z-score on log spread. Entry at ±2σ, exit at ±0.5σ. Regime filter via SMA50/200 crossover. Dynamic threshold widening in high-vol regimes.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-num">03 ——</div>
+      <div class="arch-name">Position Sizing</div>
+      <div class="arch-desc">Kelly criterion with 2% base risk per trade. 30% max single-pair position. Volatility-scaled sizing. Up to 2× pyramiding when spread extends past initial entry z-score.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-num">04 ——</div>
+      <div class="arch-name">Risk Management</div>
+      <div class="arch-desc">ATR stops at 2.5× ATR, targets at 4.0× ATR. Regime-change exits on volatile-trending detection. 20% portfolio-level max drawdown circuit breaker.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 02 Pair Rationale ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">02 — Pair Rationale</div>
+  <h2 class="section-h">Why Brent<br>vs WTI?</h2>
+  <p class="prose">
+    Brent Crude (ICE, BZ=F) and WTI Crude (NYMEX, CL=F) are the two dominant global oil benchmarks, but they reflect physically distinct markets. Brent prices seaborne North Sea crude — the international reference. WTI prices US inland crude at Cushing, Oklahoma — the domestic reference. Their prices are structurally linked through crude quality differentials, trans-Atlantic shipping costs, pipeline capacity, and refinery demand.
+  </p>
+  <p class="prose">
+    This structural economic linkage creates a persistent statistical equilibrium. When geopolitical shocks, inventory imbalances, pipeline outages, or sanctions widen the Brent-WTI spread beyond its equilibrium range, arbitrage forces — refiners switching crude grades, tanker routing changes, export/import flows — work to close the gap. This is the fundamental driver of mean reversion.
+  </p>
+  <p class="prose">
+    The log spread S_t = log(BZ_t) − β·log(CL_t) is stationary with a half-life of 14–28 days. This means the spread reverts to its historical mean in roughly 2–4 weeks on average — an actionable timeframe for systematic signal generation.
+  </p>
+  <div class="coint-stats">
+    <div class="coint-stat">
+      <div class="coint-stat-label">Cointegration P-Value</div>
+      <div class="coint-stat-value">0.0025</div>
+      <div class="coint-stat-detail">Engle-Granger two-step test. Highly significant at all conventional thresholds (1%, 5%, 10%).</div>
+    </div>
+    <div class="coint-stat">
+      <div class="coint-stat-label">Mean Half-Life</div>
+      <div class="coint-stat-value">14–28 d</div>
+      <div class="coint-stat-detail">Ornstein-Uhlenbeck mean-reversion speed estimation. Varies across market regimes.</div>
+    </div>
+    <div class="coint-stat">
+      <div class="coint-stat-label">Rolling Cointegration</div>
+      <div class="coint-stat-value">39.1%</div>
+      <div class="coint-stat-detail">% of 252-day rolling windows where the pair tests as cointegrated. Used as dynamic trade gate.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 03 Statistical Foundation ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">03 — Methodology</div>
+  <h2 class="section-h">Statistical<br>Foundation</h2>
+  <p class="prose">
+    Pairs trading operates on the principle of cointegration — a stronger condition than correlation. Two price series are cointegrated if a linear combination of them is stationary (mean-reverting), even if each series individually is non-stationary (I(1)). This guarantees a long-run equilibrium relationship and provides the theoretical justification for mean-reversion signals.
+  </p>
+
+  <div class="math-block">
+    <span class="math-label">Step 1 — Engle-Granger Cointegration Test</span>
+    Estimate the hedge ratio β via OLS regression on log prices:<br>
+    &nbsp;&nbsp;log(BZ_t) = α + β · log(CL_t) + ε_t<br><br>
+    The residual ε̂_t is the log spread (cointegrating residual).<br>
+    Apply ADF test to ε̂_t — rejection of H₀: I(1) at p &lt; 0.05 confirms cointegration.<br><br>
+    BZ-CL result: p = 0.0025 &nbsp;✓&nbsp; (critical value 5%: 0.05)
+  </div>
+
+  <div class="math-block">
+    <span class="math-label">Step 2 — Half-Life Estimation (Ornstein-Uhlenbeck)</span>
+    The spread S_t follows a continuous-time OU process:<br>
+    &nbsp;&nbsp;dS_t = κ(θ − S_t)dt + σ dW_t<br><br>
+    Discretized for estimation via OLS on:<br>
+    &nbsp;&nbsp;ΔS_t = a + b · S_{t−1} + η_t<br><br>
+    Half-life = −log(2) / b &nbsp;&nbsp;[measured in trading days]<br><br>
+    BZ-CL result: half-life ≈ 14.5 – 28.1 days
+  </div>
+
+  <div class="math-block">
+    <span class="math-label">Step 3 — Z-Score Signal Generation</span>
+    Rolling standardization of the spread over a 30-day lookback window:<br>
+    &nbsp;&nbsp;Z_t = (S_t − μ_{t,30}) / σ_{t,30}<br><br>
+    Entry Long &nbsp;&nbsp;&nbsp;→ Z_t &lt; −2.0 &nbsp;&nbsp;(spread below equilibrium: buy BZ, short CL)<br>
+    Entry Short &nbsp;&nbsp;→ Z_t &gt; +2.0 &nbsp;&nbsp;(spread above equilibrium: short BZ, buy CL)<br>
+    Exit &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ |Z_t| &lt; 0.5 &nbsp;&nbsp;(spread returns to mean)
+  </div>
+
+  <div class="math-block">
+    <span class="math-label">Step 4 — Kelly Criterion Position Sizing</span>
+    Fractional Kelly with rolling win probability estimate:<br>
+    &nbsp;&nbsp;f* = (p · b − q) / b<br><br>
+    where p = rolling win rate, q = 1 − p, b = avg win / avg loss<br><br>
+    Applied as: risk_per_trade = min(f* · 0.5, 0.02) · capital<br>
+    Position limit: max 30% of portfolio in any single pair<br>
+    Pyramiding: scale up to 2× if spread extends 0.5σ past entry z-score
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 04 Signal Pipeline ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">04 — Signal Generation</div>
+  <h2 class="section-h">Seven-Stage<br>Signal Pipeline</h2>
+  <p class="prose">
+    Each trading day the system runs the full pipeline from raw price data to a binary position signal. Multiple filters are applied sequentially to reduce false positives while preserving genuine mean-reversion opportunities. The cointegration gate alone eliminates 61% of trading days, keeping the system inactive until structural conditions hold.
+  </p>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-name">Z-Score</div>
+      <div class="pipe-detail">30-day rolling mean + std of log spread. Long-term 252-day baseline for regime comparison.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-name">Regime</div>
+      <div class="pipe-detail">SMA50 vs SMA200 crossover on spread. Vol ratio vs long-term avg. Classifies: Mean-Reverting, Trending, Volatile-Trending.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-name">Thresholds</div>
+      <div class="pipe-detail">Dynamically widens ±2σ entry thresholds when vol ratio &gt; 1.2. Clipped to ±[1.5, 3.5]σ range.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-name">Momentum</div>
+      <div class="pipe-detail">5-day spread ROC + 3-day z-score delta. Confirms reversion momentum before entry.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-name">Coint Gate</div>
+      <div class="pipe-detail">Rolling 252-day cointegration test. Only trades when the pair is cointegrated in the current window.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">06</div>
+      <div class="pipe-name">Positions</div>
+      <div class="pipe-detail">Entry, scale-in (max 2×), stop-loss reversal exits, mean-reversion exits, regime-change exits.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">07</div>
+      <div class="pipe-name">Risk Filter</div>
+      <div class="pipe-detail">ATR stop 2.5×, target 4.0×. Portfolio heat limit 10%. Max drawdown circuit breaker 20%.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 05 Performance ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">05 — Results</div>
+  <h2 class="section-h">Backtest<br>Performance</h2>
+  <p class="prose">
+    Tested on daily futures data from 2014–2025 (11 years) with 5 bps per-side commission and 2 bps average slippage modeled. $500,000 initial capital. Zero look-ahead bias — all statistics computed on expanding in-sample windows only.
+  </p>
+
+  <div class="win-bar-wrap" style="margin-top: 36px;">
+    <div class="win-bar-header">
+      <span>Win Rate — 25 winning trades out of 28 total</span>
+      <span style="color: #4ade80; letter-spacing: 0.12em;">89.3%</span>
+    </div>
+    <div class="win-bar-track">
+      <div class="win-bar-fill" id="winbar"></div>
+    </div>
+  </div>
+
+  <div class="perf-grid">
+    <div class="perf-block">
+      <div class="perf-title">Return Metrics</div>
+      <div class="metric-row">
+        <span class="metric-name">Total Return</span>
+        <span class="metric-val good">+36.77%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">CAGR</span>
+        <span class="metric-val good">+2.05% / yr</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Sharpe Ratio</span>
+        <span class="metric-val accent">0.434</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Max Drawdown</span>
+        <span class="metric-val bad">−10.85%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Net P&L ($500k base)</span>
+        <span class="metric-val good">+$183,850</span>
+      </div>
+    </div>
+    <div class="perf-block">
+      <div class="perf-title">Trade Statistics</div>
+      <div class="metric-row">
+        <span class="metric-name">Total Trades</span>
+        <span class="metric-val">28</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Win Rate</span>
+        <span class="metric-val good">89.3% &nbsp;(25 / 28)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Profit Factor</span>
+        <span class="metric-val good">4.91×</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Best Trade</span>
+        <span class="metric-val good">+6.64% &nbsp;(Trade 3)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Worst Trade</span>
+        <span class="metric-val bad">−7.32% &nbsp;(Trade 7)</span>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 06 Charts ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">06 — Analysis Charts</div>
+  <h2 class="section-h">Visual<br>Analysis</h2>
+
+  <div class="chart-wrap">
+    <div class="chart-label">Price Series — Brent (BZ=F) vs WTI (CL=F)</div>
+    <img class="chart-img" src="assets/pairs/bz-cl/01_prices.png" alt="BZ vs CL price series" loading="lazy">
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label">Log Spread · Z-Score · Entry / Exit Signals</div>
+    <img class="chart-img" src="assets/pairs/bz-cl/02_spread.png" alt="Spread and z-score" loading="lazy">
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label">Equity Curve — $500,000 Initial Capital</div>
+    <img class="chart-img" src="assets/pairs/bz-cl/03_equity.png" alt="Equity curve" loading="lazy">
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label">Trade Entry / Exit Overlay on Spread</div>
+    <img class="chart-img" src="assets/pairs/bz-cl/04_trades.png" alt="Trade entry and exit map" loading="lazy">
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label">Monthly Returns Heatmap</div>
+    <img class="chart-img" src="assets/pairs/bz-cl/05_monthly.png" alt="Monthly returns heatmap" loading="lazy">
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label">Rolling Cointegration Status — 252-Day Windows</div>
+    <img class="chart-img" src="assets/pairs/bz-cl/06_cointegration.png" alt="Rolling cointegration" loading="lazy">
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 07 Trade Journal ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">07 — Trade Log</div>
+  <h2 class="section-h">Full Trade<br>Journal</h2>
+  <p class="prose">
+    All 28 completed trades from the backtest period. 25 wins, 3 losses. The three losses are concentrated in 2016–2021 — the post-WCS-widening period when Brent-WTI dynamics were most disrupted by US shale export growth and Permian basin bottlenecks. The system has been profitable on every trade since late 2021.
+  </p>
+  <p class="footnote">Win/loss is determined by spread P&L direction before friction costs. Portfolio return % includes all transaction costs and Kelly position sizing.</p>
+  <div class="table-wrap">
+    <table class="trade-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Entry</th>
+          <th>Exit</th>
+          <th>Dir</th>
+          <th>Days</th>
+          <th>Entry Z</th>
+          <th>Portfolio Rtn</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Jul 2014</td><td>Jul 2014</td><td><span class="badge long">Long</span></td><td>9</td><td>−1.81</td><td class="metric-val good">+4.54%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>2</td><td>May 2016</td><td>Jun 2016</td><td><span class="badge long">Long</span></td><td>30</td><td>−1.80</td><td>+0.15%</td><td><span class="badge loss">Loss</span></td></tr>
+        <tr><td>3</td><td>Dec 2016</td><td>Dec 2016</td><td><span class="badge long">Long</span></td><td>1</td><td>−3.38</td><td class="metric-val good">+6.64%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>4</td><td>Mar 2017</td><td>Mar 2017</td><td><span class="badge short">Short</span></td><td>22</td><td>+1.84</td><td class="metric-val good">+1.65%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>5</td><td>May 2017</td><td>May 2017</td><td><span class="badge short">Short</span></td><td>19</td><td>+1.66</td><td>−0.10%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>6</td><td>Jun 2017</td><td>Jun 2017</td><td><span class="badge short">Short</span></td><td>10</td><td>+2.13</td><td class="metric-val good">+2.19%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>7</td><td>Aug 2017</td><td>Sep 2017</td><td><span class="badge short">Short</span></td><td>48</td><td>+1.54</td><td class="metric-val bad">−7.32%</td><td><span class="badge loss">Loss</span></td></tr>
+        <tr><td>8</td><td>Jan 2021</td><td>Jan 2021</td><td><span class="badge long">Long</span></td><td>15</td><td>−2.94</td><td class="metric-val good">+1.56%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>9</td><td>Apr 2021</td><td>May 2021</td><td><span class="badge long">Long</span></td><td>20</td><td>−1.59</td><td>−0.09%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>10</td><td>May 2021</td><td>Jul 2021</td><td><span class="badge long">Long</span></td><td>51</td><td>−2.42</td><td class="metric-val bad">−1.58%</td><td><span class="badge loss">Loss</span></td></tr>
+        <tr><td>11</td><td>Apr 2022</td><td>Apr 2022</td><td><span class="badge long">Long</span></td><td>1</td><td>−2.10</td><td class="metric-val good">+2.19%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>12</td><td>May 2022</td><td>May 2022</td><td><span class="badge long">Long</span></td><td>21</td><td>−1.87</td><td class="metric-val good">+2.72%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>13</td><td>Sep 2022</td><td>Oct 2022</td><td><span class="badge short">Short</span></td><td>12</td><td>+2.37</td><td class="metric-val good">+4.77%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>14</td><td>Nov 2022</td><td>Nov 2022</td><td><span class="badge short">Short</span></td><td>11</td><td>+1.80</td><td class="metric-val good">+2.03%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>15</td><td>Jan 2023</td><td>Jan 2023</td><td><span class="badge short">Short</span></td><td>4</td><td>+1.94</td><td class="metric-val good">+1.45%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>16</td><td>Feb 2023</td><td>Feb 2023</td><td><span class="badge short">Short</span></td><td>10</td><td>+2.16</td><td class="metric-val good">+0.74%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>17</td><td>Feb 2023</td><td>Mar 2023</td><td><span class="badge short">Short</span></td><td>8</td><td>+1.50</td><td class="metric-val good">+0.42%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>18</td><td>Mar 2023</td><td>Mar 2023</td><td><span class="badge short">Short</span></td><td>7</td><td>+2.44</td><td class="metric-val good">+0.71%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>19</td><td>May 2023</td><td>May 2023</td><td><span class="badge short">Short</span></td><td>12</td><td>+1.67</td><td class="metric-val good">+0.32%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>20</td><td>May 2023</td><td>Jun 2023</td><td><span class="badge short">Short</span></td><td>7</td><td>+2.18</td><td class="metric-val good">+0.52%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>21</td><td>Jun 2023</td><td>Jun 2023</td><td><span class="badge short">Short</span></td><td>6</td><td>+1.51</td><td class="metric-val good">+0.74%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>22</td><td>Apr 2024</td><td>May 2024</td><td><span class="badge short">Short</span></td><td>19</td><td>+1.64</td><td class="metric-val good">+2.30%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>23</td><td>Jun 2024</td><td>Jun 2024</td><td><span class="badge short">Short</span></td><td>3</td><td>+1.66</td><td class="metric-val good">+0.32%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>24</td><td>Nov 2024</td><td>Dec 2024</td><td><span class="badge short">Short</span></td><td>3</td><td>+2.70</td><td class="metric-val good">+1.60%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>25</td><td>Mar 2025</td><td>Mar 2025</td><td><span class="badge short">Short</span></td><td>13</td><td>+1.66</td><td class="metric-val good">+0.82%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>26</td><td>Apr 2025</td><td>Apr 2025</td><td><span class="badge short">Short</span></td><td>13</td><td>+2.63</td><td class="metric-val good">+0.65%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>27</td><td>Apr 2025</td><td>May 2025</td><td><span class="badge short">Short</span></td><td>1</td><td>+3.27</td><td class="metric-val good">+3.27%</td><td><span class="badge win">Win</span></td></tr>
+        <tr><td>28</td><td>Aug 2025</td><td>Sep 2025</td><td><span class="badge short">Short</span></td><td>12</td><td>+2.26</td><td class="metric-val good">+1.02%</td><td><span class="badge win">Win</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 08 Universe ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">08 — Multi-Pair Universe</div>
+  <h2 class="section-h">Screened<br>Universe</h2>
+  <p class="prose">
+    The system was systematically applied to 15+ pairs across energy, agriculture, metals, and international equities. BZ-CL was selected as the flagship on the basis of confirmed cointegration, actionable half-life, and best risk-adjusted performance.
+  </p>
+  <div class="table-wrap">
+    <table class="uni-table">
+      <thead>
+        <tr>
+          <th>Pair</th>
+          <th>Class</th>
+          <th>Coint</th>
+          <th>P-Value</th>
+          <th>Half-Life</th>
+          <th>Win Rate</th>
+          <th>Sharpe</th>
+          <th>Trades</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="flagship">
+          <td><strong style="color:var(--accent)">BZ-CL &nbsp;★ Flagship</strong></td>
+          <td>Energy</td>
+          <td style="color:#4ade80">Yes</td>
+          <td>0.0025</td>
+          <td>14.5d</td>
+          <td style="color:#4ade80">83.3%</td>
+          <td>—</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td>CL-RB &nbsp;Crack Spread</td>
+          <td>Energy</td>
+          <td style="color:#4ade80">Yes</td>
+          <td>0.0010</td>
+          <td>18.8d</td>
+          <td style="color:#4ade80">77.8%</td>
+          <td>0.05</td>
+          <td>18</td>
+        </tr>
+        <tr>
+          <td>CL-HO &nbsp;Crack Spread</td>
+          <td>Energy</td>
+          <td style="color:#4ade80">Yes</td>
+          <td>0.0154</td>
+          <td>29.0d</td>
+          <td>66.7%</td>
+          <td>−0.72</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td>NG-HO &nbsp;Heat Spread</td>
+          <td>Energy</td>
+          <td style="color:#4ade80">Yes</td>
+          <td>0.0468</td>
+          <td>65.8d</td>
+          <td style="color:#4ade80">80.0%</td>
+          <td>−0.31</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>ZC-ZS &nbsp;Corn / Soy</td>
+          <td>Agri</td>
+          <td style="color:#4ade80">Yes</td>
+          <td>0.0025</td>
+          <td>65.2d</td>
+          <td>50.0%</td>
+          <td>−0.69</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>ZW-ZC &nbsp;Wheat / Corn</td>
+          <td>Agri</td>
+          <td style="color:#4ade80">Yes</td>
+          <td>0.0002</td>
+          <td>48.0d</td>
+          <td>70.0%</td>
+          <td>−0.32</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>ZS-ZM &nbsp;Soy / Meal</td>
+          <td>Agri</td>
+          <td style="color:#4ade80">Yes</td>
+          <td>0.0100</td>
+          <td>94.1d</td>
+          <td style="color:#4ade80">100%</td>
+          <td>−1.01</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>GC-SI &nbsp;Gold / Silver</td>
+          <td>Metals</td>
+          <td style="color:var(--text-dim)">No</td>
+          <td>0.172</td>
+          <td>91.4d</td>
+          <td>100%</td>
+          <td>−3.06</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>EWA-EWC &nbsp;Aus / Can</td>
+          <td>Equities</td>
+          <td style="color:var(--text-dim)">No</td>
+          <td>—</td>
+          <td>194d</td>
+          <td>75.0%</td>
+          <td>0.13</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>SPY-IVV &nbsp;S&amp;P Arb</td>
+          <td>Equities</td>
+          <td style="color:var(--text-dim)">No</td>
+          <td>—</td>
+          <td>30.3d</td>
+          <td>99.4%</td>
+          <td>−1.77</td>
+          <td>167</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="footnote">★ BZ-CL selected as flagship on confirmed cointegration + actionable half-life + best risk-adjusted profile. Non-cointegrated pairs are tracked but not live-traded as primary strategies. Data from multi-pair backtest run 20260511.</p>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Xander Robbins</div>
+      <div class="footer-sub">Quantitative Finance · University of Florida · AlgoGators</div>
+    </div>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+/* ── Custom cursor (desktop only) ── */
+if (window.innerWidth > 768) {
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, .arch-card, .coint-stat, .pipe-step, .stat-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '6px'; cur.style.height = '6px';
+      ring.style.width = '48px'; ring.style.height = '48px';
+      ring.style.borderColor = 'var(--accent)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(139,70,32,0.5)';
+    });
+  });
+}
+
+/* ── Scroll reveal ── */
+const revealEls = document.querySelectorAll(
+  '.arch-card, .coint-stat, .perf-block, .chart-wrap, .pipe-step, .math-block'
+);
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.07 });
+revealEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = `opacity 0.65s ease ${(i % 4) * 0.07}s, transform 0.65s ease ${(i % 4) * 0.07}s`;
+  revObs.observe(el);
+});
+
+/* ── Win-rate bar animate on scroll ── */
+const winbar = document.getElementById('winbar');
+const barObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    winbar.style.width = '89.3%';
+    barObs.disconnect();
+  }
+}, { threshold: 0.5 });
+barObs.observe(winbar);
+</script>
+</body>
+</html>
