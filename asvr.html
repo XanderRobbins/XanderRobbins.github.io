@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#282a3a">
+<title>ASVR: Adaptive Stratified Variance Reduction — Xander Robbins</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  cursor: none;
+}
+body::-webkit-scrollbar { display: none; }
+
+#cursor {
+  position: fixed; width: 12px; height: 12px;
+  background: #8b4620; border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 12px rgba(139,70,32,0.6);
+}
+#cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(139,70,32,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
+}
+
+.scanlines {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 24px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(40,42,58,0.97) 0%, transparent 100%);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.nav-site {
+  font-family: 'DM Serif Display', serif; font-size: 20px;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-back {
+  font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim);
+  text-transform: uppercase; background: none;
+  border: 1px solid var(--card-border); padding: 8px 20px; border-radius: 4px;
+  cursor: none; transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+}
+.nav-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: flex-start; gap: 0; padding: 140px 52px 80px; position: relative; overflow: visible;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 15% 55%, rgba(198,97,63,0.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-content {
+  flex: 1; position: relative; z-index: 2;
+}
+.hero-visual {
+  flex: 0 0 auto; position: relative; height: 620px; width: 440px;
+  perspective: 1200px; margin-left: auto; margin-right: 200px;
+}
+.pdf-link {
+  position: absolute; inset: 0; z-index: 10; cursor: pointer;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+  background-image: linear-gradient(var(--accent) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 24px; opacity: 0.8;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before {
+  content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(72px, 12vw, 140px);
+  color: var(--text); letter-spacing: -0.04em; line-height: 0.9; margin-bottom: 12px;
+}
+.hero-subtitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3.5vw, 44px);
+  color: var(--accent); letter-spacing: -0.01em; font-style: italic; margin-bottom: 36px;
+}
+.hero-desc {
+  max-width: 680px; font-size: 13px; color: var(--text-dim);
+  line-height: 1.9; letter-spacing: 0.02em; margin-bottom: 56px;
+}
+
+.stats-bar {
+  display: flex; gap: 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; max-width: 680px;
+  background: rgba(22,24,33,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.stat-item {
+  flex: 1; padding: 20px 24px; border-right: 1px solid var(--card-border);
+  transition: background 0.25s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: rgba(198,97,63,0.06); }
+.stat-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;
+}
+.stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3vw, 36px); color: var(--text); letter-spacing: -0.02em;
+}
+
+/* ── PDF Page Stack ── */
+.pdf-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  cursor: none;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.5s ease;
+  transform-origin: bottom center;
+}
+
+.pdf-page:nth-child(1) {
+  transform: translateY(0) rotateZ(0deg) rotateX(0deg);
+  z-index: 3;
+}
+
+.pdf-page:nth-child(2) {
+  transform: translateY(8px) translateX(-6px) rotateZ(-1.5deg) rotateX(2deg);
+  z-index: 2;
+  opacity: 0.95;
+}
+
+.pdf-page:nth-child(3) {
+  transform: translateY(16px) translateX(-12px) rotateZ(-3deg) rotateX(4deg);
+  z-index: 1;
+  opacity: 0.9;
+}
+
+.hero-visual:hover .pdf-page:nth-child(1) {
+  transform: translateY(-120px) rotateZ(12deg) rotateX(-8deg) rotateY(5deg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.hero-visual:hover .pdf-page:nth-child(2) {
+  transform: translateY(-40px) translateX(40px) rotateZ(6deg) rotateX(-4deg) rotateY(8deg);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+}
+
+.hero-visual:hover .pdf-page:nth-child(3) {
+  transform: translateY(40px) translateX(80px) rotateZ(0deg) rotateX(0deg) rotateY(12deg);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.pdf-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: #000;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.pdf-subtitle {
+  font-size: 12px;
+  color: #c6613f;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.pdf-abstract {
+  font-size: 10px;
+  color: #555;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+.pdf-page-number {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  font-size: 9px;
+  color: #999;
+}
+
+/* ── Sections ── */
+.page-wrap { max-width: 1100px; margin: 0 auto; }
+
+.section { padding: 96px 52px; }
+.section-divider { height: 1px; background: rgba(198,97,63,0.1); margin: 0 52px; }
+
+.eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 18px; opacity: 0.7;
+}
+.section-h {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 60px); color: var(--text);
+  letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 44px;
+}
+.prose {
+  font-size: 13px; color: var(--text-dim); line-height: 1.95;
+  letter-spacing: 0.02em; max-width: 700px;
+}
+.prose + .prose { margin-top: 20px; }
+
+.key-findings {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 44px 0;
+}
+.finding-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 32px; transition: border-color 0.28s, background 0.28s, transform 0.28s;
+}
+.finding-card:hover {
+  border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1); transform: translateY(-3px);
+}
+.finding-title {
+  font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 16px;
+}
+.finding-desc {
+  font-size: 12px; color: var(--text-dim); line-height: 1.8;
+}
+
+.code-block {
+  background: rgba(22,24,33,0.9); border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent); border-radius: 4px;
+  padding: 22px 28px; margin: 24px 0;
+  font-size: 11px; color: var(--text); line-height: 1.8; letter-spacing: 0.03em;
+  overflow-x: auto;
+}
+
+.results-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 44px 0;
+}
+.result-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 24px; text-align: center; transition: border-color 0.28s, background 0.28s;
+}
+.result-card:hover {
+  border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1);
+}
+.result-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase;
+  margin-bottom: 12px; opacity: 0.7;
+}
+.result-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(20px, 2.5vw, 32px); color: var(--text); letter-spacing: -0.02em;
+}
+.result-detail {
+  font-size: 10px; color: var(--text-muted); margin-top: 8px; line-height: 1.5;
+}
+
+.abstract-box {
+  background: rgba(22,24,33,0.95); border: 1px solid var(--card-border);
+  border-left: 4px solid var(--accent); border-radius: 6px;
+  padding: 36px; margin: 36px 0;
+}
+.abstract-label {
+  font-size: 10px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 16px; opacity: 0.8; display: block;
+}
+.abstract-text {
+  font-size: 12px; color: var(--text-dim); line-height: 2; letter-spacing: 0.01em;
+}
+
+/* ── Footer ── */
+.footer {
+  padding: 56px 52px; border-top: 1px solid rgba(198,97,63,0.1);
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.footer-name {
+  font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 6px;
+}
+.footer-sub {
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+    gap: 40px;
+    justify-content: center;
+  }
+  .hero-visual {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+  .nav { padding: 14px 20px; }
+  .hero { padding: 90px 20px 60px; flex-direction: column; gap: 40px; }
+  .hero-visual { width: 100%; max-width: 360px; height: 480px; margin: 0 auto; }
+  .section { padding: 60px 20px; }
+  .section-divider { margin: 0 20px; }
+  .key-findings { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr 1fr; }
+  .footer { padding: 40px 20px; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { min-width: 45%; border-bottom: 1px solid var(--card-border); }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-site">Xander Robbins</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Research & Published Work</div>
+    <h1 class="hero-title">ASVR</h1>
+    <div class="hero-subtitle">Adaptive Stratified Variance Reduction for Monte Carlo Options Pricing</div>
+    <p class="hero-desc">
+      A bandit-based framework that automatically selects the best variance reduction strategy for Monte Carlo option pricing without prior knowledge of the payoff structure. Achieves near-oracle performance on well-separated option types with theoretical O(K log N/N) MSE bounds.
+    </p>
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-label">Publication Date</div>
+        <div class="stat-value">May 2026</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Option Types Tested</div>
+        <div class="stat-value">8</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">VR Strategies</div>
+        <div class="stat-value">9</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Best Performance</div>
+        <div class="stat-value">7.45×</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <a href="/asvr_paper.pdf" download class="pdf-link"></a>
+    <div class="pdf-stack">
+      <!-- Page 1 (Front) -->
+      <div class="pdf-page">
+        <div class="pdf-subtitle">May 13, 2026</div>
+        <div class="pdf-title">ASVR: Adaptive Strategy-selected Variance Reduction</div>
+        <div class="pdf-subtitle" style="margin-top: 24px; margin-bottom: 24px;">for Monte Carlo Option Pricing</div>
+        <div class="pdf-abstract">
+          <p style="margin-bottom: 16px;"><strong>Alexander Robbins</strong></p>
+          <p style="margin-bottom: 16px;">We propose Adaptive Strategy-selected Variance Reduction (ASVR), a bandit-based framework that automatically selects the best variance reduction strategy for Monte Carlo option pricing without requiring prior knowledge of the option payoff structure.</p>
+          <p>ASVR runs a two-phase explore-then-exploit procedure over a pool of K variance reduction strategies and achieves expected MSE within O(K log N/N) of the oracle (the best fixed strategy).</p>
+        </div>
+        <div class="pdf-page-number">1</div>
+      </div>
+
+      <!-- Page 2 -->
+      <div class="pdf-page">
+        <div class="pdf-subtitle">Abstract (Continued)</div>
+        <div class="pdf-abstract" style="margin-top: 20px;">
+          <p style="margin-bottom: 12px;">Across eight option types—European, Asian, barrier, and lookback—ASVR always outperforms plain Monte Carlo and achieves near-oracle performance on 2 out of 8 options (within 10% of the best fixed strategy) with a single, parameter-free implementation.</p>
+          <p style="margin-bottom: 12px;">We also propose a Bayesian fusion estimator that combines exploration estimates via inverse-variance weighting; with oracle weights this is provably variance-minimising, and with estimated weights it achieves genuine MSE-ratio improvement on 6 out of 8 option types.</p>
+          <p>All experiments use N = 10,000 paths, 252 steps, and 200 independent trials with parameters S₀ = K = 100, r = 0.05, σ = 0.20, T = 1.</p>
+        </div>
+        <div class="pdf-page-number">2</div>
+      </div>
+
+      <!-- Page 3 -->
+      <div class="pdf-page">
+        <div class="pdf-subtitle">Contents</div>
+        <div class="pdf-abstract" style="margin-top: 20px;">
+          <p style="margin-bottom: 8px;"><strong>1 Introduction</strong> — Motivation and Research Question</p>
+          <p style="margin-bottom: 8px;"><strong>2 Problem Setup</strong> — Monte Carlo, VR Strategies, Oracle</p>
+          <p style="margin-bottom: 8px;"><strong>3 The ASVR Algorithm</strong> — Two-Phase Framework & Theory</p>
+          <p style="margin-bottom: 8px;"><strong>4 Implementation Details</strong> — Pool Design & Halton QMC</p>
+          <p style="margin-bottom: 8px;"><strong>5 Experimental Results</strong> — Performance across 8 option types</p>
+          <p style="margin-bottom: 8px;"><strong>6 Discussion</strong> — IS Parameterization & Extensions</p>
+          <p style="margin-bottom: 8px;"><strong>7 Conclusion</strong></p>
+          <p style="margin-top: 12px; font-size: 9px; color: #999;">28 pages | 5 figures | Appendices with proofs & data</p>
+        </div>
+        <div class="pdf-page-number">3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── 01 Overview ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">01 — Problem</div>
+  <h2 class="section-h">Automatic Strategy<br>Selection</h2>
+  <p class="prose">
+    Monte Carlo simulation is the standard method for pricing path-dependent and high-dimensional derivatives. However, its O(N^−1/2) convergence rate can be slow. Variance reduction (VR) techniques dramatically improve efficiency, but the challenge is that different strategies excel on different option types.
+  </p>
+  <p class="prose">
+    Control variates dominate European calls but fail on puts. Latin hypercube sampling works for Asian puts but not lookback calls. Importance sampling is powerful but requires careful parameterization and matching the option's sensitivity direction. In practice, practitioners choose strategies by domain knowledge or trial-and-error — both impractical for automated pricing pipelines.
+  </p>
+  <p class="prose">
+    ASVR solves this by running a two-phase explore-then-exploit procedure: allocate exploration paths to test each strategy's variance on the unknown payoff, then devote the remainder of the budget to the estimated best strategy. The result is a parameter-free algorithm that's never worse than plain Monte Carlo and achieves near-oracle performance when strategy separation is large.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 02 Key Results ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">02 — Results</div>
+  <h2 class="section-h">Key Findings</h2>
+  <p class="prose">
+    ASVR was tested on 8 option types across 200 independent trials with 10,000 paths each, using the same GBM parameters throughout. The algorithm always improves over plain Monte Carlo and achieves near-oracle performance on well-separated option types.
+  </p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-label">Always Beats Plain MC</div>
+      <div class="result-value">1.13–7.45×</div>
+      <div class="result-detail">Minimum 13%, maximum 645% improvement</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Near-Oracle on Calls</div>
+      <div class="result-value">3.6% Gap</div>
+      <div class="result-detail">European Call: 7.45× vs oracle 7.72×</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Beats Oracle</div>
+      <div class="result-value">5.4% Gain</div>
+      <div class="result-detail">Lookback Call: 5.77× vs CV 5.46×</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Fusion Wins</div>
+      <div class="result-value">6/8 Types</div>
+      <div class="result-detail">Bayesian inverse-variance weighting improves on exploit</div>
+    </div>
+  </div>
+
+  <div class="key-findings">
+    <div class="finding-card">
+      <div class="finding-title">European Call</div>
+      <div class="finding-desc">ASVR achieves 7.45×, within 3.6% of oracle (CV at 7.72×). Control variates are optimal when payoff is smooth and correlated with ST — ASVR identifies this reliably during exploration.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-title">Lookback Call</div>
+      <div class="finding-desc">ASVR achieves 5.77× and actually beats the oracle CV at 5.46×. The 9,100 exploitation paths with a well-calibrated strategy can outperform any fixed strategy using 10,000 paths.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-title">Asian Put</div>
+      <div class="finding-desc">ASVR identifies LHS (3.28×) but the finite-sample gap is 118% due to 100-path exploration being insufficient when strategy separation is small. Adaptive exploration budgets would solve this.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-title">Halton Failure</div>
+      <div class="finding-desc">Randomised Halton QMC in 252 dimensions performs 3–33× worse than plain MC. Its artificially low variance in small samples causes the bandit to over-exploit it, requiring exclusion from high-dimensional pools.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 03 Methodology ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">03 — Methodology</div>
+  <h2 class="section-h">Explore-Then-<br>Exploit Algorithm</h2>
+  <p class="prose">
+    ASVR is a multi-armed bandit algorithm that identifies the best variance reduction strategy without prior knowledge of the payoff structure. It operates in two phases:
+  </p>
+
+  <div class="code-block">
+    <strong>Exploration Phase:</strong> Allocate n_exp paths to each of K strategies.<br>
+    Compute sample variance σ̂²_k for each strategy.<br>
+    <br>
+    <strong>Selection:</strong> Pick k̂* = arg min_k σ̂²_k<br>
+    <br>
+    <strong>Exploitation Phase:</strong> Devote remaining paths to k̂*<br>
+    Return the price estimate from the best strategy.
+  </div>
+
+  <p class="prose">
+    In experiments, n_exp = 100 and K = 9, consuming 900 of 10,000 total paths (9% exploration overhead). The oracle-gap theorem guarantees E[MSE(ASVR)] ≤ MSE(oracle) + C · K log N / N, where the constant C depends on strategy separation.
+  </p>
+
+  <p class="prose">
+    For strategies with large variance separation (European call: CV vs LHS gap is 3×), the bound is tight and empirical performance matches theory. For options with small separation (Asian put: LHS vs moment matching gap is only 1.2×), finite-sample noise dominates and the gap to oracle widens.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 04 Bayesian Fusion ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">04 — Enhancement</div>
+  <h2 class="section-h">Bayesian Fusion<br>Estimator</h2>
+  <p class="prose">
+    After both phases, ASVR has K exploration estimates and one exploitation estimate. Rather than discarding exploration paths, the fusion estimator combines all K+1 estimates via inverse-variance weighting:
+  </p>
+
+  <div class="code-block">
+    V̂_fusion = [Σ_k (n_exp / σ̂²_k) V̂_k + (N_expl / σ̂²_k*) V̂_expl] /<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Σ_k (n_exp / σ̂²_k) + (N_expl / σ̂²_k*)]
+  </div>
+
+  <p class="prose">
+    With oracle weights (true variances), the fusion variance is guaranteed ≤ exploit variance. In practice with estimated weights, two failure modes arise: estimation noise when σ̂²_k is noisy, and selection bias (winner's curse) when σ̂²_k* is optimistically biased. Despite these, fusion wins on 6 out of 8 option types and produces 2.1–5.2% MSE improvements.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 05 Abstract ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">05 — Publication</div>
+  <h2 class="section-h">Paper Abstract</h2>
+
+  <div class="abstract-box">
+    <span class="abstract-label">ASVR: Adaptive Strategy-selected Variance Reduction for Monte Carlo Option Pricing</span>
+    <div class="abstract-text">
+      We propose Adaptive Strategy-selected Variance Reduction (ASVR), a bandit-based framework that automatically selects the best variance reduction strategy for Monte Carlo option pricing without requiring prior knowledge of the option payoff structure. ASVR runs a two-phase explore-then-exploit procedure over a pool of K variance reduction strategies and achieves expected MSE within O(K log N/N) of the oracle (the best fixed strategy). Across eight option types—European, Asian, barrier, and lookback—ASVR always outperforms plain Monte Carlo and achieves near-oracle performance on 2 out of 8 options (within 10% of the best fixed strategy) with a single, parameter-free implementation. We also propose a Bayesian fusion estimator that combines exploration estimates via inverse-variance weighting; with oracle weights this is provably variance-minimising, and with estimated weights from n_exp = 100 exploration paths it achieves a genuine MSE-ratio improvement on 6 out of 8 option types. A novel negative result accompanies the positive findings: randomised Halton quasi-Monte Carlo in 252 time-step dimensions performs 3–33× worse than plain Monte Carlo due to severe inter-dimensional correlation, and must be excluded from high-dimensional bandit pools. All experiments use N = 10,000 paths, 252 steps, and 200 independent trials.
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 06 Download ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">06 — Full Text</div>
+  <h2 class="section-h">Access the<br>Complete Paper</h2>
+  <p class="prose">
+    The full paper includes detailed proofs of the oracle-gap theorem, variance reduction strategy implementations, extended benchmark tables across all 8 option types, and discussion of the Halton failure mode in high dimensions.
+  </p>
+  <a href="/asvr_paper.pdf" class="download-btn" download>
+    ↓ Download Full PDF (587 KB)
+  </a>
+  <p class="prose" style="margin-top: 24px; font-size: 11px;">
+    Paper: "ASVR: Adaptive Strategy-selected Variance Reduction for Monte Carlo Option Pricing"<br>
+    Author: Alexander Robbins<br>
+    Date: May 13, 2026<br>
+    Pages: 28<br>
+    Keywords: variance reduction, Monte Carlo, multi-armed bandit, explore-then-exploit, Bayesian fusion, quasi-Monte Carlo
+  </p>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Xander Robbins</div>
+      <div class="footer-sub">Quantitative Research · University of Florida · AlgoGators</div>
+    </div>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+/* ── Custom cursor (desktop only) ── */
+if (window.innerWidth > 768) {
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, .finding-card, .result-card, .stat-item, .download-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '6px'; cur.style.height = '6px';
+      ring.style.width = '48px'; ring.style.height = '48px';
+      ring.style.borderColor = 'var(--accent)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(139,70,32,0.5)';
+    });
+  });
+}
+
+/* ── Scroll reveal ── */
+const revealEls = document.querySelectorAll(
+  '.finding-card, .result-card, .key-findings, .results-grid, .code-block, .abstract-box'
+);
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.07 });
+revealEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = `opacity 0.65s ease ${(i % 4) * 0.07}s, transform 0.65s ease ${(i % 4) * 0.07}s`;
+  revObs.observe(el);
+});
+</script>
+</body>
+</html>
