@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#282a3a">
+<title>Arbitrage-Free Volatility Surface — Xander Robbins</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  cursor: none;
+}
+body::-webkit-scrollbar { display: none; }
+
+#cursor {
+  position: fixed; width: 12px; height: 12px;
+  background: #8b4620; border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 12px rgba(139,70,32,0.6);
+}
+#cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(139,70,32,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
+}
+
+.scanlines {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 24px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(40,42,58,0.97) 0%, transparent 100%);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.nav-site {
+  font-family: 'DM Serif Display', serif; font-size: 20px;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-back {
+  font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim);
+  text-transform: uppercase; background: none;
+  border: 1px solid var(--card-border); padding: 8px 20px; border-radius: 4px;
+  cursor: none; transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+}
+.nav-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  min-height: auto; display: flex; flex-direction: column;
+  justify-content: center; padding: 80px 52px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 15% 55%, rgba(198,97,63,0.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+  background-image: linear-gradient(var(--accent) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content {
+  display: flex; flex-direction: column; gap: 48px;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 24px; opacity: 0.8;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before {
+  content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+.hero-header {
+  display: grid; grid-template-columns: 1fr 800px; gap: 100px; align-items: start; margin-bottom: 36px;
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(72px, 12vw, 140px);
+  color: var(--text); letter-spacing: -0.04em; line-height: 0.9; margin-bottom: 12px;
+}
+.hero-subtitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3.5vw, 44px);
+  color: var(--accent); letter-spacing: -0.01em; font-style: italic; margin-bottom: 4px;
+}
+.hero-title-image {
+  border-radius: 10px; border: 1px solid var(--card-border);
+  overflow: hidden; background: rgba(22,24,33,0.8);
+  height: 750px;
+}
+.hero-title-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.hero-desc {
+  max-width: 580px; font-size: 13px; color: var(--text-dim);
+  line-height: 1.9; letter-spacing: 0.02em; margin-bottom: 56px;
+}
+
+.stats-bar {
+  display: flex; gap: 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; max-width: 680px;
+  background: rgba(22,24,33,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.stat-item {
+  flex: 1; padding: 20px 24px; border-right: 1px solid var(--card-border);
+  transition: background 0.25s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: rgba(198,97,63,0.06); }
+.stat-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;
+}
+.stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3vw, 36px); color: var(--text); letter-spacing: -0.02em;
+}
+.stat-value.pos { color: #4ade80; }
+
+/* ── Sections ── */
+.page-wrap { max-width: 1100px; margin: 0 auto; }
+
+.section { padding: 96px 52px; }
+.section-divider { height: 1px; background: rgba(198,97,63,0.1); margin: 0 52px; }
+
+.eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 18px; opacity: 0.7;
+}
+.section-h {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 60px); color: var(--text);
+  letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 44px;
+}
+.prose {
+  font-size: 13px; color: var(--text-dim); line-height: 1.95;
+  letter-spacing: 0.02em; max-width: 700px;
+}
+.prose + .prose { margin-top: 20px; }
+
+/* ── Component grid ── */
+.comp-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 48px;
+}
+.comp-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 24px 20px; transition: border-color 0.28s, background 0.28s, transform 0.28s;
+}
+.comp-card:hover { border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1); transform: translateY(-3px); }
+.comp-num { font-size: 9px; letter-spacing: 0.2em; color: var(--accent); opacity: 0.55; margin-bottom: 14px; }
+.comp-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); margin-bottom: 10px; }
+.comp-desc { font-size: 11px; color: var(--text-dim); line-height: 1.75; }
+
+/* ── Math blocks ── */
+.math-block {
+  background: rgba(22,24,33,0.9); border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent); border-radius: 4px;
+  padding: 22px 28px; margin: 24px 0;
+  font-size: 12px; color: var(--text); line-height: 2.1; letter-spacing: 0.03em;
+}
+.math-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; display: block;
+}
+
+/* ── Stats ── */
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin: 40px 0; }
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 28px; transition: border-color 0.25s;
+}
+.stat-card:hover { border-color: rgba(198,97,63,0.5); }
+.stat-card-label {
+  font-size: 9px; letter-spacing: 0.18em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 10px; opacity: 0.7;
+}
+.stat-card-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px, 3.5vw, 44px); color: var(--text); letter-spacing: -0.02em;
+}
+.stat-card-detail { font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
+/* ── Pipeline ── */
+.pipeline {
+  display: flex; align-items: stretch; gap: 0; margin: 44px 0;
+  border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden;
+}
+.pipe-step {
+  flex: 1; padding: 20px 16px;
+  border-right: 1px solid var(--card-border);
+  background: var(--card-bg); transition: background 0.2s;
+  position: relative;
+}
+.pipe-step:last-child { border-right: none; }
+.pipe-step:hover { background: rgba(40,42,58,1); }
+.pipe-step::after {
+  content: '→'; position: absolute; right: -10px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent); opacity: 0.35; font-size: 14px;
+  z-index: 1; pointer-events: none;
+}
+.pipe-step:last-child::after { display: none; }
+.pipe-num { font-size: 9px; letter-spacing: 0.18em; color: var(--accent); opacity: 0.55; margin-bottom: 8px; }
+.pipe-name { font-size: 11px; color: var(--text); font-weight: 500; margin-bottom: 6px; letter-spacing: 0.03em; }
+.pipe-detail { font-size: 10px; color: var(--text-dim); line-height: 1.65; }
+
+/* ── Test Results ── */
+.perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 44px 0; }
+.perf-block {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 32px;
+}
+.perf-title {
+  font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 24px;
+}
+.metric-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 0; border-bottom: 1px solid rgba(198,97,63,0.08);
+}
+.metric-row:last-child { border-bottom: none; }
+.metric-name { font-size: 11px; color: var(--text-dim); letter-spacing: 0.04em; }
+.metric-val { font-size: 13px; color: var(--text); font-weight: 500; }
+.metric-val.good { color: #4ade80; }
+.metric-val.accent { color: var(--accent); }
+
+/* ── Chart wrapper ── */
+.chart-wrap {
+  margin: 32px 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; background: rgba(22,24,33,0.5);
+}
+.chart-label {
+  padding: 12px 20px; font-size: 10px; letter-spacing: 0.14em; color: var(--text-dim);
+  text-transform: uppercase; border-bottom: 1px solid var(--card-border);
+  display: flex; align-items: center; gap: 8px;
+}
+.chart-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.7; flex-shrink: 0; }
+.chart-img { width: 100%; display: block; }
+
+/* ── Features table ── */
+.feature-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 36px; }
+.feature-table th {
+  text-align: left; font-size: 9px; letter-spacing: 0.15em; color: var(--accent);
+  text-transform: uppercase; padding: 12px 14px; border-bottom: 1px solid var(--card-border); opacity: 0.7;
+}
+.feature-table td {
+  padding: 11px 14px; border-bottom: 1px solid rgba(198,97,63,0.07); color: var(--text-dim);
+  transition: color 0.15s;
+}
+.feature-table tr:hover td { color: var(--text); background: rgba(198,97,63,0.03); }
+
+.badge {
+  font-size: 9px; letter-spacing: 0.1em; padding: 3px 8px;
+  border-radius: 2px; text-transform: uppercase; font-weight: 500;
+}
+.badge.check { background: rgba(74,222,128,0.12); color: #4ade80; }
+
+/* ── Footnote ── */
+.footnote {
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em;
+  margin-top: 16px; line-height: 1.7;
+}
+
+/* ── Footer ── */
+.footer {
+  padding: 56px 52px; border-top: 1px solid rgba(198,97,63,0.1);
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.footer-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 6px; }
+.footer-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+  .nav { padding: 14px 20px; }
+  .hero { padding: 90px 20px 60px; }
+  .hero-header { grid-template-columns: 1fr; gap: 48px; }
+  .hero-title-image { height: 600px; }
+  .section { padding: 60px 20px; }
+  .section-divider { margin: 0 20px; }
+  .comp-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .perf-grid { grid-template-columns: 1fr; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { min-width: 45%; border-bottom: 1px solid var(--card-border); }
+  .pipeline { flex-direction: column; }
+  .pipe-step::after { content: '↓'; right: auto; left: 50%; top: auto; bottom: -12px; transform: translateX(-50%); }
+  .footer { padding: 40px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-site">Xander Robbins</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-eyebrow">Research Toolkit — Derivatives Pricing</div>
+      <div class="hero-header">
+        <div>
+          <h1 class="hero-title">ASVS</h1>
+          <div class="hero-subtitle">Arbitrage-Free IV Surface Library</div>
+        </div>
+        <div class="hero-title-image">
+          <img src="assets/images/SVI_Surface.png" alt="SVI fitted volatility surface" loading="lazy">
+        </div>
+      </div>
+      <p class="hero-desc">
+        Research toolkit for constructing and analyzing arbitrage-free implied volatility surfaces. Combines SVI parameterization with rigorous no-arbitrage constraints, robust IV computation, static arbitrage detection, and fast Heston calibration via COS pricing.
+      </p>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-label">Test Coverage</div>
+          <div class="stat-value pos">108 tests</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">IV Computation</div>
+          <div class="stat-value">12 ms / 100</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Heston Calib.</div>
+          <div class="stat-value">1.2 s / 250</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">COS Pricing</div>
+          <div class="stat-value">0.8 ms / opt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── 01 System ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">01 — Design</div>
+  <h2 class="section-h">Modular<br>Toolkit</h2>
+  <p class="prose">
+    ASVS provides independent, composable modules for IV surface research. Load option data, compute implied volatilities with Newton-Raphson + Brent fallback, validate against arbitrage constraints (put-call parity, butterfly spreads, calendar), fit smooth SVI smiles with Gatheral no-arbitrage enforcement, and calibrate Heston parameters via COS pricing.
+  </p>
+  <p class="prose">
+    Each component includes robust error handling: Jaeckel rational approximation for deep OTM/ITM initial guesses, configurable arbitrage tolerance bands, Feller condition enforcement on Heston parameters, and multi-start optimization. Use the fluent API to chain operations or work with individual modules independently.
+  </p>
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-num">01 ——</div>
+      <div class="comp-name">IV Solver</div>
+      <div class="comp-desc">Newton-Raphson + Brent fallback. Jaeckel (2015) rational approximation initial guess. Converges in ≤3 iterations for standard options.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-num">02 ——</div>
+      <div class="comp-name">Arbitrage Check</div>
+      <div class="comp-desc">Put-call parity, butterfly spreads, calendar arbitrage. Configurable tolerance. Reports violations by expiry/moneyness band.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-num">03 ——</div>
+      <div class="comp-name">SVI Fitting</div>
+      <div class="comp-desc">L-BFGS-B least-squares optimization. Gatheral no-arbitrage constraints enforced. Per-expiry calibration with rolling covariance.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-num">04 ——</div>
+      <div class="comp-name">Heston Calib.</div>
+      <div class="comp-desc">COS method (N=128 terms, exponential convergence). Feller condition enforced. Global + local multi-start optimization.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 02 Mathematics ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">02 — Theory</div>
+  <h2 class="section-h">Core<br>Methods</h2>
+  <p class="prose">
+    The toolkit implements three complementary methodologies. Black-Scholes IV inversion solves for implied volatility from market option prices. SVI parameterization provides a parsimonious, arbitrage-free representation of the volatility smile. The Heston stochastic volatility model captures dynamics and Greeks via characteristic function methods.
+  </p>
+
+  <div class="math-block">
+    <span class="math-label">1 — Implied Volatility (Newton-Raphson)</span>
+    Given market option price C_market, solve for σ in Black-Scholes:<br><br>
+    &nbsp;&nbsp;C_BS(S, K, T, r, σ) = C_market<br><br>
+    Newton-Raphson iteration using vega as the derivative:<br>
+    &nbsp;&nbsp;σ_{n+1} = σ_n − (C_BS(σ_n) − C_market) / vega(σ_n)<br><br>
+    Converges quadratically in ~3 iterations. Jaeckel (2015) rational approximation provides tight initial guess for deep OTM/ITM options.
+  </div>
+
+  <div class="math-block">
+    <span class="math-label">2 — SVI Parameterization (Gatheral, 2014)</span>
+    Total implied variance as a function of log-moneyness k = log(K/F):<br><br>
+    &nbsp;&nbsp;w(k) = a + b(ρ(k − m) + √((k − m)² + σ²))<br><br>
+    No-arbitrage conditions (Gatheral & Jacquier, 2014):<br>
+    &nbsp;&nbsp;• b ≥ 0&nbsp;&nbsp; • |ρ| &lt; 1&nbsp;&nbsp; • σ &gt; 0<br>
+    &nbsp;&nbsp;• a + bσ√(1 − ρ²) ≥ 0&nbsp;&nbsp; • b(1 + |ρ|) ≤ 4
+  </div>
+
+  <div class="math-block">
+    <span class="math-label">3 — Heston Stochastic Volatility Model</span>
+    Risk-neutral asset and variance dynamics:<br><br>
+    &nbsp;&nbsp;dS_t = rS_t dt + √(v_t)S_t dW¹_t<br>
+    &nbsp;&nbsp;dv_t = κ(θ − v_t)dt + ξ√(v_t) dW²_t<br><br>
+    Feller condition (strict positivity): 2κθ &gt; ξ²<br><br>
+    COS pricing achieves O(e^−N) convergence:<br>
+    &nbsp;&nbsp;C(S, K, T) = e^−rT Σ Re(φ(kπ/(b−a)) · U_k · χ_k)
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 03 API & Features ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">03 — Workflow</div>
+  <h2 class="section-h">Analysis<br>Pipeline</h2>
+  <p class="prose">
+    ASVS provides a fluent API for end-to-end IV surface analysis. Chain operations from data ingestion through model fitting and visualization, or use individual modules as needed. All components are type-annotated, tested, and designed for research reproducibility.
+  </p>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-num">01</div>
+      <div class="pipe-name">Load Data</div>
+      <div class="pipe-detail">DataFrame with strike, expiry, option_type, price. Spot S, rate r.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">02</div>
+      <div class="pipe-name">Compute IVs</div>
+      <div class="pipe-detail">Newton-Raphson + Brent fallback. Intrinsic value floor.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">03</div>
+      <div class="pipe-name">Arbitrage Check</div>
+      <div class="pipe-detail">PCP, butterfly, calendar. Reports violations by band.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">04</div>
+      <div class="pipe-name">Fit SVI</div>
+      <div class="pipe-detail">L-BFGS-B, per-expiry, no-arb enforcement.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">05</div>
+      <div class="pipe-name">Calibrate Heston</div>
+      <div class="pipe-detail">COS pricing, Feller check, multi-start local/global.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">06</div>
+      <div class="pipe-name">Greeks & Analysis</div>
+      <div class="pipe-detail">Delta, vega, gamma surfaces. Finite diff or closed-form.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">07</div>
+      <div class="pipe-name">Visualize</div>
+      <div class="pipe-detail">3D surface, smile, term structure, Greeks heatmaps.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 04 Performance ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">04 — Benchmarks</div>
+  <h2 class="section-h">Performance<br>Profile</h2>
+  <p class="prose">
+    Typical runtimes on Intel i7 hardware. All components are vectorized and optimized for batch processing. COS pricing with N=128 terms achieves <10 μs per option.
+  </p>
+
+  <div class="perf-grid">
+    <div class="perf-block">
+      <div class="perf-title">Computation Time</div>
+      <div class="metric-row">
+        <span class="metric-name">IV compute (100 opts)</span>
+        <span class="metric-val accent">12 ms</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">SVI fit (50 × 5)</span>
+        <span class="metric-val accent">45 ms</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Heston calib (250 opts)</span>
+        <span class="metric-val accent">1.2 s</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">COS pricing (1 option)</span>
+        <span class="metric-val accent">0.8 ms</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Greeks (via finDiff)</span>
+        <span class="metric-val accent">6 ms</span>
+      </div>
+    </div>
+    <div class="perf-block">
+      <div class="perf-title">Test Coverage</div>
+      <div class="metric-row">
+        <span class="metric-name">Total Tests</span>
+        <span class="metric-val good">108</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Line Coverage</span>
+        <span class="metric-val good">54%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">IV Solver Tests</span>
+        <span class="metric-val">18</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">SVI Fitting Tests</span>
+        <span class="metric-val">24</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Heston Calib Tests</span>
+        <span class="metric-val">22</span>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 05 Visualizations ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">05 — Analysis</div>
+  <h2 class="section-h">Visual<br>Analysis</h2>
+
+  <div class="chart-wrap">
+    <div class="chart-label">Volatility Smile — Market IV vs SVI Fit</div>
+    <img class="chart-img" src="assets/images/Volatility_Smile.png" alt="Volatility smile" loading="lazy">
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-label">3D Volatility Surface — Strike × Expiry Grid</div>
+    <img class="chart-img" src="assets/images/Volatility_Surface.png" alt="3D volatility surface" loading="lazy">
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 06 Features ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">06 — Features & Tools</div>
+  <h2 class="section-h">Comprehensive<br>Toolkit</h2>
+  <p class="prose">
+    ASVS includes a complete suite of tools for volatility surface analysis: robust IV computation with fallback methods, arbitrage violation detection, SVI calibration with no-arbitrage enforcement, Heston stochastic volatility calibration, Greeks computation, and publication-quality visualizations.
+  </p>
+  <div class="table-wrap">
+    <table class="feature-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Method</th>
+          <th>Feature</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>IV Solver</strong></td>
+          <td>Newton-Raphson</td>
+          <td>Jaeckel initial guess + Brent fallback</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>Arbitrage Check</strong></td>
+          <td>Put-Call Parity</td>
+          <td>PCP violations, butterfly spreads, calendar</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>SVI Fitting</strong></td>
+          <td>L-BFGS-B</td>
+          <td>Per-expiry, Gatheral constraints, rolling covar</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>Heston Calib</strong></td>
+          <td>COS Method</td>
+          <td>Global + local multi-start, Feller enforced</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>Greeks</strong></td>
+          <td>Finite Diff + Analytic</td>
+          <td>Delta, gamma, vega, theta surfaces</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>Term Structure</strong></td>
+          <td>Interpolation</td>
+          <td>ATM vol, skew, term structure curves</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>Visualization</strong></td>
+          <td>Matplotlib + Plotly</td>
+          <td>3D surface, smile, Greeks heatmaps, comparison</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+        <tr>
+          <td><strong>Model Compare</strong></td>
+          <td>RMSE / MAE</td>
+          <td>Market vs SVI vs Heston error metrics</td>
+          <td><span class="badge check">✓</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="footnote">All components include comprehensive error handling, type annotations, and unit test coverage. COS pricing vectorized for batch operations.</p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 07 Usage ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">07 — Example</div>
+  <h2 class="section-h">Research<br>Workflow</h2>
+  <p class="prose">
+    Build analysis pipelines with a clean, composable API. All methods return self for chainability. Type-annotated for IDE support and research reproducibility.
+  </p>
+  <div class="math-block">
+    <span class="math-label">Minimal Usage Example</span>
+    import pandas as pd<br>
+    from vol_surface import VolatilitySurface<br><br>
+    data = pd.DataFrame({<br>
+    &nbsp;&nbsp;'strike': [95, 100, 105, 110],<br>
+    &nbsp;&nbsp;'expiry': [0.25, 0.25, 0.25, 0.25],<br>
+    &nbsp;&nbsp;'option_type': ['call', 'call', 'call', 'call'],<br>
+    &nbsp;&nbsp;'price': [8.5, 5.2, 2.8, 1.1]<br>
+    })<br><br>
+    surface = VolatilitySurface(S=100, r=0.02)<br>
+    surface.load_data(data) \<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.compute_ivs() \<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.check_arbitrage() \<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.fit_svi() \<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.calibrate_heston()<br><br>
+    surface.plot_smile(expiry=0.25, include_svi=True)<br>
+    surface.plot_surface_3d(model='heston')<br>
+    surface.summary()
+  </div>
+  <p class="prose" style="margin-top: 36px;">
+    The library is open-source (MIT license) with comprehensive test coverage (108 tests). Designed for research, backtesting, and derivatives pricing applications. Includes example notebooks, API documentation, and benchmark scripts.
+  </p>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Xander Robbins</div>
+      <div class="footer-sub">Quantitative Research · University of Florida</div>
+    </div>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+/* ── Custom cursor (desktop only) ── */
+if (window.innerWidth > 768) {
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, .comp-card, .stat-card, .pipe-step, .stat-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '6px'; cur.style.height = '6px';
+      ring.style.width = '48px'; ring.style.height = '48px';
+      ring.style.borderColor = 'var(--accent)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(139,70,32,0.5)';
+    });
+  });
+}
+
+/* ── Scroll reveal ── */
+const revealEls = document.querySelectorAll(
+  '.comp-card, .stat-card, .perf-block, .chart-wrap, .pipe-step, .math-block'
+);
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.07 });
+revealEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = `opacity 0.65s ease ${(i % 4) * 0.07}s, transform 0.65s ease ${(i % 4) * 0.07}s`;
+  revObs.observe(el);
+});
+</script>
+</body>
+</html>
