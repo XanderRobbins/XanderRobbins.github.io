@@ -58,14 +58,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 #cursor {
   position: fixed;
   width: 12px; height: 12px;
-  background: #8b4620;
+  background: #c6613f;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%,-50%);
   transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
-  mix-blend-mode: screen;
-  box-shadow: 0 0 12px rgba(139,70,32,0.6);
+  mix-blend-mode: normal;
+  box-shadow: 0 0 6px rgba(198,97,63,0.3);
 }
 #cursor-ring {
   position: fixed;
@@ -1536,6 +1536,23 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
           </div>
           <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Download</div>
         </a>
+        <a href="currency-network.html" class="research-item research-item--link">
+          <div class="research-header">
+            <h3>The Currency Network</h3>
+            <div class="research-meta">
+              <span class="research-status">In Progress</span>
+              <span class="research-date">2025–2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Modeling cross-asset correlation networks using graph-theoretic methods. Analyzing how correlation structures evolve across market regimes and their implications for portfolio construction and tail risk management.</p>
+          <div class="research-tags">
+            <span>#NetworkAnalysis</span>
+            <span>#GraphTheory</span>
+            <span>#PortfolioTheory</span>
+            <span>#MacroFinance</span>
+          </div>
+          <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Learn More</div>
+        </a>
         <a href="xfinance.html" class="research-item research-item--link">
           <div class="research-header">
             <h3>xFinance — Financial Data with Automatic Failover</h3>
@@ -1570,23 +1587,6 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
             <span>#DerivativesPricing</span>
           </div>
         </a>
-        <a href="currency-network.html" class="research-item research-item--link">
-          <div class="research-header">
-            <h3>The Currency Network</h3>
-            <div class="research-meta">
-              <span class="research-status">In Progress</span>
-              <span class="research-date">2025–2026</span>
-            </div>
-          </div>
-          <p class="research-desc">Modeling cross-asset correlation networks using graph-theoretic methods. Analyzing how correlation structures evolve across market regimes and their implications for portfolio construction and tail risk management.</p>
-          <div class="research-tags">
-            <span>#NetworkAnalysis</span>
-            <span>#GraphTheory</span>
-            <span>#PortfolioTheory</span>
-            <span>#MacroFinance</span>
-          </div>
-          <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Learn More</div>
-        </a>
       </div>
     </div>
   </div>
@@ -1605,7 +1605,7 @@ if (!isMobile()) {
   document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
   function animCursor() {
     cur.style.left = mx + 'px'; cur.style.top = my + 'px';
-    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    rx += (mx - rx) * 0.22; ry += (my - ry) * 0.22;
     ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
     requestAnimationFrame(animCursor);
   }
@@ -1676,7 +1676,7 @@ function startCanvas() {
   const BG = '#282a3a';
 
   const MOUSE_R = 160;
-  const MOUSE_PULL = 38;
+  const MOUSE_PULL = 50;
 
   let mouseX = -9999, mouseY = -9999;
   let smoothMX = -9999, smoothMY = -9999, mouseReady = false;
@@ -1792,9 +1792,12 @@ function startCanvas() {
     const assemblyP = Math.min(1, (ts - assemblyStart) / ASSEMBLY_MS);
     R = Math.min(W, H) * 0.26;
 
-    // Rotation ramps up in the final quarter of assembly
-    const rotRamp = assemblyP < 0.85 ? 0 : ((assemblyP - 0.85) / 0.15);
-    rotY += 0.00176 * rotRamp;
+    // Rotation accelerates over time up to 0.01, but only after assembly completes
+    if (assemblyP >= 1) {
+      const timeElapsed = ts - (assemblyStart + ASSEMBLY_MS);
+      const accelerationPhase = Math.min(1, timeElapsed / 20000); // Reaches 0.01 after 20 seconds
+      rotY += (0.004 + 0.006 * accelerationPhase); // Starts at 0.004, accelerates to 0.01
+    }
 
     const targetMX = mouseReady ? mouseX : (isMobile() ? cx : W * 0.15);
     const targetMY = mouseReady ? mouseY : (isMobile() ? cy : H * 0.15);
@@ -1915,7 +1918,7 @@ function startCanvas() {
 
       const dn = Math.max(0,Math.min(1,n.depthNorm));
 
-      const size  = 1.2 + dn*2.2 + prox*2.5;
+      const size  = 1.5 + dn*2.2 + prox*2.5;
       const alpha = Math.min(1,0.35 + dn*0.65 + prox*0.2);
 
       ctx.beginPath();
@@ -1959,7 +1962,7 @@ function startCanvas() {
     const backNodes = projected.filter(n => n.z2 >= CULL + R * 0.15);
     ctx.lineWidth = 1.2;
     backNodes.forEach(n => {
-      const size = 1;
+      const size = 1.2;
       ctx.beginPath();
       ctx.arc(n.sx,n.sy,size,0,Math.PI*2);
       ctx.strokeStyle = `rgba(${AC},0.25)`;
