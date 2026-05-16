@@ -280,7 +280,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 /* Left card — Trading — hovers left */
 .card-trading {
   left: clamp(24px, 3.5vw, 64px);
-  top: 50%;
+  top: 44%;
   transform: translateY(-50%);
 }
 .card-trading:hover { transform: translateY(-50%) translateX(-10px); }
@@ -300,6 +300,21 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   transform: translateY(-50%);
 }
 .card-research:hover { transform: translateY(calc(-50% + 10px)) translateX(10px); }
+
+/* Below Trading — Resume — hovers down+right */
+.card-resume {
+  left: clamp(220px, 16vw, 320px);
+  top: 80%;
+  transform: translateY(-50%);
+  width: clamp(125px, 9.5vw, 185px);
+  aspect-ratio: 8.5 / 11;
+  animation: breathing 3s ease-in-out infinite;
+}
+.card-resume:hover { animation: none; transform: translateY(calc(-50% + 10px)) translateX(10px); }
+@keyframes breathing {
+  0%, 100% { transform: translateY(-50%); }
+  50% { transform: translateY(calc(-50% - 8px)); }
+}
 
 .card-index {
   font-size: clamp(10px, 0.9vw, 12px);
@@ -1220,6 +1235,12 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
       <div class="card-arrow">↗</div>
     </div>
 
+    <a href="Alexander Robbins Resume.pdf" class="card card-resume" style="text-decoration: none; color: inherit; padding: 12px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; position: relative;">
+      <div style="font-size: 11px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; opacity: 0.8; align-self: center;">Resume</div>
+      <img src="assets/resume-preview.png" style="flex: 1; width: 100%; object-fit: contain; border-radius: 8px 8px 12px 12px;" alt="Resume preview" loading="lazy">
+      <div class="card-arrow" style="position: absolute; bottom: 10px; right: 10px; font-size: 14px;">↗</div>
+    </a>
+
     <div class="card card-awards" onclick="openSection('awards')">
       <div class="card-index">02 ——</div>
       <div class="card-title">Accomplishments</div>
@@ -1229,7 +1250,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 
     <div class="card card-research" onclick="openSection('research')">
       <div class="card-index">03 ——</div>
-      <div class="card-title">Research</div>
+      <div class="card-title">Research & Projects</div>
       <div class="card-desc">Monte Carlo options pricing, variance reduction, ASVR algorithms</div>
       <div class="card-arrow">↗</div>
     </div>
@@ -1514,6 +1535,24 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
             <span>#OptionPricing</span>
           </div>
           <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Download</div>
+        </a>
+        <a href="xfinance.html" class="research-item research-item--link">
+          <div class="research-header">
+            <h3>xFinance — Financial Data with Automatic Failover</h3>
+            <div class="research-meta">
+              <span class="research-status">Published</span>
+              <span class="research-date">May 2026</span>
+            </div>
+          </div>
+          <p class="research-desc">Python library delivering yfinance's simplicity with better reliability. Automatic multi-source failover to 6 data providers (Yahoo, Stooq, SEC, ECB, Binance, CoinGecko) with per-source circuit breakers, transparent error handling, and 50× concurrent speedup.</p>
+          <div class="research-tags">
+            <span>#FinancialData</span>
+            <span>#SoftwareEngineering</span>
+            <span>#CircuitBreaker</span>
+            <span>#FailoverArchitecture</span>
+            <span>#OpenSource</span>
+          </div>
+          <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Learn More</div>
         </a>
         <a href="asvs.html" class="research-item research-item--link">
           <div class="research-header">

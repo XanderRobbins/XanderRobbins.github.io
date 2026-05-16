@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#282a3a">
+<title>xFinance — Financial Data with Automatic Failover — Xander Robbins</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  cursor: none;
+}
+body::-webkit-scrollbar { display: none; }
+
+#cursor {
+  position: fixed; width: 12px; height: 12px;
+  background: #8b4620; border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 12px rgba(139,70,32,0.6);
+}
+#cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(139,70,32,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
+}
+
+.scanlines {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 24px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(40,42,58,0.97) 0%, transparent 100%);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.nav-site {
+  font-family: 'DM Serif Display', serif; font-size: 20px;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-back {
+  font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim);
+  text-transform: uppercase; background: none;
+  border: 1px solid var(--card-border); padding: 8px 20px; border-radius: 4px;
+  cursor: none; transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+}
+.nav-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  min-height: auto; display: flex; flex-direction: column;
+  justify-content: center; padding: 80px 52px; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 15% 55%, rgba(198,97,63,0.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+  background-image: linear-gradient(var(--accent) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-content {
+  display: flex; flex-direction: column; gap: 48px;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 24px; opacity: 0.8;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before {
+  content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+.hero-header {
+  display: grid; grid-template-columns: 1fr; gap: 100px; align-items: start; margin-bottom: 36px;
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(72px, 12vw, 140px);
+  color: var(--text); letter-spacing: -0.04em; line-height: 0.9; margin-bottom: 12px;
+}
+.hero-subtitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3.5vw, 44px);
+  color: var(--accent); letter-spacing: -0.01em; font-style: italic; margin-bottom: 4px;
+}
+.hero-desc {
+  max-width: 680px; font-size: 13px; color: var(--text-dim);
+  line-height: 1.9; letter-spacing: 0.02em; margin-bottom: 56px;
+}
+
+.stats-bar {
+  display: flex; gap: 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; max-width: 680px;
+  background: rgba(22,24,33,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.stat-item {
+  flex: 1; padding: 20px 24px; border-right: 1px solid var(--card-border);
+  transition: background 0.25s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: rgba(198,97,63,0.06); }
+.stat-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;
+}
+.stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3vw, 36px); color: var(--text); letter-spacing: -0.02em;
+}
+.stat-value.pos { color: #4ade80; }
+
+/* ── Sections ── */
+.page-wrap { max-width: 1100px; margin: 0 auto; }
+
+.section { padding: 96px 52px; }
+.section-divider { height: 1px; background: rgba(198,97,63,0.1); margin: 0 52px; }
+
+.eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 18px; opacity: 0.7;
+}
+.section-h {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 60px); color: var(--text);
+  letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 44px;
+}
+.prose {
+  font-size: 13px; color: var(--text-dim); line-height: 1.95;
+  letter-spacing: 0.02em; max-width: 700px;
+}
+.prose + .prose { margin-top: 20px; }
+
+/* ── Component grid ── */
+.comp-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 48px;
+}
+.comp-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 24px 20px; transition: border-color 0.28s, background 0.28s, transform 0.28s;
+}
+.comp-card:hover { border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1); transform: translateY(-3px); }
+.comp-num { font-size: 9px; letter-spacing: 0.2em; color: var(--accent); opacity: 0.55; margin-bottom: 14px; }
+.comp-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); margin-bottom: 10px; }
+.comp-desc { font-size: 11px; color: var(--text-dim); line-height: 1.75; }
+
+/* ── Code block ── */
+.code-block {
+  background: rgba(22,24,33,0.9); border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent); border-radius: 4px;
+  padding: 22px 28px; margin: 24px 0;
+  font-size: 12px; color: var(--text); line-height: 2.1; letter-spacing: 0.03em;
+  font-family: 'JetBrains Mono', monospace; overflow-x: auto;
+}
+.code-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; display: block;
+}
+
+/* ── Feature table ── */
+.feature-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 36px; }
+.feature-table th {
+  text-align: left; font-size: 9px; letter-spacing: 0.15em; color: var(--accent);
+  text-transform: uppercase; padding: 12px 14px; border-bottom: 1px solid var(--card-border); opacity: 0.7;
+}
+.feature-table td {
+  padding: 11px 14px; border-bottom: 1px solid rgba(198,97,63,0.07); color: var(--text-dim);
+  transition: color 0.15s;
+}
+.feature-table tr:hover td { color: var(--text); background: rgba(198,97,63,0.03); }
+
+.badge {
+  font-size: 9px; letter-spacing: 0.1em; padding: 3px 8px;
+  border-radius: 2px; text-transform: uppercase; font-weight: 500;
+}
+.badge.check { background: rgba(74,222,128,0.12); color: #4ade80; }
+
+/* ── Stats grid ── */
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin: 40px 0; }
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 28px; transition: border-color 0.25s;
+}
+.stat-card:hover { border-color: rgba(198,97,63,0.5); }
+.stat-card-label {
+  font-size: 9px; letter-spacing: 0.18em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 10px; opacity: 0.7;
+}
+.stat-card-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px, 3.5vw, 44px); color: var(--text); letter-spacing: -0.02em;
+}
+.stat-card-detail { font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
+/* ── Footer ── */
+.footer {
+  padding: 56px 52px; border-top: 1px solid rgba(198,97,63,0.1);
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.footer-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 6px; }
+.footer-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+  .nav { padding: 14px 20px; }
+  .hero { padding: 90px 20px 60px; }
+  .hero-header { grid-template-columns: 1fr; gap: 48px; }
+  .section { padding: 60px 20px; }
+  .section-divider { margin: 0 20px; }
+  .comp-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { min-width: 45%; border-bottom: 1px solid var(--card-border); }
+  .footer { padding: 40px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-site">Xander Robbins</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-eyebrow">Software Library — Financial Data</div>
+      <div class="hero-header">
+        <div>
+          <h1 class="hero-title">xFinance</h1>
+          <div class="hero-subtitle">Reliable financial data with automatic failover</div>
+        </div>
+      </div>
+      <p class="hero-desc">
+        A Python financial data library that delivers yfinance's simplicity with better reliability. Automatic multi-source failover—when Yahoo Finance is rate-limited or unavailable, data transparently falls back to Stooq, SEC, ECB, Binance, or CoinGecko. No code changes. No API keys needed.
+      </p>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-label">Data Sources</div>
+          <div class="stat-value pos">6</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Circuit Breaker</div>
+          <div class="stat-value">Per-source</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Caching</div>
+          <div class="stat-value">5 min TTL</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Concurrent</div>
+          <div class="stat-value">50× faster</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── 01 Why xFinance ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">01 — Problem</div>
+  <h2 class="section-h">The yfinance<br>Problem</h2>
+  <p class="prose">
+    yfinance relies on a single source: Yahoo Finance. When Yahoo hits its ~950 request per session limit, or when Yahoo's API breaks (which happens frequently), users get rate limit errors or empty DataFrames with no fallback.
+  </p>
+  <p class="prose">
+    xFinance solves this with automatic multi-source failover. If Yahoo is throttled, data silently falls back to Stooq. If that fails, it tries SEC, ECB, Binance, CoinGecko. Same API. Same data structure. No code changes.
+  </p>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-label">Single Point of Failure</div>
+      <div class="stat-card-value">1 source</div>
+      <div class="stat-card-detail">yfinance only tries Yahoo</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Automatic Failover</div>
+      <div class="stat-card-value">6 sources</div>
+      <div class="stat-card-detail">xFinance tries 6 in sequence</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Rate Limit Crashes</div>
+      <div class="stat-card-value">✗ Fixed</div>
+      <div class="stat-card-detail">Circuit breaker + retry logic</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 02 Architecture ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">02 — Design</div>
+  <h2 class="section-h">Data Source<br>Router</h2>
+  <p class="prose">
+    xFinance implements a pluggable DataSourceRouter that tries sources in priority order. Each source is wrapped in a circuit breaker: after 5 consecutive failures, that source is "open" for 60 seconds. Further requests skip it without wasting HTTP calls. Transient errors trigger exponential backoff with up to 4 retries.
+  </p>
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-num">01 ——</div>
+      <div class="comp-name">Circuit Breaker</div>
+      <div class="comp-desc">Per-source, 5 failure threshold, 60s cooldown. Prevents cascading failures.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-num">02 ——</div>
+      <div class="comp-name">Automatic Retry</div>
+      <div class="comp-desc">Exponential backoff. Catches 50x errors, timeouts, rate limits.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-num">03 ——</div>
+      <div class="comp-name">Caching</div>
+      <div class="comp-desc">Per-instance in-memory, 5-minute TTL. Eliminates redundant network calls.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 03 Data Sources ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">03 — Sources</div>
+  <h2 class="section-h">Six Data<br>Providers</h2>
+  <p class="prose">
+    xFinance queries sources in priority order. Each supports a different mix of data types. Yahoo Finance covers everything (but is rate-limited). Stooq covers equities and forex cheaply. SEC provides audited fundamentals. ECB covers forex. Binance and CoinGecko cover crypto.
+  </p>
+  <div class="code-block">
+    <span class="code-label">Source Priority & Coverage</span>
+    <strong>Try order:</strong> Yahoo → Stooq → SEC → ECB → Binance → CoinGecko<br><br>
+    <strong>Yahoo Finance:</strong> Prices, Info, Forex, Crypto, Fundamentals, Options<br>
+    <strong>Stooq:</strong> Prices, Forex (cheap &amp; fast)<br>
+    <strong>SEC EDGAR:</strong> Company Info, Fundamentals (audited 10-K/10-Q)<br>
+    <strong>ECB Frankfurter:</strong> Forex data (no rate limits)<br>
+    <strong>Binance:</strong> Prices, Info, Crypto (fast, reliable)<br>
+    <strong>CoinGecko:</strong> Prices, Info, Crypto (free tier: 30 req/min)
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 04 API ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">04 — Usage</div>
+  <h2 class="section-h">yfinance<br>Compatible</h2>
+  <p class="prose">
+    Use xFinance exactly like yfinance. Same method names. Same return types (pandas DataFrames). Same lazy evaluation and caching. Drop-in replacement: change <code>import yfinance</code> to <code>import xfinance</code>.
+  </p>
+  <div class="code-block">
+    <span class="code-label">Single Ticker (Multi-Source Failover, Cached)</span>
+    import xfinance as xf<br><br>
+    t = xf.Ticker("AAPL")<br>
+    df = t.history(period="1y")&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# OHLCV DataFrame<br>
+    info = t.info&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Company metadata<br>
+    income = t.income_stmt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Financials<br>
+  </div>
+  <div class="code-block">
+    <span class="code-label">Concurrent Multi-Symbol Download (50× faster)</span>
+    df = xf.download(["AAPL", "MSFT", "GOOGL"], period="1y")<br>
+    print(df["Close"])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# All close prices<br>
+    print(df[["AAPL", "MSFT"]])&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Subset of symbols
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 05 Performance ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">05 — Benchmarks</div>
+  <h2 class="section-h">Speed &amp;<br>Reliability</h2>
+  <p class="prose">
+    Concurrent downloads are 50× faster than sequential. Circuit breaker and cache reduce API pressure. No API keys needed—all sources are public or free-tier.
+  </p>
+  <table class="feature-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>yfinance</th>
+        <th>xFinance</th>
+        <th>Benefit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Rate Limit Handling</strong></td>
+        <td>Crashes (SourceRateLimitError)</td>
+        <td>Automatic fallback</td>
+        <td><span class="badge check">✓ Works every time</span></td>
+      </tr>
+      <tr>
+        <td><strong>Failover Sources</strong></td>
+        <td>None (1 source)</td>
+        <td>5 alternatives + plugin arch</td>
+        <td><span class="badge check">✓ Resilient</span></td>
+      </tr>
+      <tr>
+        <td><strong>Multi-Symbol Speed</strong></td>
+        <td>Sequential (~10s for 100 tickers)</td>
+        <td>Concurrent (~0.2s for 100 tickers)</td>
+        <td><span class="badge check">✓ 50× faster</span></td>
+      </tr>
+      <tr>
+        <td><strong>Caching</strong></td>
+        <td>None</td>
+        <td>Per-instance, 5-min TTL</td>
+        <td><span class="badge check">✓ Instant repeats</span></td>
+      </tr>
+      <tr>
+        <td><strong>API Keys Required</strong></td>
+        <td>No (unofficial)</td>
+        <td>No (all public/free)</td>
+        <td><span class="badge check">✓ Zero setup</span></td>
+      </tr>
+      <tr>
+        <td><strong>Error Transparency</strong></td>
+        <td>Silent failures (empty DataFrame)</td>
+        <td>Rich exceptions + source provenance</td>
+        <td><span class="badge check">✓ Debuggable</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 06 Real World Example ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">06 — Example</div>
+  <h2 class="section-h">Forex with<br>Automatic Failover</h2>
+  <p class="prose">
+    Without xFinance, if Yahoo hits rate limits, you get an error and no data. With xFinance, it silently falls back to Stooq, then ECB, until one succeeds. Same code. No retry logic needed.
+  </p>
+  <div class="code-block">
+    <span class="code-label">Before (yfinance) — Crashes on Rate Limit</span>
+    import yfinance as yf<br><br>
+    t = yf.Ticker("USD/EUR")<br>
+    df = t.history(period="1y")&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ← SourceRateLimitError!<br>
+    # You're blocked. No automatic fallback.
+  </div>
+  <div class="code-block">
+    <span class="code-label">After (xFinance) — Automatic Failover</span>
+    import xfinance as xf<br><br>
+    t = xf.Ticker("USD/EUR")<br>
+    df = t.history(period="1y")&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ← Returns from Stooq or ECB if Yahoo is throttled<br>
+    # Silent fallback. Works every time.
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 07 Plugin Architecture ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">07 — Extensibility</div>
+  <h2 class="section-h">Custom Data<br>Sources</h2>
+  <p class="prose">
+    Add your own data source with a simple plugin. Implement the <code>DataSource</code> protocol (&lt;100 lines), register in <code>pyproject.toml</code>, and the router automatically discovers and uses it. No xFinance code changes needed.
+  </p>
+  <div class="code-block">
+    <span class="code-label">Building a Custom Data Source Plugin</span>
+    from xfinance.sources.base import DataSource, PricesParams<br>
+    from xfinance.models.source import DataSourceMeta, SupportedDataType<br><br>
+    class MySource(DataSource):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;meta = DataSourceMeta(<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="mysource",<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;supported_types=[SupportedDataType.PRICES, SupportedDataType.INFO],<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rate_limit_per_minute=1000,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;)<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;def supports(self, data_type, symbol):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return data_type in self.meta.supported_types<br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;async def fetch_prices(self, params, *, client):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Your implementation<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pass
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 08 Installation ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">08 — Getting Started</div>
+  <h2 class="section-h">Installation &amp;<br>Terms</h2>
+  <p class="prose">
+    Install via pip. Requires Python 3.10+. Dependencies: httpx, pandas, pydantic, pybreaker, tenacity.
+  </p>
+  <div class="code-block">
+    <span class="code-label">Installation</span>
+    pip install xfinance
+  </div>
+  <p class="prose" style="margin-top: 36px;">
+    <strong>No API keys needed.</strong> All sources are public or free-tier. Users are responsible for complying with each provider's Terms of Service: use yfinance-based data for personal research only; respect rate limits and fair-use guidelines. Full documentation and examples available at <code>xfinance.readthedocs.io</code>.
+  </p>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Xander Robbins</div>
+      <div class="footer-sub">Quantitative Research · University of Florida</div>
+    </div>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+/* ── Custom cursor (desktop only) ── */
+if (window.innerWidth > 768) {
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, .comp-card, .stat-card, .stat-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '6px'; cur.style.height = '6px';
+      ring.style.width = '48px'; ring.style.height = '48px';
+      ring.style.borderColor = 'var(--accent)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(139,70,32,0.5)';
+    });
+  });
+}
+
+/* ── Scroll reveal ── */
+const revealEls = document.querySelectorAll(
+  '.comp-card, .stat-card, .code-block'
+);
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.07 });
+revealEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = `opacity 0.65s ease ${(i % 4) * 0.07}s, transform 0.65s ease ${(i % 4) * 0.07}s`;
+  revObs.observe(el);
+});
+</script>
+</body>
+</html>
