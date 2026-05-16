@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#282a3a">
+<title>The Currency Network — Xander Robbins</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #282a3a;
+  --accent: #c6613f;
+  --accent-dim: rgba(198,97,63,0.15);
+  --text: #e8ddd4;
+  --text-dim: rgba(232,221,212,0.45);
+  --text-muted: rgba(232,221,212,0.25);
+  --card-bg: rgba(40,42,58,0.85);
+  --card-border: rgba(198,97,63,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  overflow-x: hidden;
+  scrollbar-width: none;
+  cursor: none;
+}
+body::-webkit-scrollbar { display: none; }
+
+#cursor {
+  position: fixed; width: 12px; height: 12px;
+  background: #8b4620; border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.08s, width 0.2s, height 0.2s;
+  mix-blend-mode: screen;
+  box-shadow: 0 0 12px rgba(139,70,32,0.6);
+}
+#cursor-ring {
+  position: fixed; width: 32px; height: 32px;
+  border: 1px solid rgba(139,70,32,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.18s ease-out, width 0.2s, height 0.2s, border-color 0.2s;
+}
+
+.scanlines {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 24px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(40,42,58,0.97) 0%, transparent 100%);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.nav-site {
+  font-family: 'DM Serif Display', serif; font-size: 20px;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-back {
+  font-size: 11px; letter-spacing: 0.15em; color: var(--text-dim);
+  text-transform: uppercase; background: none;
+  border: 1px solid var(--card-border); padding: 8px 20px; border-radius: 4px;
+  cursor: none; transition: border-color 0.2s, color 0.2s;
+  font-family: 'JetBrains Mono', monospace; text-decoration: none;
+}
+.nav-back:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: flex-start; gap: 0; padding: 140px 52px 80px; position: relative; overflow: visible;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 15% 55%, rgba(198,97,63,0.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-content {
+  flex: 1; position: relative; z-index: 2;
+}
+.hero-visual {
+  flex: 0 0 auto; position: relative; height: 620px; width: 440px;
+  perspective: 1200px; margin-left: auto; margin-right: 200px;
+}
+.pdf-link {
+  position: absolute; inset: 0; z-index: 10; cursor: pointer;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.03;
+  background-image: linear-gradient(var(--accent) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 24px; opacity: 0.8;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-eyebrow::before {
+  content: ''; display: inline-block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(52px, 9vw, 110px);
+  color: var(--text); letter-spacing: -0.04em; line-height: 0.9; margin-bottom: 12px;
+}
+.hero-subtitle {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(18px, 2.8vw, 36px);
+  color: var(--accent); letter-spacing: -0.01em; font-style: italic; margin-bottom: 36px;
+}
+.hero-desc {
+  max-width: 680px; font-size: 13px; color: var(--text-dim);
+  line-height: 1.9; letter-spacing: 0.02em; margin-bottom: 56px;
+}
+
+.stats-bar {
+  display: flex; gap: 0; border: 1px solid var(--card-border); border-radius: 8px;
+  overflow: hidden; max-width: 680px;
+  background: rgba(22,24,33,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.stat-item {
+  flex: 1; padding: 20px 24px; border-right: 1px solid var(--card-border);
+  transition: background 0.25s;
+}
+.stat-item:last-child { border-right: none; }
+.stat-item:hover { background: rgba(198,97,63,0.06); }
+.stat-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 8px; opacity: 0.7;
+}
+.stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(20px, 2.5vw, 32px); color: var(--text); letter-spacing: -0.02em;
+}
+
+/* ── PDF Page Stack ── */
+.pdf-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  cursor: none;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.5s ease;
+  transform-origin: bottom center;
+}
+
+.pdf-page:nth-child(1) {
+  transform: translateY(0) rotateZ(0deg) rotateX(0deg);
+  z-index: 3;
+}
+
+.pdf-page:nth-child(2) {
+  transform: translateY(8px) translateX(-6px) rotateZ(-1.5deg) rotateX(2deg);
+  z-index: 2;
+  opacity: 0.95;
+}
+
+.pdf-page:nth-child(3) {
+  transform: translateY(16px) translateX(-12px) rotateZ(-3deg) rotateX(4deg);
+  z-index: 1;
+  opacity: 0.9;
+}
+
+.hero-visual:hover .pdf-page:nth-child(1) {
+  transform: translateY(-120px) rotateZ(12deg) rotateX(-8deg) rotateY(5deg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.hero-visual:hover .pdf-page:nth-child(2) {
+  transform: translateY(-40px) translateX(40px) rotateZ(6deg) rotateX(-4deg) rotateY(8deg);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+}
+
+.hero-visual:hover .pdf-page:nth-child(3) {
+  transform: translateY(40px) translateX(80px) rotateZ(0deg) rotateX(0deg) rotateY(12deg);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.pdf-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: #000;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.pdf-subtitle {
+  font-size: 12px;
+  color: #c6613f;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.pdf-abstract {
+  font-size: 10px;
+  color: #555;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+.pdf-page-number {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  font-size: 9px;
+  color: #999;
+}
+
+/* ── Sections ── */
+.page-wrap { max-width: 1100px; margin: 0 auto; }
+
+.section { padding: 96px 52px; }
+.section-divider { height: 1px; background: rgba(198,97,63,0.1); margin: 0 52px; }
+
+.eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 18px; opacity: 0.7;
+}
+.section-h {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 60px); color: var(--text);
+  letter-spacing: -0.02em; line-height: 1.08; margin-bottom: 44px;
+}
+.prose {
+  font-size: 13px; color: var(--text-dim); line-height: 1.95;
+  letter-spacing: 0.02em; max-width: 700px;
+}
+.prose + .prose { margin-top: 20px; }
+
+.key-findings {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 44px 0;
+}
+.finding-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 32px; transition: border-color 0.28s, background 0.28s, transform 0.28s;
+}
+.finding-card:hover {
+  border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1); transform: translateY(-3px);
+}
+.finding-title {
+  font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 16px;
+}
+.finding-desc {
+  font-size: 12px; color: var(--text-dim); line-height: 1.8;
+}
+
+.code-block {
+  background: rgba(22,24,33,0.9); border: 1px solid var(--card-border);
+  border-left: 3px solid var(--accent); border-radius: 4px;
+  padding: 22px 28px; margin: 24px 0;
+  font-size: 11px; color: var(--text); line-height: 1.8; letter-spacing: 0.03em;
+  overflow-x: auto;
+}
+
+.results-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 44px 0;
+}
+.result-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 24px; text-align: center; transition: border-color 0.28s, background 0.28s;
+}
+.result-card:hover {
+  border-color: rgba(198,97,63,0.6); background: rgba(40,42,58,1);
+}
+.result-label {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase;
+  margin-bottom: 12px; opacity: 0.7;
+}
+.result-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(20px, 2.5vw, 32px); color: var(--text); letter-spacing: -0.02em;
+}
+.result-detail {
+  font-size: 10px; color: var(--text-muted); margin-top: 8px; line-height: 1.5;
+}
+
+.abstract-box {
+  background: rgba(22,24,33,0.95); border: 1px solid var(--card-border);
+  border-left: 4px solid var(--accent); border-radius: 6px;
+  padding: 36px; margin: 36px 0;
+}
+.abstract-label {
+  font-size: 10px; letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 16px; opacity: 0.8; display: block;
+}
+.abstract-text {
+  font-size: 12px; color: var(--text-dim); line-height: 2; letter-spacing: 0.01em;
+}
+
+.download-btn {
+  display: inline-block; margin-top: 36px;
+  font-size: 11px; letter-spacing: 0.15em; color: var(--accent);
+  text-transform: uppercase; border: 1px solid var(--card-border);
+  padding: 14px 28px; border-radius: 4px; text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.download-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+
+/* ── Footer ── */
+.footer {
+  padding: 56px 52px; border-top: 1px solid rgba(198,97,63,0.1);
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.footer-name {
+  font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 6px;
+}
+.footer-sub {
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column;
+    gap: 40px;
+    justify-content: center;
+  }
+  .hero-visual {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+  .nav { padding: 14px 20px; }
+  .hero { padding: 90px 20px 60px; flex-direction: column; gap: 40px; }
+  .hero-visual { width: 100%; max-width: 360px; height: 480px; margin: 0 auto; }
+  .section { padding: 60px 20px; }
+  .section-divider { margin: 0 20px; }
+  .key-findings { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr 1fr; }
+  .footer { padding: 40px 20px; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { min-width: 45%; border-bottom: 1px solid var(--card-border); }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanlines"></div>
+
+<nav class="nav">
+  <a href="index.html" class="nav-site">Xander Robbins</a>
+  <a href="index.html" class="nav-back">← Back</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Research & Working Paper</div>
+    <h1 class="hero-title">The Currency<br>Network</h1>
+    <div class="hero-subtitle">A Spectral Graph Framework for Detecting G10 FX Network Fractures</div>
+    <p class="hero-desc">
+      A physics-inspired framework that models the G10 foreign exchange market as a mechanical spring-mass system. Currencies are nodes with inertial mass; bilateral correlations determine spring constants through a weighted signed Laplacian. The Currency Network Stress Index (CNSI) detects structural network fractures at 9–16σ for three confirmed G10 crises — events that a realized-volatility baseline either misses entirely or confuses with false positives.
+    </p>
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-label">Data Window</div>
+        <div class="stat-value">2,605</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Fractures Detected</div>
+        <div class="stat-value">3</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Peak CNSI-Z</div>
+        <div class="stat-value">15.8σ</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">CNSI–RVol Corr.</div>
+        <div class="stat-value">0.21</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <a href="/Currency_Network_v5.pdf" download class="pdf-link"></a>
+    <div class="pdf-stack">
+      <!-- Page 1 (Front) -->
+      <div class="pdf-page">
+        <div class="pdf-subtitle">Working Paper — May 2025</div>
+        <div class="pdf-title">The Currency Network</div>
+        <div class="pdf-subtitle" style="margin-top: 12px; margin-bottom: 20px;">A Spectral Graph Framework for Detecting G10 FX Network Fractures</div>
+        <div class="pdf-abstract">
+          <p style="margin-bottom: 12px;"><strong>Alexander Robbins</strong> — University of Florida</p>
+          <p style="margin-bottom: 12px;">We introduce the Currency Network, a physics-inspired framework that models the G10 foreign exchange market as a mechanical system in a scalar displacement field. Each currency is a node with inertial mass calibrated from trading volume, relative volatility, and trend strength; bilateral exchange-rate correlations determine spring constants through a weighted signed Laplacian.</p>
+          <p>The primary empirical application is the Currency Network Stress Index (CNSI): total elastic potential energy stored in the displaced network.</p>
+        </div>
+        <div class="pdf-page-number">1</div>
+      </div>
+
+      <!-- Page 2 -->
+      <div class="pdf-page">
+        <div class="pdf-subtitle">Abstract (Continued)</div>
+        <div class="pdf-abstract" style="margin-top: 20px;">
+          <p style="margin-bottom: 12px;">Backtested on G10 FX data (2015–2024, 2,605 trading days), the CNSI detects structural network fractures at z-scores of 9–16σ for three confirmed episodes — Brexit (June 2016, 15.2σ), the COVID synchronized selloff (March 2020, 15.8σ), and the Japan carry-trade unwind (August 2024, 9.1σ).</p>
+          <p style="margin-bottom: 12px;">A simple G10 realized-volatility index correlates with CNSI-Z at only 0.21 (full-sample). The Japan 2024 carry unwind — CNSI 9.1σ vs. RVol 2.2σ — demonstrates that the network structure detects structural fractures that high-volatility measures miss.</p>
+          <p>The RVol baseline also false-fires on Russia/Ukraine, SVB, and Truss/Yen that the CNSI correctly suppresses. False-positive rate: CNSI 1.6% vs. RVol 2.1%.</p>
+        </div>
+        <div class="pdf-page-number">2</div>
+      </div>
+
+      <!-- Page 3 -->
+      <div class="pdf-page">
+        <div class="pdf-subtitle">Contents</div>
+        <div class="pdf-abstract" style="margin-top: 20px;">
+          <p style="margin-bottom: 8px;"><strong>1 Introduction</strong> — G10 FX and the Network Gap</p>
+          <p style="margin-bottom: 8px;"><strong>2 Mathematical Setup</strong> — Nodes, Spring Constants, Laplacian</p>
+          <p style="margin-bottom: 8px;"><strong>3 Equations of Motion</strong> — Equilibrium, Theorem 1</p>
+          <p style="margin-bottom: 8px;"><strong>4 Gravitational Pressure</strong> — Reserve Currency Ranking</p>
+          <p style="margin-bottom: 8px;"><strong>5 Spectral Analysis</strong> — Fiedler Value, Theorem 2, Two Regimes</p>
+          <p style="margin-bottom: 8px;"><strong>6 Dynamic Extension</strong> — Time-Varying Networks</p>
+          <p style="margin-bottom: 8px;"><strong>7 Empirical Calibration</strong> — 2015–2024 Backtest</p>
+          <p style="margin-bottom: 8px;"><strong>8 CNSI & Crisis Detection</strong> — 3 Confirmed Fractures</p>
+          <p style="margin-bottom: 8px;"><strong>9–10 Limitations & Conclusion</strong></p>
+          <p style="margin-top: 12px; font-size: 9px; color: #999;">15 pages | 2 theorems | 1 proposition | 5 tables</p>
+        </div>
+        <div class="pdf-page-number">3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── 01 Overview ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">01 — Framework</div>
+  <h2 class="section-h">Currencies as a<br>Mechanical System</h2>
+  <p class="prose">
+    Foreign exchange markets constitute the largest and most liquid financial markets on Earth, with daily turnover exceeding $7.5 trillion. Despite decades of empirical work, no unified mechanical framework captures how pressure propagates across the G10 currency network during stress episodes — accounting simultaneously for the restoring forces that link correlated currencies and the inertial resistances that make some currencies harder to displace.
+  </p>
+  <p class="prose">
+    The Currency Network fills this gap by embedding the G10 currencies as nodes in a weighted spring-mass graph. Each edge carries a spring constant proportional to the rolling Pearson correlation of the corresponding log-return pair. Each node possesses a gravitational mass calibrated from three observable quantities: trading volume (V), inverse realized volatility (Ω), and trend strength (IR). Under an external shock vector whose components sum to zero, the network relaxes to a mechanical equilibrium solved analytically via the Moore-Penrose pseudoinverse of the weighted Laplacian.
+  </p>
+  <p class="prose">
+    A critical design note: the equilibrium u*(t) = L⁺f(t) is a contemporaneous mapping of day-t observed displacements, not a forecast. The model's value is structural diagnosis — the Currency Network Stress Index (CNSI) measures total elastic potential energy stored in the network, detecting when the G10 correlation structure itself has fractured rather than when individual currencies have moved.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 02 Results ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">02 — Results</div>
+  <h2 class="section-h">Crisis Detection<br>Backtest</h2>
+  <p class="prose">
+    The CNSI was backtested on 2,605 G10 FX trading days (2015–2024). At a 2.5σ threshold, it produces 3 true positives — all confirmed G10 network fractures — and 32 false positives over 2,055 non-crisis days (1.6%). A realized-volatility baseline produces 44 false positives (2.1%) over the same window.
+  </p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-label">Brexit (Jun 2016)</div>
+      <div class="result-value">15.2σ</div>
+      <div class="result-detail">Synchronization crisis — GBP crash reorganized entire G10 structure</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">COVID (Mar 2020)</div>
+      <div class="result-value">15.8σ</div>
+      <div class="result-detail">Largest CNSI event in sample — synchronized global flight-to-safety</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Japan Carry Unwind (Aug 2024)</div>
+      <div class="result-value">9.1σ</div>
+      <div class="result-detail">CNSI detects; RVol-Z = 2.2σ — the key result of the paper</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">CNSI–RVol Corr.</div>
+      <div class="result-value">0.21</div>
+      <div class="result-detail">Full-sample — these series measure different phenomena</div>
+    </div>
+  </div>
+
+  <div class="key-findings">
+    <div class="finding-card">
+      <div class="finding-title">Brexit — Synchronization</div>
+      <div class="finding-desc">GBP crashed 10% overnight, reorganizing the entire G10 correlation structure simultaneously. Fiedler rose +10.7% — the network tightened under a shared shock, not fragmented. CNSI: 15.2σ. RVol: 10.3σ. Both detect.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-title">COVID — Synchronization</div>
+      <div class="finding-desc">Largest Fiedler increase in the sample (+71.2%) as all G10 currencies moved together under synchronized flight-to-safety pressure. The forcing vector ‖f‖ was enormous, not the spectral gap small. CNSI: 15.8σ.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-title">Japan 2024 — Fragmentation</div>
+      <div class="finding-desc">JPY reversal split the carry-currency cluster (AUD, NZD, CAD) from the safe-haven bloc (CHF, JPY). Fiedler declined −15.2%. Aggregate volatility barely moved — RVol-Z = 2.2σ. The CNSI alone detects it at 9.1σ.</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-title">Three Correct Negatives</div>
+      <div class="finding-desc">Russia/Ukraine (0.9σ), SVB (2.0σ), and Truss/Yen (0.5σ) — events that stressed individual currencies or non-G10 assets without fracturing the G10 correlation network. RVol false-fires on all three; CNSI stays quiet.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 03 Methodology ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">03 — Methodology</div>
+  <h2 class="section-h">The CNSI and<br>Spectral Framework</h2>
+  <p class="prose">
+    The Currency Network Stress Index is defined as the total elastic potential energy stored in the displaced network at time t. The equilibrium displacement u* = L⁺f is the minimum-norm solution to Lu* = f, where f is the external shock vector and L is the weighted signed Laplacian of the correlation graph. By the pseudoinverse identity, CNSI simplifies to:
+  </p>
+
+  <div class="code-block">
+    <strong>CNSI(t)</strong> = ½ u*(t)ᵀ L(t) u*(t) = ½ f(t)ᵀ L⁺(t) f(t)<br>
+    <br>
+    where  u*(t) = L⁺(t) f(t)   [static equilibrium, Theorem 1]<br>
+           L = weighted signed Laplacian of rolling correlations<br>
+           f = shock vector (zero-sum, observed displacements)<br>
+    <br>
+    <strong>CNSI-Z(t)</strong> = [CNSI(t) − μ(t−1)] / σ(t−1)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using a strictly lagged 252-day rolling window
+  </div>
+
+  <p class="prose">
+    Theorem 2 establishes a tight displacement bound: ‖u*‖₂ ≤ ‖f‖₂ / δ, where δ is the Fiedler eigenvalue (the spectral gap). The bound holds on 91.1% of all trading days; the mean ratio ‖u*‖₂·δ / ‖f‖₂ = 0.75, confirming the bound is not vacuous — actual displacement uses approximately 75% of the theoretical maximum. CNSI is independent of the mass matrix M by Proposition 1: the static equilibrium depends only on L and f, so crisis detection does not depend on the mass specification.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 04 Two Regimes ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">04 — Theory</div>
+  <h2 class="section-h">Two Crisis<br>Regimes</h2>
+  <p class="prose">
+    A key empirical finding is that CNSI peaks divide into two structurally distinct regimes, identified in real time by the sign of the Fiedler value change over the 60-day pre-crisis window:
+  </p>
+
+  <div class="code-block">
+    <strong>Synchronization crisis</strong> [Brexit, COVID]:<br>
+    &nbsp;&nbsp;δ(t*) > δ(t* − 60) — Fiedler increased<br>
+    &nbsp;&nbsp;All G10 correlations converge under shared flight-to-safety pressure.<br>
+    &nbsp;&nbsp;CNSI spikes because ‖f‖ is enormous, not because δ is small.<br>
+    <br>
+    <strong>Fragmentation crisis</strong> [Japan 2024]:<br>
+    &nbsp;&nbsp;δ(t*) < δ(t* − 60) — Fiedler declined<br>
+    &nbsp;&nbsp;A currency cluster splits; cross-cluster correlations weaken.<br>
+    &nbsp;&nbsp;Aggregate volatility need not spike — RVol misses these events.
+  </div>
+
+  <p class="prose">
+    This typology replaces the common narrative that a declining Fiedler value universally signals an impending FX crisis. For synchronization crises — which include the two most severe detected events — the Fiedler value rises as all correlations converge. The Fiedler decline criterion holds only for fragmentation crises, precisely the regime that volatility measures miss. The two regimes are identifiable in real time from the sign of the 60-day Fiedler change at the CNSI alert.
+  </p>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 05 Abstract ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">05 — Publication</div>
+  <h2 class="section-h">Paper Abstract</h2>
+
+  <div class="abstract-box">
+    <span class="abstract-label">The Currency Network: A Spectral Graph Framework for Detecting G10 FX Network Fractures</span>
+    <div class="abstract-text">
+      We introduce the Currency Network, a physics-inspired framework that models the G10 foreign exchange market as a mechanical system in a scalar displacement field. Each currency is a node with inertial mass calibrated from trading volume, relative volatility, and trend strength; bilateral exchange-rate correlations determine spring constants through a weighted signed Laplacian. We prove equilibrium existence, uniqueness, and Lipschitz continuity (Theorem 1) and establish a tight displacement bound controlled by the Fiedler eigenvalue (Theorem 2). A critical design note: the equilibrium u*(t) = L⁺f(t) is a contemporaneous mapping of day-t observed displacements, not a forecast. The framework's value is structural diagnosis, not return prediction. The primary empirical application is the Currency Network Stress Index (CNSI): total elastic potential energy stored in the displaced network. Backtested on G10 FX data (2015–2024, 2,605 trading days), the CNSI detects structural network fractures at z-scores of 9–16σ for three confirmed episodes — Brexit (June 2016, 15.2σ), the COVID synchronized selloff (March 2020, 15.8σ), and the Japan carry-trade unwind (August 2024, 9.1σ). A simple G10 realized-volatility index correlates with CNSI-Z at only 0.21 (full-sample), and the Japan 2024 carry unwind — CNSI 9.1σ vs. RVol 2.2σ — demonstrates that the network structure detects structural fractures that high-volatility measures miss. The RVol baseline also produces false positives on Russia/Ukraine, SVB, and Truss/Yen that the CNSI correctly suppresses (false-positive rate: 1.6% vs. 2.1%). We formally distinguish two crisis regimes by the sign of ΔFiedler at CNSI peaks: synchronization crises (COVID, Brexit) and fragmentation crises (Japan 2024 carry unwind).
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── 06 Download ── -->
+<div class="page-wrap">
+<section class="section">
+  <div class="eyebrow">06 — Full Text</div>
+  <h2 class="section-h">Access the<br>Complete Paper</h2>
+  <p class="prose">
+    The full paper includes proofs of Theorem 1 (equilibrium existence, uniqueness, and Lipschitz continuity), Theorem 2 (spectral displacement bound), and Proposition 1 (mass invariance of CNSI). Empirical results cover 2,605 trading days across all G10 currency pairs with full crisis detection tables, Fiedler dynamics by regime, and a direct comparison to realized-volatility baselines.
+  </p>
+  <a href="/Currency_Network_v5.pdf" class="download-btn" download>
+    ↓ Download Full PDF
+  </a>
+  <p class="prose" style="margin-top: 24px; font-size: 11px;">
+    Paper: "The Currency Network: A Spectral Graph Framework for Detecting G10 FX Network Fractures"<br>
+    Author: Alexander Robbins<br>
+    Date: May 2025<br>
+    Pages: 15<br>
+    Keywords: Foreign exchange, spring-mass networks, graph Laplacian, spectral graph theory, mechanical equilibrium, systemic risk, Fiedler value, crisis detection, G10 FX
+  </p>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Xander Robbins</div>
+      <div class="footer-sub">Quantitative Research · University of Florida · AlgoGators</div>
+    </div>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+  </div>
+</footer>
+
+<script>
+/* ── Custom cursor (desktop only) ── */
+if (window.innerWidth > 768) {
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, .finding-card, .result-card, .stat-item, .download-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '6px'; cur.style.height = '6px';
+      ring.style.width = '48px'; ring.style.height = '48px';
+      ring.style.borderColor = 'var(--accent)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(139,70,32,0.5)';
+    });
+  });
+}
+
+/* ── Scroll reveal ── */
+const revealEls = document.querySelectorAll(
+  '.finding-card, .result-card, .key-findings, .results-grid, .code-block, .abstract-box'
+);
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.07 });
+revealEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = `opacity 0.65s ease ${(i % 4) * 0.07}s, transform 0.65s ease ${(i % 4) * 0.07}s`;
+  revObs.observe(el);
+});
+</script>
+</body>
+</html>
