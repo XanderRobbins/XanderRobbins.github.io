@@ -108,6 +108,11 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   transition: opacity 0.9s ease 0.6s;
 }
 #ui-layer.visible { opacity: 1; pointer-events: all; }
+@media (max-width: 768px) {
+  #ui-layer {
+    transition: opacity 0.5s ease 0.2s;
+  }
+}
 
 /* ── Terminal ── */
 #terminal {
@@ -1236,7 +1241,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
       <div class="card-arrow">↗</div>
     </div>
 
-    <a href="Alexander Robbins Resume.pdf" class="card card-resume" style="text-decoration: none; color: inherit; padding: 12px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; position: relative;">
+    <a href="Alexander Robbins Resume.pdf" class="card card-resume" target="_blank" style="text-decoration: none; color: inherit; padding: 12px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; position: relative;">
       <div style="font-size: 11px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; opacity: 0.8; align-self: center;">Resume</div>
       <img src="assets/resume-preview.png" style="flex: 1; width: 100%; object-fit: contain; border-radius: 8px 8px 12px 12px;" alt="Resume preview" loading="lazy">
       <div class="card-arrow" style="position: absolute; bottom: 10px; right: 10px; font-size: 14px;">↗</div>
@@ -1519,7 +1524,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
     <h1>Research & Projects</h1>
     <div class="section-content">
       <div class="research-grid">
-        <a href="asvr.html" class="research-item research-item--link">
+        <a href="asvr.html" class="research-item research-item--link" target="_blank">
           <div class="research-header">
             <h3>Adaptive Stratified Variance Reduction for Monte Carlo Options Pricing</h3>
             <div class="research-meta">
@@ -1537,7 +1542,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
           </div>
           <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Download</div>
         </a>
-        <a href="currency-network.html" class="research-item research-item--link">
+        <a href="currency-network.html" class="research-item research-item--link" target="_blank">
           <div class="research-header">
             <h3>The Currency Network</h3>
             <div class="research-meta">
@@ -1554,7 +1559,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
           </div>
           <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Learn More</div>
         </a>
-        <a href="xfinance.html" class="research-item research-item--link">
+        <a href="xfinance.html" class="research-item research-item--link" target="_blank">
           <div class="research-header">
             <h3>xFinance — Financial Data with Automatic Failover</h3>
             <div class="research-meta">
@@ -1572,7 +1577,7 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
           </div>
           <div style="margin-top: 16px; font-size: 11px; color: var(--accent); opacity: 0; transform: translateX(-4px); transition: opacity 0.22s, transform 0.22s;">↓ View & Learn More</div>
         </a>
-        <a href="asvs.html" class="research-item research-item--link">
+        <a href="asvs.html" class="research-item research-item--link" target="_blank">
           <div class="research-header">
             <h3>Arbitrage-Free Implied Volatility Surface Calibration</h3>
             <div class="research-meta">
@@ -1660,9 +1665,10 @@ if (!isMobile()) {
   }
 
   // UI fades in after assembly completes
+  const uiShowDelay = isMobile() ? 1200 : 2100;
   setTimeout(() => {
     document.getElementById('ui-layer').classList.add('visible');
-  }, 2100);
+  }, uiShowDelay);
 }());
 
 /* ── 3D Sphere node network ── */
@@ -2023,6 +2029,10 @@ function openSection(name) {
   document.documentElement.style.overflow = 'hidden';
 }
 function closeSection(name) {
+  if (isMobile()) {
+    location.reload();
+    return;
+  }
   document.getElementById('page-' + name).classList.remove('open');
   document.body.style.overflow = '';
   document.documentElement.style.overflow = '';
