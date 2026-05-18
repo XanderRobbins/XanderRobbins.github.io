@@ -1611,7 +1611,7 @@ if (!isMobile()) {
   document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
   function animCursor() {
     cur.style.left = mx + 'px'; cur.style.top = my + 'px';
-    rx += (mx - rx) * 0.22; ry += (my - ry) * 0.22;
+    rx += (mx - rx) * 0.04; ry += (my - ry) * 0.04;
     ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
     requestAnimationFrame(animCursor);
   }
@@ -1682,7 +1682,7 @@ function startCanvas() {
   const AC = [198, 97, 63];
   const BG = '#282a3a';
 
-  const MOUSE_R = 160;
+  const MOUSE_R = 240;
   const MOUSE_PULL = 50;
 
   let mouseX = -9999, mouseY = -9999;
@@ -1807,8 +1807,8 @@ function startCanvas() {
     const targetMX = mouseReady ? mouseX : (isMobile() ? cx : W * 0.15);
     const targetMY = mouseReady ? mouseY : (isMobile() ? cy : H * 0.15);
 
-    smoothMX += (targetMX - smoothMX) * 0.055;
-    smoothMY += (targetMY - smoothMY) * 0.055;
+    smoothMX += (targetMX - smoothMX) * 0.032;
+    smoothMY += (targetMY - smoothMY) * 0.032;
 
     const mOffX = (smoothMX - cx) / (W * 0.5);
     const mOffY = (smoothMY - cy) / (H * 0.5);
