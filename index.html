@@ -1799,11 +1799,9 @@ function startCanvas() {
     const assemblyP = Math.min(1, (ts - assemblyStart) / ASSEMBLY_MS);
     R = Math.min(W, H) * 0.26;
 
-    // Rotation accelerates over time up to 0.01, but only after assembly completes
+    // Constant smooth rotation after assembly completes
     if (assemblyP >= 1) {
-      const timeElapsed = ts - (assemblyStart + ASSEMBLY_MS);
-      const accelerationPhase = Math.min(1, timeElapsed / 20000); // Reaches 0.01 after 20 seconds
-      rotY += (0.004 + 0.006 * accelerationPhase); // Starts at 0.004, accelerates to 0.01
+      rotY += 0.0015;
     }
 
     const targetMX = mouseReady ? mouseX : (isMobile() ? cx : W * 0.15);
