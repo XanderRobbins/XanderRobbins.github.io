@@ -560,10 +560,31 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
   padding: 32px;
   transition: all 0.3s ease;
 }
+.strategy-card {
+  position: relative;
+}
+.strategy-card::after {
+  content: 'CLICK!';
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate(4px, -4px);
+  transition: opacity 0.22s, transform 0.22s;
+  text-transform: uppercase;
+  font-weight: 500;
+}
 .strategy-card:hover {
   border-color: var(--accent);
   background: rgba(40,42,58,1);
   transform: translateY(-4px);
+}
+.strategy-card:hover::after {
+  opacity: 1;
+  transform: translate(0, 0);
 }
 .strategy-header {
   display: flex;
@@ -717,6 +738,27 @@ body.hovering #cursor-ring { width: 48px; height: 48px; border-color: var(--acce
 .research-item--link:hover {
   border-color: var(--accent);
   background: rgba(40,42,58,1);
+}
+.research-item--link {
+  position: relative;
+}
+.research-item--link::after {
+  content: 'CLICK!';
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate(4px, -4px);
+  transition: opacity 0.22s, transform 0.22s;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.research-item--link:hover::after {
+  opacity: 1;
+  transform: translate(0, 0);
 }
 .research-item--link:hover > div:last-child {
   opacity: 1;
